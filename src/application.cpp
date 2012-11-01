@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 // Constants initialization
 //------------------------------------------------------------------------------
-const QString Application::appName("JenkinsWallWatcher");
+const QString Application::appName("JenkinsCuteView");
 const QString Application::appVersion("0.1");
-const QString Application::orgName("JenkinsWallWatcher");
+const QString Application::orgName("JenkinsCuteView");
 //------------------------------------------------------------------------------
 // Static members initialization
 //------------------------------------------------------------------------------
