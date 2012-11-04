@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "preferencesdialog.h"
+#include "aboutdialog.h"
 #include "application.h"
 
 #include <QDebug>
@@ -15,7 +16,9 @@
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow),
-	m_prefsDialog(0)
+	m_prefsDialog(0),
+	m_aboutDialog(0),
+	m_fullscreenShortcut(0)
 {
 	ui->setupUi(this);
 
@@ -54,6 +57,14 @@ void MainWindow::showPrefsDialog(){
 		m_prefsDialog->show();
 }
 //------------------------------------------------------------------------------
+void MainWindow::showAboutDialog(){
+	if(!m_aboutDialog)
+		m_aboutDialog = new AboutDialog(this);
+
+	if(!m_aboutDialog->isVisible())
+		m_aboutDialog->show();
+}
+//------------------------------------------------------------------------------
 // Protected functions
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -81,7 +92,7 @@ void MainWindow::on_m_actionFullscreen_triggered(){
 }
 //------------------------------------------------------------------------------
 void MainWindow::on_m_actionAbout_triggered(){
-	qDebug()<<"MainWindow::on_m_actionAbout_triggered - TODO";
+	showAboutDialog();
 }
 //------------------------------------------------------------------------------
 void MainWindow::fullScreenShortcut_activated(){

@@ -5,6 +5,7 @@
 #include <QMainWindow>
 //------------------------------------------------------------------------------
 class PreferencesDialog;
+class AboutDialog;
 class QShortcut;
 //------------------------------------------------------------------------------
 namespace Ui {
@@ -25,6 +26,7 @@ class MainWindow : public QMainWindow{
 //------------------------------------------------------------------------------
 	public slots:
 		void showPrefsDialog();
+		void showAboutDialog();
 
 //------------------------------------------------------------------------------
 // Protected functions
@@ -63,6 +65,9 @@ class MainWindow : public QMainWindow{
 
 		// Dialogs
 		PreferencesDialog	*m_prefsDialog;
+		AboutDialog			*m_aboutDialog;
+
+		// Shortcuts
 		QShortcut			*m_fullscreenShortcut;
 };
 //------------------------------------------------------------------------------

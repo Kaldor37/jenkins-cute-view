@@ -17,7 +17,8 @@ SOURCES	+=		main.cpp \
 					utils/httpgetter.cpp \
 					views/jenkinsgraphicsview.cpp \
 					views/mainwindow.cpp \
-					views/preferencesdialog.cpp
+					views/preferencesdialog.cpp \
+    views/aboutdialog.cpp
 #-------------------------------------------------------------------------------
 HEADERS	+=		application.h \
 					preferences.h \
@@ -29,8 +30,10 @@ HEADERS	+=		application.h \
 					utils/httpgetter.h \
 					views/jenkinsgraphicsview.h \
 					views/mainwindow.h \
-					views/preferencesdialog.h
+					views/preferencesdialog.h \
+    views/aboutdialog.h
 #-------------------------------------------------------------------------------
 FORMS		+=		views/uis/mainwindow.ui \
-					views/uis/preferencesdialog.ui
+					views/uis/preferencesdialog.ui \
+    views/uis/aboutdialog.ui
 #-------------------------------------------------------------------------------
