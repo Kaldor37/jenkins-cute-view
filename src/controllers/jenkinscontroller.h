@@ -2,7 +2,10 @@
 #ifndef JENKINSCONTROLLER_H
 #define JENKINSCONTROLLER_H
 //------------------------------------------------------------------------------
+#include "views/jobdisplaydata.h"
+
 #include <QObject>
+#include <QList>
 
 class MainWindow;
 class QTimer;
@@ -17,6 +20,7 @@ class JenkinsController : public QObject {
 //------------------------------------------------------------------------------
 	signals:
 		void status_changed(QString status, int timeout=0);
+		void jobs_updated(QList<JobDisplayData> jobs);
 //------------------------------------------------------------------------------
 	public slots:
 		void control(MainWindow *wnd);

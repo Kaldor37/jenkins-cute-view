@@ -15,10 +15,12 @@ SOURCES	+=		main.cpp \
 					models/jobmodel.cpp \
 					models/viewmodel.cpp \
 					utils/httpgetter.cpp \
+					views/aboutdialog.cpp \
 					views/jenkinsgraphicsview.cpp \
+					views/jobdisplaydata.cpp \
+					views/jobgraphicsitem.cpp \
 					views/mainwindow.cpp \
-					views/preferencesdialog.cpp \
-    views/aboutdialog.cpp
+					views/preferencesdialog.cpp
 #-------------------------------------------------------------------------------
 HEADERS	+=		application.h \
 					preferences.h \
@@ -28,12 +30,14 @@ HEADERS	+=		application.h \
 					models/jobmodel.h \
 					models/viewmodel.h \
 					utils/httpgetter.h \
+					views/aboutdialog.h \
 					views/jenkinsgraphicsview.h \
+					views/jobdisplaydata.h \
+					views/jobgraphicsitem.h \
 					views/mainwindow.h \
-					views/preferencesdialog.h \
-    views/aboutdialog.h
+					views/preferencesdialog.h
 #-------------------------------------------------------------------------------
-FORMS		+=		views/uis/mainwindow.ui \
-					views/uis/preferencesdialog.ui \
-    views/uis/aboutdialog.ui
+FORMS		+=		views/uis/aboutdialog.ui \
+					views/uis/mainwindow.ui \
+					views/uis/preferencesdialog.ui
 #-------------------------------------------------------------------------------

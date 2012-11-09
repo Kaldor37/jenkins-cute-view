@@ -1,23 +1,19 @@
 //------------------------------------------------------------------------------
-#ifndef JENKINSGRAPHICSVIEW_H
-#define JENKINSGRAPHICSVIEW_H
+#ifndef JOBGRAPHICSITEM_H
+#define JOBGRAPHICSITEM_H
 //------------------------------------------------------------------------------
-#include "jobdisplaydata.h"
-
-#include <QGraphicsView>
-#include <QVector>
+#include <QGraphicsObject>
 //------------------------------------------------------------------------------
-class JenkinsGraphicsScene;
-class JobGraphicsItem;
+class QSizeF;
 //------------------------------------------------------------------------------
-class JenkinsGraphicsView : public QGraphicsView {
+class JobGraphicsItem : public QGraphicsObject {
 	Q_OBJECT
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit JenkinsGraphicsView(QWidget *parent = 0);
-		~JenkinsGraphicsView();
+		explicit JobGraphicsItem(QGraphicsItem *parent = 0);
+		~JobGraphicsItem();
 
 //------------------------------------------------------------------------------
 // Signals
@@ -25,49 +21,40 @@ class JenkinsGraphicsView : public QGraphicsView {
 	signals:
 
 //------------------------------------------------------------------------------
+// Public functions
+//------------------------------------------------------------------------------
+	public:
+		QRectF boundingRect() const;
+		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+		const QString & getName() const;
+
+//------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
 	public slots:
-		void updateJobs(const QList<JobDisplayData> &);
+		void setPos(const QPointF & pos);
+		void setPos(qreal x, qreal y);
+		void setSize(qreal w, qreal h);
+		void setSize(const QSizeF & size);
+		void setRect(const QRectF &rect);
+
+		void setName(const QString &name);
 
 //------------------------------------------------------------------------------
-// Protected functions
+// Private
 //------------------------------------------------------------------------------
-	protected:
-		void resizeEvent(QResizeEvent *event);
-
-//------------------------------------------------------------------------------
-// Private functions
-//------------------------------------------------------------------------------
-	private:
-		void updateDisplay();
+		void rectChanged();
 
 //------------------------------------------------------------------------------
 // Members
 //------------------------------------------------------------------------------
 	private:
-		JenkinsGraphicsScene *m_scene;
-
-		typedef QVector<JobGraphicsItem*> JobsItems;
-		JobsItems m_jobItems;
-
-//------------------------------------------------------------------------------
-// Constants
-//------------------------------------------------------------------------------
-	private:
-		const static int jobsMargin = 2;
+		QSizeF m_size;
+		QString m_name;
 
 //------------------------------------------------------------------------------
 };
-
 //------------------------------------------------------------------------------
-class JenkinsGraphicsScene : public QGraphicsScene {
-	Q_OBJECT
-
-	public:
-		explicit JenkinsGraphicsScene(QWidget *parent = 0);
-		~JenkinsGraphicsScene();
-};
-//------------------------------------------------------------------------------
-#endif // JENKINSGRAPHICSVIEW_H
+#endif // JOBGRAPHICSITEM_H
 //------------------------------------------------------------------------------

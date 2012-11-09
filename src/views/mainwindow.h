@@ -7,6 +7,7 @@
 class PreferencesDialog;
 class AboutDialog;
 class QShortcut;
+class JenkinsGraphicsView;
 //------------------------------------------------------------------------------
 namespace Ui {
 	class MainWindow;
@@ -29,7 +30,13 @@ class MainWindow : public QMainWindow{
 		void showAboutDialog();
 
 //------------------------------------------------------------------------------
-// Protected functions
+// Public functions
+//------------------------------------------------------------------------------
+	public:
+		JenkinsGraphicsView * getGraphicsView();
+
+//------------------------------------------------------------------------------
+// Signals
 //------------------------------------------------------------------------------
 	signals:
 		void preferencesUpdated();
