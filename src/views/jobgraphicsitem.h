@@ -2,6 +2,7 @@
 #ifndef JOBGRAPHICSITEM_H
 #define JOBGRAPHICSITEM_H
 //------------------------------------------------------------------------------
+#include "jobdisplaydata.h"
 #include <QGraphicsObject>
 //------------------------------------------------------------------------------
 class QSizeF;
@@ -40,6 +41,7 @@ class JobGraphicsItem : public QGraphicsObject {
 		void setRect(const QRectF &rect);
 
 		void setName(const QString &name);
+		void update(const JobDisplayData& data);
 
 //------------------------------------------------------------------------------
 // Private
@@ -50,9 +52,9 @@ class JobGraphicsItem : public QGraphicsObject {
 // Members
 //------------------------------------------------------------------------------
 	private:
-		QSizeF m_size;
-		QString m_name;
-
+		QSizeF	m_size;
+		QString	m_name;
+		QColor	m_rectColor;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

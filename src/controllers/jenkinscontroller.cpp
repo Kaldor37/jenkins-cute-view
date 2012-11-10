@@ -1,12 +1,14 @@
 //------------------------------------------------------------------------------
 #include "jenkinscontroller.h"
 #include "models/jenkinsxmlapimodel.h"
+#include "models/buildmodel.h"
 #include "views/mainwindow.h"
 #include "preferences.h"
 #include "views/jenkinsgraphicsview.h"
 
 #include <QDebug>
 #include <QTimer>
+
 //------------------------------------------------------------------------------
 // Constructor/Destructor
 //------------------------------------------------------------------------------
@@ -60,8 +62,38 @@ void JenkinsController::selectedViewDataUpdated(){
 	qDebug()<<"JenkinsController::selectedViewDataUpdated - Jobs to display : "<<jobs.size();
 
 	foreach(const JobModel *job, jobs){
+		const BuildModel *jobLastBuild = job->getLastBuild();
+
 		JobDisplayData jobData;
 		jobData.setName(job->getName());
+		jobData.setStability(job->getHealthScore());
+
+		// Last build infos
+		if(jobLastBuild){
+			jobData.setLastBuildNum(jobLastBuild->getNumber());
+			jobData.setRunning(jobLastBuild->getBuilding());
+			if(jobLastBuild->getBuilding()){
+				jobData.setStartTime(jobLastBuild->getTimestamp());
+				jobData.setEstimatedDuration(jobLastBuild->getEstimatedDuration());
+			}
+
+			if(jobLastBuild->getResult() == "SUCCESS"){
+				jobData.setStatus(JobDisplayData::StatusLastBuildSuccessful);
+			}
+			else if(jobLastBuild->getResult() == "FAILURE"){
+				jobData.setStatus(JobDisplayData::StatusLastBuildFailed);
+			}
+			else{
+				jobData.setStatus(JobDisplayData::StatusLastBuildSuccessfulButUnstable);
+			}
+		}
+		else{
+			jobData.setStatus(JobDisplayData::StatusInactiveOrNeverBuilt);
+		}
+
+		if(!job->getBuildable())
+			jobData.setStatus(JobDisplayData::StatusInactiveOrNeverBuilt);
+
 		jobsList.push_back(jobData);
 	}
 

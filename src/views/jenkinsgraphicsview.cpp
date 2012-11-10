@@ -11,7 +11,6 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	m_jobItems()
 {
 	m_scene = new JenkinsGraphicsScene(this);
-	m_scene->setSceneRect(0,0,10,10);
 	setScene(m_scene);
 }
 //------------------------------------------------------------------------------
@@ -47,15 +46,17 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 		// Job found, update
 		if(foundJob){
 			foundJob->setName(name);
-			qDebug()<<"Updated job "<<name;
+			foundJob->update(job);
+			//qDebug()<<"Updated job "<<name;
 		}
 		// Job not found, add
 		else{
 			JobGraphicsItem *newJob = new JobGraphicsItem(); // Deleted with scene
 			newJob->setName(name);
+			newJob->update(job);
 			m_jobItems[name] = newJob;
 			m_scene->addItem(newJob);
-			qDebug()<<"Added job "<<name;
+			//qDebug()<<"Added job "<<name;
 		}
 	}
 
@@ -66,7 +67,7 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 		if(!jobsList.contains(name)){
 			m_scene->removeItem(jobItem);
 			jobItem->deleteLater();
-			qDebug()<<"Removed job "<<name;
+			//qDebug()<<"Removed job "<<name;
 
 			it = m_jobItems.erase(it);
 			if(it == m_jobItems.end())

@@ -36,8 +36,8 @@ void JobGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
 	// Background rectangle
 	painter->setPen(Qt::NoPen);
-	painter->setBrush(Qt::darkGreen);
-	painter->drawRoundedRect(rect, 10, 10);
+	painter->setBrush(m_rectColor);
+	painter->drawRoundedRect(rect, 20, 20);
 
 	// Job name
 	painter->setPen(Qt::white);
@@ -76,6 +76,27 @@ void JobGraphicsItem::setName(const QString &name){
 //------------------------------------------------------------------------------
 const QString & JobGraphicsItem::getName() const{
 	return m_name;
+}
+//------------------------------------------------------------------------------
+void JobGraphicsItem::update(const JobDisplayData& data){
+	switch(data.getStatus()){
+		case JobDisplayData::StatusInactiveOrNeverBuilt:
+			m_rectColor = Qt::gray;
+		break;
+
+		case JobDisplayData::StatusLastBuildSuccessful:
+			m_rectColor = Qt::darkGreen;
+		break;
+
+		case JobDisplayData::StatusLastBuildSuccessfulButUnstable:
+			m_rectColor = Qt::darkYellow;
+		break;
+
+		case JobDisplayData::StatusLastBuildFailed:
+			m_rectColor = Qt::darkRed;
+		break;
+	}
+
 }
 //------------------------------------------------------------------------------
 // Private functions
