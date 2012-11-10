@@ -30,7 +30,7 @@ void ViewModel::loadJobs(){
 		return;
 
 	m_jobsListLoaded = false;
-
+	//qDebug()<<"ViewModel["<<m_name<<"]::loadJobs()";
 	httpGetter.get(m_url + "/api/xml", this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
 }
 //------------------------------------------------------------------------------
@@ -72,6 +72,8 @@ void ViewModel::http_finished(const QString &content, QNetworkReply::NetworkErro
 //------------------------------------------------------------------------------
 void ViewModel::parseJobs(const QDomDocument &doc){
 	clearJobs();
+
+	//qDebug()<<"ViewModel["<<m_name<<"]::parseJobs()";
 
 	QDomNodeList nodesList = doc.elementsByTagName("job");
 	int numJobs = nodesList.size();

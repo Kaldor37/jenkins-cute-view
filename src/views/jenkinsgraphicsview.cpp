@@ -34,32 +34,29 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 	// Add new jobs - Update existing jobs
 	foreach(const JobDisplayData &job, jobs){
 		const QString &name = job.getName();
+		jobsList.push_back(name);
 
-		// Searching for the job
+		// Find job
 		JobGraphicsItem *foundJob = NULL;
-		foreach(JobGraphicsItem *jobItem, m_jobItems){
-			Q_ASSERT(jobItem);
-			if(jobItem && jobItem->getName() == name){
-				foundJob = jobItem;
-				break;
-			}
+		JobsItems::Iterator found = m_jobItems.find(name);
+		if(found != m_jobItems.end()){
+			foundJob = found.value();
+			Q_ASSERT(foundJob);
 		}
 
-		// Update Job
+		// Job found, update
 		if(foundJob){
 			foundJob->setName(name);
 			qDebug()<<"Updated job "<<name;
 		}
-		// Add job
+		// Job not found, add
 		else{
 			JobGraphicsItem *newJob = new JobGraphicsItem(); // Deleted with scene
-			newJob->setName(job.getName());
-			m_jobItems.push_back(newJob);
+			newJob->setName(name);
+			m_jobItems[name] = newJob;
 			m_scene->addItem(newJob);
 			qDebug()<<"Added job "<<name;
 		}
-
-		jobsList.push_back(name);
 	}
 
 	// Delete jobs
@@ -85,16 +82,20 @@ void JenkinsGraphicsView::updateDisplay(){
 	QSizeF size = m_scene->sceneRect().size();
 	qreal width = size.width();
 	qreal height = size.height();
+	qreal margin = jobsMargin;
 
 	// Resize jobs
 	qreal numJobs = m_jobItems.size();
-	qreal jobWidth = width;
-	qreal jobHeight = height/numJobs;
+	qreal jobWidth = width-(2*margin);
+	qreal jobHeight = (height-((numJobs+1)*margin))/numJobs;
 
-	for(int i=0 ; i < numJobs ; ++i){
-		JobGraphicsItem *job = m_jobItems.at(i);
+	int i=0;
+	const JobsItems::Iterator end = m_jobItems.end();
+	for(JobsItems::Iterator it=m_jobItems.begin() ; it != end ; ++it){
+		JobGraphicsItem *job = it.value();
 		Q_ASSERT(job);
-		job->setRect(QRectF(jobsMargin, (jobHeight*i)+jobsMargin, jobWidth-(2*jobsMargin), jobHeight-(2*jobsMargin)));
+		job->setRect(QRectF(margin, margin + ((jobHeight+margin)*i), jobWidth, jobHeight));
+		++i;
 	}
 }
 //------------------------------------------------------------------------------

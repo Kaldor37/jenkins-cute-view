@@ -19,7 +19,6 @@ class JenkinsController : public QObject {
 		~JenkinsController();
 //------------------------------------------------------------------------------
 	signals:
-		void status_changed(QString status, int timeout=0);
 		void jobs_updated(QList<JobDisplayData> jobs);
 //------------------------------------------------------------------------------
 	public slots:

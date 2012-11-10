@@ -70,6 +70,7 @@ void JobModel::load(){
 
 	m_loaded = false;
 
+	//qDebug()<<"ViewModel["<<m_Name<<"]::load()";
 	httpGetter.get(m_Url + "api/xml", this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
 }
 //------------------------------------------------------------------------------
@@ -92,6 +93,8 @@ void JobModel::http_finished(const QString &content, QNetworkReply::NetworkError
 void JobModel::parseJob(const QDomDocument &doc){
 	QDomNodeList ndList;
 	QDomElement elm;
+
+	//qDebug()<<"ViewModel["<<m_Name<<"]::parseJob()";
 
 	if((ndList = doc.elementsByTagName("description")).count() > 0)
 		if(!((elm = ndList.at(0).toElement()).isNull()))
@@ -148,6 +151,10 @@ void JobModel::parseJob(const QDomDocument &doc){
 		m_lastBuild = new BuildModel(lastBuildNumber, lastBuildUrl, this);
 		connect(m_lastBuild, SIGNAL(loaded()), SLOT(lastBuild_loaded()));
 		m_lastBuild->load();
+	}
+	// No last build, consider job loaded
+	else{
+		lastBuild_loaded();
 	}
 }
 //------------------------------------------------------------------------------

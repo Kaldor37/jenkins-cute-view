@@ -72,6 +72,5 @@ void JenkinsController::selectedViewDataUpdated(){
 //------------------------------------------------------------------------------
 void JenkinsController::timerTimeout(){
 	m_XMLAPIModel->loadViews();
-	emit status_changed("Updated !", 2000);
 }
 //------------------------------------------------------------------------------

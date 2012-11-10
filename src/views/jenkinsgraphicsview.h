@@ -5,13 +5,15 @@
 #include "jobdisplaydata.h"
 
 #include <QGraphicsView>
-#include <QVector>
+#include <QMap>
 //------------------------------------------------------------------------------
 class JenkinsGraphicsScene;
 class JobGraphicsItem;
 //------------------------------------------------------------------------------
+// Graphics View
+//------------------------------------------------------------------------------
 class JenkinsGraphicsView : public QGraphicsView {
-	Q_OBJECT
+		Q_OBJECT
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
@@ -48,21 +50,22 @@ class JenkinsGraphicsView : public QGraphicsView {
 	private:
 		JenkinsGraphicsScene *m_scene;
 
-		typedef QVector<JobGraphicsItem*> JobsItems;
+		typedef QMap<QString,JobGraphicsItem*> JobsItems;
 		JobsItems m_jobItems;
 
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
 	private:
-		const static int jobsMargin = 2;
+		const static int jobsMargin = 5;
 
 //------------------------------------------------------------------------------
 };
-
+//------------------------------------------------------------------------------
+// Graphics Scene
 //------------------------------------------------------------------------------
 class JenkinsGraphicsScene : public QGraphicsScene {
-	Q_OBJECT
+		Q_OBJECT
 
 	public:
 		explicit JenkinsGraphicsScene(QWidget *parent = 0);
