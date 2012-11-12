@@ -8,12 +8,17 @@
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
-JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent){
-
+JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
+	m_nameItem(0)
+{
+	m_nameItem = new AutoResizingTextItem(this);
+	m_nameItem->setFont(QFont("Arial")); // TODO - Manage in prefs
+	m_nameItem->setPen(QPen(Qt::white));
 }
 //------------------------------------------------------------------------------
 JobGraphicsItem::~JobGraphicsItem(){
-
+	if(m_nameItem)
+		m_nameItem->deleteLater();
 }
 //------------------------------------------------------------------------------
 // Signals
@@ -39,43 +44,35 @@ void JobGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 	painter->setBrush(m_rectColor);
 	painter->drawRoundedRect(rect, 20, 20);
 
-	// Job name
-	painter->setPen(Qt::white);
-	painter->setFont(QFont("Arial", 14));
-	painter->drawText(rect,Qt::AlignCenter,m_name);
-
 	painter->restore();
 }
 //------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
-void JobGraphicsItem::setPos(const QPointF & pos){
-	QGraphicsItem::setPos(pos);
-}
-//------------------------------------------------------------------------------
-void JobGraphicsItem::setPos(qreal x, qreal y){
-	QGraphicsItem::setPos(x, y);
-}
-//------------------------------------------------------------------------------
 void JobGraphicsItem::setSize(qreal width, qreal height){
 	m_size = QSizeF(width, height);
+	rectChanged();
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::setSize(const QSizeF & size){
 	m_size = size;
+	rectChanged();
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::setRect(const QRectF &rect){
 	setPos(rect.x(), rect.y());
 	setSize(rect.width(), rect.height());
+	rectChanged();
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::setName(const QString &name){
-	m_name = name;
+	Q_ASSERT(m_nameItem);
+	m_nameItem->setText(name);
 }
 //------------------------------------------------------------------------------
 const QString & JobGraphicsItem::getName() const{
-	return m_name;
+	Q_ASSERT(m_nameItem);
+	return m_nameItem->text();
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::update(const JobDisplayData& data){
@@ -102,6 +99,6 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 // Private functions
 //------------------------------------------------------------------------------
 void JobGraphicsItem::rectChanged(){
-
+	m_nameItem->setRect(boundingRect());
 }
 //------------------------------------------------------------------------------

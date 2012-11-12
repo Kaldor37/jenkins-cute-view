@@ -20,7 +20,8 @@ SOURCES	+=		main.cpp \
 					views/jobdisplaydata.cpp \
 					views/jobgraphicsitem.cpp \
 					views/mainwindow.cpp \
-					views/preferencesdialog.cpp
+					views/preferencesdialog.cpp \
+    views/autoresizingtextitem.cpp
 #-------------------------------------------------------------------------------
 HEADERS	+=		application.h \
 					preferences.h \
@@ -35,7 +36,8 @@ HEADERS	+=		application.h \
 					views/jobdisplaydata.h \
 					views/jobgraphicsitem.h \
 					views/mainwindow.h \
-					views/preferencesdialog.h
+					views/preferencesdialog.h \
+    views/autoresizingtextitem.h
 #-------------------------------------------------------------------------------
 FORMS		+=		views/uis/aboutdialog.ui \
 					views/uis/mainwindow.ui \

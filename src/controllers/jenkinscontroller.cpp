@@ -63,6 +63,7 @@ void JenkinsController::selectedViewDataUpdated(){
 
 	foreach(const JobModel *job, jobs){
 		const BuildModel *jobLastBuild = job->getLastBuild();
+		const BuildModel *jobLastCompBuild = job->getLastCompletedBuild();
 
 		JobDisplayData jobData;
 		jobData.setName(job->getName());
@@ -76,20 +77,23 @@ void JenkinsController::selectedViewDataUpdated(){
 				jobData.setStartTime(jobLastBuild->getTimestamp());
 				jobData.setEstimatedDuration(jobLastBuild->getEstimatedDuration());
 			}
+		}
 
-			if(jobLastBuild->getResult() == "SUCCESS"){
+		// Last completed build infos
+		if(jobLastCompBuild){
+			// Success
+			if(jobLastCompBuild->getResult() == "SUCCESS")
 				jobData.setStatus(JobDisplayData::StatusLastBuildSuccessful);
-			}
-			else if(jobLastBuild->getResult() == "FAILURE"){
+			// Failure
+			else if(jobLastCompBuild->getResult() == "FAILURE")
 				jobData.setStatus(JobDisplayData::StatusLastBuildFailed);
-			}
-			else{
+			// Success but unstable
+			else
 				jobData.setStatus(JobDisplayData::StatusLastBuildSuccessfulButUnstable);
-			}
 		}
-		else{
+		// Job never built yet
+		else
 			jobData.setStatus(JobDisplayData::StatusInactiveOrNeverBuilt);
-		}
 
 		if(!job->getBuildable())
 			jobData.setStatus(JobDisplayData::StatusInactiveOrNeverBuilt);

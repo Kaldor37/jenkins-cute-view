@@ -1,27 +1,20 @@
 //------------------------------------------------------------------------------
-#ifndef JOBGRAPHICSITEM_H
-#define JOBGRAPHICSITEM_H
+#ifndef AUTORESIZINGTEXTITEM_H
+#define AUTORESIZINGTEXTITEM_H
 //------------------------------------------------------------------------------
-#include "jobdisplaydata.h"
-#include "autoresizingtextitem.h"
-
 #include <QGraphicsObject>
+#include <QFont>
+#include <QString>
+#include <QPen>
 //------------------------------------------------------------------------------
-class QSizeF;
-//------------------------------------------------------------------------------
-class JobGraphicsItem : public QGraphicsObject {
+class AutoResizingTextItem : public QGraphicsObject {
 	Q_OBJECT
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit JobGraphicsItem(QGraphicsItem *parent = 0);
-		~JobGraphicsItem();
-
-//------------------------------------------------------------------------------
-// Signals
-//------------------------------------------------------------------------------
-	signals:
+		explicit AutoResizingTextItem(QGraphicsItem *parent = 0);
+		~AutoResizingTextItem();
 
 //------------------------------------------------------------------------------
 // Public functions
@@ -30,7 +23,9 @@ class JobGraphicsItem : public QGraphicsObject {
 		QRectF boundingRect() const;
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-		const QString & getName() const;
+		const QString & text() const;
+		const QFont & font() const;
+		const QPen & pen() const;
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -40,24 +35,26 @@ class JobGraphicsItem : public QGraphicsObject {
 		void setSize(const QSizeF & size);
 		void setRect(const QRectF &rect);
 
-		void setName(const QString &name);
-		void update(const JobDisplayData& data);
+		void setText(const QString &text);
+		void setFont(const QFont &font);
+		void setPen(const QPen &pen);
 
 //------------------------------------------------------------------------------
-// Private
+// Private functions
 //------------------------------------------------------------------------------
-		void rectChanged();
+	private:
+		void adjustText();
 
 //------------------------------------------------------------------------------
 // Members
 //------------------------------------------------------------------------------
 	private:
 		QSizeF	m_size;
-		QColor	m_rectColor;
-
-		AutoResizingTextItem	*m_nameItem;
+		QString	m_text;
+		QFont		m_font;
+		QPen		m_pen;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------
-#endif // JOBGRAPHICSITEM_H
+#endif // AUTORESIZINGTEXTITEM_H
 //------------------------------------------------------------------------------

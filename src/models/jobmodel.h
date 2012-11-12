@@ -29,6 +29,7 @@ class JobModel : public QObject {
 	public:
 		bool isLoaded() const;
 		const BuildModel * getLastBuild() const;
+		const BuildModel * getLastCompletedBuild() const;
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -48,6 +49,7 @@ class JobModel : public QObject {
 	private slots:
 		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 		void lastBuild_loaded();
+		void lastCompletedBuild_loaded();
 
 //------------------------------------------------------------------------------
 // Private functions
@@ -59,8 +61,10 @@ class JobModel : public QObject {
 // Members
 //------------------------------------------------------------------------------
 	private:
-		bool m_loaded;
+		bool m_lastBuildLoaded;
+		bool m_lastCompletedBuildLoaded;
 		BuildModel * m_lastBuild;
+		BuildModel * m_lastCompletedBuild;
 
 //------------------------------------------------------------------------------
 // Members declaration

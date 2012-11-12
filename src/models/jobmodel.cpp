@@ -18,8 +18,10 @@
 	}
 //------------------------------------------------------------------------------
 JobModel::JobModel(const QString &name, const QString &url, QObject *parent/*=0*/):QObject(parent),
-	m_loaded(false),
+	m_lastBuildLoaded(false),
+	m_lastCompletedBuildLoaded(false),
 	m_lastBuild(0),
+	m_lastCompletedBuild(0),
 	m_Name(name),
 	m_Url(url),
 	JOB_INIT_STR_MEMBER(Description),
@@ -37,6 +39,9 @@ JobModel::JobModel(const QString &name, const QString &url, QObject *parent/*=0*
 JobModel::~JobModel(){
 	if(m_lastBuild)
 		m_lastBuild->deleteLater();
+
+	if(m_lastCompletedBuild)
+		m_lastCompletedBuild->deleteLater();
 }
 //------------------------------------------------------------------------------
 JOB_IMPL_MEMBER(QString,	Name)
@@ -57,20 +62,23 @@ JOB_IMPL_MEMBER(bool,		ConcurrentBuild)
 #undef JOB_IMPL_MEMBER
 //------------------------------------------------------------------------------
 bool JobModel::isLoaded() const{
-	return m_loaded;
+	return (m_lastBuildLoaded && m_lastCompletedBuildLoaded);
 }
 //------------------------------------------------------------------------------
 const BuildModel * JobModel::getLastBuild() const {
 	return m_lastBuild;
 }
 //------------------------------------------------------------------------------
+const BuildModel * JobModel::getLastCompletedBuild() const {
+	return m_lastCompletedBuild;
+}
+//------------------------------------------------------------------------------
 void JobModel::load(){
 	if(m_Url.isEmpty())
 		return;
 
-	m_loaded = false;
+	m_lastBuildLoaded = m_lastCompletedBuildLoaded = false;
 
-	//qDebug()<<"ViewModel["<<m_Name<<"]::load()";
 	httpGetter.get(m_Url + "api/xml", this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
 }
 //------------------------------------------------------------------------------
@@ -93,8 +101,6 @@ void JobModel::http_finished(const QString &content, QNetworkReply::NetworkError
 void JobModel::parseJob(const QDomDocument &doc){
 	QDomNodeList ndList;
 	QDomElement elm;
-
-	//qDebug()<<"ViewModel["<<m_Name<<"]::parseJob()";
 
 	if((ndList = doc.elementsByTagName("description")).count() > 0)
 		if(!((elm = ndList.at(0).toElement()).isNull()))
@@ -135,8 +141,15 @@ void JobModel::parseJob(const QDomDocument &doc){
 		if(!((elm = ndList.at(0).toElement()).isNull()))
 			setConcurrentBuild(elm.text() == "true");
 
-	if(m_lastBuild)
+	if(m_lastBuild){
 		m_lastBuild->deleteLater();
+		m_lastBuild = 0;
+	}
+
+	if(m_lastCompletedBuild){
+		m_lastCompletedBuild->deleteLater();
+		m_lastCompletedBuild = 0;
+	}
 
 	// Load last build
 	if((ndList = doc.elementsByTagName("lastBuild")).count() > 0){
@@ -152,14 +165,40 @@ void JobModel::parseJob(const QDomDocument &doc){
 		connect(m_lastBuild, SIGNAL(loaded()), SLOT(lastBuild_loaded()));
 		m_lastBuild->load();
 	}
-	// No last build, consider job loaded
-	else{
-		lastBuild_loaded();
+	// No last build, consider it loaded
+	else
+		emit lastBuild_loaded();
+
+	// Load last completed build
+	if((ndList = doc.elementsByTagName("lastCompletedBuild")).count() > 0){
+		uint lastBuildNumber = 0;
+		QString lastBuildUrl;
+
+		if(!((elm = ndList.at(0).firstChildElement("number")).isNull()))
+			lastBuildNumber = elm.text().toUInt();
+		if(!((elm = ndList.at(0).firstChildElement("url")).isNull()))
+			lastBuildUrl = elm.text();
+
+		m_lastCompletedBuild = new BuildModel(lastBuildNumber, lastBuildUrl, this);
+		connect(m_lastCompletedBuild, SIGNAL(loaded()), SLOT(lastCompletedBuild_loaded()));
+		m_lastCompletedBuild->load();
 	}
+	// No last completed build, consider it loaded
+	else
+		emit lastCompletedBuild_loaded();
 }
 //------------------------------------------------------------------------------
 void JobModel::lastBuild_loaded(){
-	m_loaded = true;
-	emit loaded();
+	m_lastBuildLoaded = true;
+
+	if(m_lastCompletedBuildLoaded)
+		emit loaded();
+}
+//------------------------------------------------------------------------------
+void JobModel::lastCompletedBuild_loaded(){
+	m_lastCompletedBuildLoaded = true;
+
+	if(m_lastBuildLoaded)
+		emit loaded();
 }
 //------------------------------------------------------------------------------
