@@ -87,6 +87,9 @@ void JenkinsController::selectedViewDataUpdated(){
 			// Failure
 			else if(jobLastCompBuild->getResult() == "FAILURE")
 				jobData.setStatus(JobDisplayData::StatusLastBuildFailed);
+			// Aborted
+			else if(jobLastCompBuild->getResult() == "ABORTED")
+				jobData.setStatus(JobDisplayData::StatusInactiveOrNeverBuilt);
 			// Success but unstable
 			else
 				jobData.setStatus(JobDisplayData::StatusLastBuildSuccessfulButUnstable);
