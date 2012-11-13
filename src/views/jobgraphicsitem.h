@@ -64,8 +64,8 @@ class JobGraphicsItem : public QGraphicsObject {
 
 		bool			m_running;
 		qreal			m_progressFactor;
-		time_t		m_buildStartTime;
-		time_t		m_buildEstEndTime;
+		qint64		m_buildStartTime;
+		qint64		m_buildEstEndTime;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

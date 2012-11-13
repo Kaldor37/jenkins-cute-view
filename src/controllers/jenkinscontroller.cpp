@@ -74,8 +74,8 @@ void JenkinsController::selectedViewDataUpdated(){
 			jobData.setLastBuildNum(jobLastBuild->getNumber());
 			jobData.setRunning(jobLastBuild->getBuilding());
 			if(jobLastBuild->getBuilding()){
-				jobData.setStartTime(jobLastBuild->getTimestamp()/1000); // TODO - Convert to secs before or it will not work on 32bits machines
-				jobData.setEstimatedDuration(jobLastBuild->getEstimatedDuration()/1000); // TODO - Convert to secs before or it will not work on 32bits machines
+				jobData.setStartTime(jobLastBuild->getTimestamp());
+				jobData.setEstimatedDuration(jobLastBuild->getEstimatedDuration());
 			}
 		}
 

@@ -35,13 +35,13 @@ BuildModel::~BuildModel(){}
 //------------------------------------------------------------------------------
 BUILD_IMPL_MEMBER(bool,			Building)
 BUILD_IMPL_MEMBER(QString,		Description)
-BUILD_IMPL_MEMBER(ulong,		Duration)
-BUILD_IMPL_MEMBER(ulong,		EstimatedDuration)
+BUILD_IMPL_MEMBER(qint64,		Duration)
+BUILD_IMPL_MEMBER(qint64,		EstimatedDuration)
 BUILD_IMPL_MEMBER(QString,		FullDisplayName)
 BUILD_IMPL_MEMBER(QString,		Id)
 BUILD_IMPL_MEMBER(uint,			Number)
 BUILD_IMPL_MEMBER(QString,		Result)
-BUILD_IMPL_MEMBER(ulong,		Timestamp)
+BUILD_IMPL_MEMBER(qint64,		Timestamp)
 BUILD_IMPL_MEMBER(QString,		Url)
 BUILD_IMPL_MEMBER(QString,		BuiltOn)
 //------------------------------------------------------------------------------
@@ -92,11 +92,11 @@ void BuildModel::parseBuild(const QDomDocument &doc){
 
 	if((ndList = doc.elementsByTagName("duration")).count() > 0)
 		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setDuration(elm.text().toULong());
+			setDuration(elm.text().toLongLong());
 
 	if((ndList = doc.elementsByTagName("estimatedDuration")).count() > 0)
 		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setEstimatedDuration(elm.text().toULong());
+			setEstimatedDuration(elm.text().toLongLong());
 
 	if((ndList = doc.elementsByTagName("fullDisplayName")).count() > 0)
 		if(!((elm = ndList.at(0).toElement()).isNull()))
@@ -116,7 +116,7 @@ void BuildModel::parseBuild(const QDomDocument &doc){
 
 	if((ndList = doc.elementsByTagName("timestamp")).count() > 0)
 		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setTimestamp(elm.text().toULong());
+			setTimestamp(elm.text().toLongLong());
 
 	if((ndList = doc.elementsByTagName("url")).count() > 0)
 		if(!((elm = ndList.at(0).toElement()).isNull()))

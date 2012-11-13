@@ -67,11 +67,11 @@ bool JobDisplayData::isRunning() const {
 	return m_running;
 }
 //------------------------------------------------------------------------------
-time_t JobDisplayData::getStartTime() const {
+qint64 JobDisplayData::getStartTime() const {
 	return m_startTime;
 }
 //------------------------------------------------------------------------------
-ulong JobDisplayData::getEstimatedDuration() const {
+qint64 JobDisplayData::getEstimatedDuration() const {
 	return m_estimatedDuration;
 }
 //------------------------------------------------------------------------------
@@ -101,11 +101,11 @@ void JobDisplayData::setRunning(bool value){
 	m_running = value;
 }
 //------------------------------------------------------------------------------
-void JobDisplayData::setStartTime(time_t value){
+void JobDisplayData::setStartTime(qint64 value){
 	m_startTime = value;
 }
 //------------------------------------------------------------------------------
-void JobDisplayData::setEstimatedDuration(ulong value){
+void JobDisplayData::setEstimatedDuration(qint64 value){
 	m_estimatedDuration = value;
 }
 //------------------------------------------------------------------------------

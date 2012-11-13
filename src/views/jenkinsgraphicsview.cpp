@@ -16,7 +16,7 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 
 	m_progressUpdateTimer = new QTimer(this);
 	connect(m_progressUpdateTimer, SIGNAL(timeout()), SLOT(progressTimer_timeout()));
-	m_progressUpdateTimer->start(jobsProgressUpdateTimer);
+	m_progressUpdateTimer->start(100);
 }
 //------------------------------------------------------------------------------
 JenkinsGraphicsView::~JenkinsGraphicsView(){

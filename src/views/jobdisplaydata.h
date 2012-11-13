@@ -3,7 +3,6 @@
 #define JOBDISPLAYDATA_H
 //------------------------------------------------------------------------------
 #include <QString>
-#include <time.h>
 //------------------------------------------------------------------------------
 class JobDisplayData{
 	public:
@@ -33,8 +32,8 @@ class JobDisplayData{
 		uint					getLastBuildNum() const;
 		const QString &	getLastBuildDesc() const;
 		bool					isRunning() const;
-		time_t				getStartTime() const;
-		ulong					getEstimatedDuration() const;
+		qint64				getStartTime() const;
+		qint64				getEstimatedDuration() const;
 
 //------------------------------------------------------------------------------
 // Setters
@@ -46,8 +45,8 @@ class JobDisplayData{
 		void setLastBuildNum(uint value);
 		void setLastBuildDesc(const QString &value);
 		void setRunning(bool value);
-		void setStartTime(time_t value);
-		void setEstimatedDuration(ulong value);
+		void setStartTime(qint64 value);
+		void setEstimatedDuration(qint64 value);
 //------------------------------------------------------------------------------
 // Members
 //------------------------------------------------------------------------------
@@ -58,8 +57,8 @@ class JobDisplayData{
 		uint			m_lastBuildNum;
 		QString		m_lastBuildDesc;
 		bool			m_running;
-		time_t		m_startTime;
-		ulong			m_estimatedDuration;
+		qint64		m_startTime;
+		qint64		m_estimatedDuration;
 
 //------------------------------------------------------------------------------
 };
