@@ -4,6 +4,7 @@
 
 #include <QDebug>
 #include <QResizeEvent>
+#include <QTimer>
 //------------------------------------------------------------------------------
 // JenkinsGraphicsScene
 //------------------------------------------------------------------------------
@@ -12,6 +13,10 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 {
 	m_scene = new JenkinsGraphicsScene(this);
 	setScene(m_scene);
+
+	m_progressUpdateTimer = new QTimer(this);
+	connect(m_progressUpdateTimer, SIGNAL(timeout()), SLOT(progressTimer_timeout()));
+	m_progressUpdateTimer->start(jobsProgressUpdateTimer);
 }
 //------------------------------------------------------------------------------
 JenkinsGraphicsView::~JenkinsGraphicsView(){
@@ -67,7 +72,6 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 		if(!jobsList.contains(name)){
 			m_scene->removeItem(jobItem);
 			jobItem->deleteLater();
-			//qDebug()<<"Removed job "<<name;
 
 			it = m_jobItems.erase(it);
 			if(it == m_jobItems.end())
@@ -98,6 +102,23 @@ void JenkinsGraphicsView::updateDisplay(){
 		job->setRect(QRectF(margin, margin + ((jobHeight+margin)*i), jobWidth, jobHeight));
 		++i;
 	}
+}
+//------------------------------------------------------------------------------
+void JenkinsGraphicsView::progressTimer_timeout(){
+	bool repaint = false;
+
+	// Update running jobs
+	const JobsItems::Iterator end = m_jobItems.end();
+	for(JobsItems::Iterator it=m_jobItems.begin() ; it != end ; ++it){
+		JobGraphicsItem *job = it.value();
+		if(job->isRunning()){
+			job->updateProgress();
+			repaint = true;
+		}
+	}
+
+	if(repaint)
+		this->repaint();
 }
 //------------------------------------------------------------------------------
 // JenkinsGraphicsScene

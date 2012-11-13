@@ -6,6 +6,7 @@
 #include "autoresizingtextitem.h"
 
 #include <QGraphicsObject>
+#include <QDateTime>
 //------------------------------------------------------------------------------
 class QSizeF;
 //------------------------------------------------------------------------------
@@ -31,6 +32,7 @@ class JobGraphicsItem : public QGraphicsObject {
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 		const QString & getName() const;
+		bool isRunning() const;
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -42,10 +44,12 @@ class JobGraphicsItem : public QGraphicsObject {
 
 		void setName(const QString &name);
 		void update(const JobDisplayData& data);
+		void updateProgress();
 
 //------------------------------------------------------------------------------
 // Private
 //------------------------------------------------------------------------------
+	private:
 		void rectChanged();
 
 //------------------------------------------------------------------------------
@@ -56,6 +60,12 @@ class JobGraphicsItem : public QGraphicsObject {
 		QColor	m_rectColor;
 
 		AutoResizingTextItem	*m_nameItem;
+		AutoResizingTextItem	*m_estEndTimeItem;
+
+		bool			m_running;
+		qreal			m_progressFactor;
+		time_t		m_buildStartTime;
+		time_t		m_buildEstEndTime;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

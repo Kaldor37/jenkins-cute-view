@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------
 class JenkinsGraphicsScene;
 class JobGraphicsItem;
+class QTimer;
 //------------------------------------------------------------------------------
 // Graphics View
 //------------------------------------------------------------------------------
@@ -45,6 +46,12 @@ class JenkinsGraphicsView : public QGraphicsView {
 		void updateDisplay();
 
 //------------------------------------------------------------------------------
+// Private slots
+//------------------------------------------------------------------------------
+	private slots:
+		void progressTimer_timeout();
+
+//------------------------------------------------------------------------------
 // Members
 //------------------------------------------------------------------------------
 	private:
@@ -52,12 +59,14 @@ class JenkinsGraphicsView : public QGraphicsView {
 
 		typedef QMap<QString,JobGraphicsItem*> JobsItems;
 		JobsItems m_jobItems;
+		QTimer *m_progressUpdateTimer;
 
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
 	private:
 		const static int jobsMargin = 5;
+		const static int jobsProgressUpdateTimer = 100;
 
 //------------------------------------------------------------------------------
 };

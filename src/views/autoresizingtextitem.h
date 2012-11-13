@@ -26,6 +26,7 @@ class AutoResizingTextItem : public QGraphicsObject {
 		const QString & text() const;
 		const QFont & font() const;
 		const QPen & pen() const;
+		bool isVisible() const;
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -34,7 +35,7 @@ class AutoResizingTextItem : public QGraphicsObject {
 		void setSize(qreal w, qreal h);
 		void setSize(const QSizeF & size);
 		void setRect(const QRectF &rect);
-
+		void setVisible(bool visible);
 		void setText(const QString &text);
 		void setFont(const QFont &font);
 		void setPen(const QPen &pen);
@@ -50,6 +51,7 @@ class AutoResizingTextItem : public QGraphicsObject {
 //------------------------------------------------------------------------------
 	private:
 		QSizeF	m_size;
+		bool		m_visible;
 		QString	m_text;
 		QFont		m_font;
 		QPen		m_pen;

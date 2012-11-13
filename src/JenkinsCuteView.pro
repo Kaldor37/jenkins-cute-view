@@ -16,12 +16,12 @@ SOURCES	+=		main.cpp \
 					models/viewmodel.cpp \
 					utils/httpgetter.cpp \
 					views/aboutdialog.cpp \
+					views/autoresizingtextitem.cpp \
 					views/jenkinsgraphicsview.cpp \
 					views/jobdisplaydata.cpp \
 					views/jobgraphicsitem.cpp \
 					views/mainwindow.cpp \
-					views/preferencesdialog.cpp \
-    views/autoresizingtextitem.cpp
+					views/preferencesdialog.cpp
 #-------------------------------------------------------------------------------
 HEADERS	+=		application.h \
 					preferences.h \
@@ -32,12 +32,12 @@ HEADERS	+=		application.h \
 					models/viewmodel.h \
 					utils/httpgetter.h \
 					views/aboutdialog.h \
+					views/autoresizingtextitem.h \
 					views/jenkinsgraphicsview.h \
 					views/jobdisplaydata.h \
 					views/jobgraphicsitem.h \
 					views/mainwindow.h \
-					views/preferencesdialog.h \
-    views/autoresizingtextitem.h
+					views/preferencesdialog.h
 #-------------------------------------------------------------------------------
 FORMS		+=		views/uis/aboutdialog.ui \
 					views/uis/mainwindow.ui \

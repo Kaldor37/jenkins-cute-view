@@ -8,7 +8,9 @@
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
-AutoResizingTextItem::AutoResizingTextItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent){
+AutoResizingTextItem::AutoResizingTextItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
+	m_visible(true)
+{
 }
 //------------------------------------------------------------------------------
 AutoResizingTextItem::~AutoResizingTextItem(){
@@ -17,13 +19,15 @@ AutoResizingTextItem::~AutoResizingTextItem(){
 // Public functions
 //------------------------------------------------------------------------------
 QRectF AutoResizingTextItem::boundingRect() const{
-	return QRectF(0,0,m_size.width(), m_size.height());
+	return (m_visible)?QRectF(0,0,m_size.width(), m_size.height()):QRectF();
 }
 //------------------------------------------------------------------------------
 void AutoResizingTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
+	if(!m_visible)
+		return;
 	if(m_text.isEmpty())
 		return;
 	if(m_size.isEmpty() || m_size.isNull())
@@ -57,6 +61,10 @@ const QPen & AutoResizingTextItem::pen() const{
 	return m_pen;
 }
 //------------------------------------------------------------------------------
+bool AutoResizingTextItem::isVisible() const{
+	return m_visible;
+}
+//------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
 void AutoResizingTextItem::setSize(qreal w, qreal h){
@@ -73,6 +81,10 @@ void AutoResizingTextItem::setRect(const QRectF &rect){
 	setPos(rect.x(), rect.y());
 	m_size = rect.size();
 	adjustText();
+}
+//------------------------------------------------------------------------------
+void AutoResizingTextItem::setVisible(bool visible){
+	m_visible = visible;
 }
 //------------------------------------------------------------------------------
 void AutoResizingTextItem::setText(const QString &text){
