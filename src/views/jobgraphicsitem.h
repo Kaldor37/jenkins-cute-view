@@ -50,7 +50,7 @@ class JobGraphicsItem : public QGraphicsObject {
 // Private
 //------------------------------------------------------------------------------
 	private:
-		void rectChanged();
+		void updateLayout();
 
 //------------------------------------------------------------------------------
 // Members
@@ -61,6 +61,7 @@ class JobGraphicsItem : public QGraphicsObject {
 
 		AutoResizingTextItem	*m_nameItem;
 		AutoResizingTextItem	*m_estEndTimeItem;
+		AutoResizingTextItem	*m_descriptionItem;
 
 		bool			m_running;
 		qreal			m_progressFactor;

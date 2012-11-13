@@ -77,6 +77,7 @@ void JenkinsController::selectedViewDataUpdated(){
 				jobData.setStartTime(jobLastBuild->getTimestamp());
 				jobData.setEstimatedDuration(jobLastBuild->getEstimatedDuration());
 			}
+			jobData.setLastBuildDesc(jobLastBuild->getDescription());
 		}
 
 		// Last completed build infos

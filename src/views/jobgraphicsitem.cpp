@@ -11,6 +11,7 @@
 JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
 	m_nameItem(0),
 	m_estEndTimeItem(0),
+	m_descriptionItem(0),
 	m_running(false),
 	m_progressFactor(0),
 	m_buildStartTime(0),
@@ -23,6 +24,11 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	m_estEndTimeItem = new AutoResizingTextItem(this);
 	m_estEndTimeItem->setFont(QFont("Arial")); // TODO - Manage in prefs
 	m_estEndTimeItem->setPen(QPen(Qt::white));
+
+	m_descriptionItem = new AutoResizingTextItem(this);
+	m_descriptionItem->setFont(QFont("Arial")); // TODO - Manage in prefs
+	m_descriptionItem->setPen(QPen(Qt::white));
+	m_descriptionItem->setVisible(false);
 }
 //------------------------------------------------------------------------------
 JobGraphicsItem::~JobGraphicsItem(){
@@ -31,6 +37,9 @@ JobGraphicsItem::~JobGraphicsItem(){
 
 	if(m_estEndTimeItem)
 		m_estEndTimeItem->deleteLater();
+
+	if(m_descriptionItem)
+		m_descriptionItem->deleteLater();
 }
 //------------------------------------------------------------------------------
 // Signals
@@ -70,18 +79,18 @@ void JobGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 //------------------------------------------------------------------------------
 void JobGraphicsItem::setSize(qreal width, qreal height){
 	m_size = QSizeF(width, height);
-	rectChanged();
+	updateLayout();
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::setSize(const QSizeF & size){
 	m_size = size;
-	rectChanged();
+	updateLayout();
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::setRect(const QRectF &rect){
 	setPos(rect.x(), rect.y());
 	setSize(rect.width(), rect.height());
-	rectChanged();
+	updateLayout();
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::setName(const QString &name){
@@ -128,7 +137,13 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 	else
 		m_progressFactor = 0;
 
+	// TODO - If activated in prefs
+	//qDebug()<<"JobGraphicsItem::update("<<data.getName()<<") - Desc : "<<data.getLastBuildDesc();
+	m_descriptionItem->setText(data.getLastBuildDesc());
+	m_descriptionItem->setVisible(!m_descriptionItem->text().isEmpty());
+
 	updateProgress();
+	updateLayout();
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::updateProgress(){
@@ -153,14 +168,49 @@ void JobGraphicsItem::updateProgress(){
 //------------------------------------------------------------------------------
 // Private functions
 //------------------------------------------------------------------------------
-void JobGraphicsItem::rectChanged(){
+void JobGraphicsItem::updateLayout(){
 	QRectF jobRect(boundingRect());
+	qreal jobX = jobRect.x();
+	qreal jobY = jobRect.y();
+	qreal jobW = jobRect.width();
+	qreal jobH = jobRect.height();
 
-	// Name rect, 60% center of job rect
-	QRectF nameRect(jobRect.x() + jobRect.width()*0.2, jobRect.y(), jobRect.width()*0.6, jobRect.height());
+
+	QRectF nameRect;
+	QRectF descRect;
+	QRectF estEndRect;
+	QRectF weatherRect; // TODO
+
+	nameRect.setY(jobY);
+
+	// Job description under name
+	if(m_descriptionItem->isVisible()){
+		descRect.setY(jobY + jobH * 0.7);
+		descRect.setHeight(jobH * 0.3);
+		nameRect.setHeight(jobH * 0.7);
+	}
+	else
+		nameRect.setHeight(jobH);
+
+	// Estimated end time and weather on both sides
+	if(m_estEndTimeItem->isVisible()/* || m_weatherItem->isVisible()*/){
+		// Estimated end time 20% right
+		estEndRect = QRectF(jobX + jobW*0.8, jobY + jobH*0.2, jobW*0.2, jobH*0.6);
+		weatherRect = QRectF(jobX, jobY + jobH*0.2, jobW*0.2, jobH*0.6);
+		nameRect.setX(jobX + jobW*0.2);
+		nameRect.setWidth(jobW*0.6);
+	}
+	else{
+		nameRect.setX(jobX);
+		nameRect.setWidth(jobW);
+	}
+
+	descRect.setX(nameRect.x());
+	descRect.setWidth(nameRect.width());
+
 	m_nameItem->setRect(nameRect);
-
-	QRectF estEndRect(jobRect.x() + jobRect.width()*0.8, jobRect.y() + jobRect.height()*0.2, jobRect.width()*0.2, jobRect.height()*0.6);
+	m_descriptionItem->setRect(descRect);
 	m_estEndTimeItem->setRect(estEndRect);
+	//m_weatherItem->setRect(weatherRect);
 }
 //------------------------------------------------------------------------------
