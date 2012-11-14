@@ -23,11 +23,6 @@ class JenkinsGraphicsView : public QGraphicsView {
 		~JenkinsGraphicsView();
 
 //------------------------------------------------------------------------------
-// Signals
-//------------------------------------------------------------------------------
-	signals:
-
-//------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
 	public slots:
@@ -65,7 +60,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 // Constants
 //------------------------------------------------------------------------------
 	private:
-		const static int jobsMargin = 5;
+		const static int jobsMargin = 4;
 		const static int jobsProgressUpdateTimer = 100;
 
 //------------------------------------------------------------------------------

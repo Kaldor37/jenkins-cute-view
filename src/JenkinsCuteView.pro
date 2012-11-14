@@ -21,7 +21,8 @@ SOURCES	+=		main.cpp \
 					views/jobdisplaydata.cpp \
 					views/jobgraphicsitem.cpp \
 					views/mainwindow.cpp \
-					views/preferencesdialog.cpp
+					views/preferencesdialog.cpp \
+					views/weathergraphicsitem.cpp
 #-------------------------------------------------------------------------------
 HEADERS	+=		application.h \
 					preferences.h \
@@ -37,7 +38,8 @@ HEADERS	+=		application.h \
 					views/jobdisplaydata.h \
 					views/jobgraphicsitem.h \
 					views/mainwindow.h \
-					views/preferencesdialog.h
+					views/preferencesdialog.h \
+					views/weathergraphicsitem.h
 #-------------------------------------------------------------------------------
 FORMS		+=		views/uis/aboutdialog.ui \
 					views/uis/mainwindow.ui \

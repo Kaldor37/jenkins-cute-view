@@ -1,24 +1,30 @@
 //------------------------------------------------------------------------------
 #include "views/jobgraphicsitem.h"
+#include "autoresizingtextitem.h"
+#include "weathergraphicsitem.h"
 
 #include <QDebug>
 #include <QBrush>
 #include <QPen>
 #include <QPainter>
+#include <QGraphicsPixmapItem>
+#include <QDateTime>
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
+	m_name(),
 	m_nameItem(0),
 	m_estEndTimeItem(0),
 	m_descriptionItem(0),
+	m_weatherItem(0),
 	m_running(false),
 	m_progressFactor(0),
 	m_buildStartTime(0),
 	m_buildEstEndTime(0)
 {
 	m_nameItem = new AutoResizingTextItem(this);
-	m_nameItem->setFont(QFont("Arial")); // TODO - Manage in prefs
+	m_nameItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
 	m_nameItem->setPen(QPen(Qt::white));
 
 	m_estEndTimeItem = new AutoResizingTextItem(this);
@@ -29,6 +35,8 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	m_descriptionItem->setFont(QFont("Arial")); // TODO - Manage in prefs
 	m_descriptionItem->setPen(QPen(Qt::white));
 	m_descriptionItem->setVisible(false);
+
+	m_weatherItem = new WeatherGraphicsItem(this);
 }
 //------------------------------------------------------------------------------
 JobGraphicsItem::~JobGraphicsItem(){
@@ -40,11 +48,10 @@ JobGraphicsItem::~JobGraphicsItem(){
 
 	if(m_descriptionItem)
 		m_descriptionItem->deleteLater();
-}
-//------------------------------------------------------------------------------
-// Signals
-//------------------------------------------------------------------------------
 
+	if(m_weatherItem)
+		m_weatherItem->deleteLater();
+}
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------
@@ -94,13 +101,13 @@ void JobGraphicsItem::setRect(const QRectF &rect){
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::setName(const QString &name){
+	m_name = name;
 	Q_ASSERT(m_nameItem);
-	m_nameItem->setText(name);
+	m_nameItem->setText(m_name);
 }
 //------------------------------------------------------------------------------
 const QString & JobGraphicsItem::getName() const{
-	Q_ASSERT(m_nameItem);
-	return m_nameItem->text();
+	return m_name;
 }
 //------------------------------------------------------------------------------
 bool JobGraphicsItem::isRunning() const{
@@ -126,6 +133,10 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 		break;
 	}
 
+	if(data.getLastBuildNum() > 0/* TODO : && prefs.lastBuildNumEnabled*/){
+		m_nameItem->setText(QString("%1 #%2").arg(data.getName()).arg(data.getLastBuildNum()));
+	}
+
 	m_running = data.isRunning();
 	m_estEndTimeItem->setVisible(m_running);
 
@@ -141,6 +152,27 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 	//qDebug()<<"JobGraphicsItem::update("<<data.getName()<<") - Desc : "<<data.getLastBuildDesc();
 	m_descriptionItem->setText(data.getLastBuildDesc());
 	m_descriptionItem->setVisible(!m_descriptionItem->text().isEmpty());
+
+	// TODO - If activated in prefs
+	if(data.getStatus() != JobDisplayData::StatusInactiveOrNeverBuilt){
+		uint stability = data.getStability();
+		if(stability > 80)
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::Sunny);
+		else if(stability <= 80  && stability > 60)
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::PartlyCloudy);
+		else if(stability <= 60  && stability > 40)
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::Cloudy);
+		else if(stability <= 40  && stability > 20)
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::Rain);
+		else if(stability <= 20)
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::Thunder);
+
+		m_weatherItem->setVisible(true);
+	}
+	else{
+		m_weatherItem->setWeatherIcon(WeatherGraphicsItem::NoIcon);
+		m_weatherItem->setVisible(false);
+	}
 
 	updateProgress();
 	updateLayout();
@@ -179,28 +211,31 @@ void JobGraphicsItem::updateLayout(){
 	QRectF nameRect;
 	QRectF descRect;
 	QRectF estEndRect;
-	QRectF weatherRect; // TODO
-
-	nameRect.setY(jobY);
+	QRectF weatherRect;
 
 	// Job description under name
 	if(m_descriptionItem->isVisible()){
 		descRect.setY(jobY + jobH * 0.7);
 		descRect.setHeight(jobH * 0.3);
-		nameRect.setHeight(jobH * 0.7);
+		nameRect.setY(jobY);
 	}
 	else
-		nameRect.setHeight(jobH);
+		nameRect.setY(jobY + jobH*0.15);
+
+	nameRect.setHeight(jobH * 0.7);
 
 	// Estimated end time and weather on both sides
-	if(m_estEndTimeItem->isVisible()/* || m_weatherItem->isVisible()*/){
+	if(m_estEndTimeItem->isVisible() || m_weatherItem->isVisible()){
 		// Estimated end time 20% right
 		estEndRect = QRectF(jobX + jobW*0.8, jobY + jobH*0.2, jobW*0.2, jobH*0.6);
-		weatherRect = QRectF(jobX, jobY + jobH*0.2, jobW*0.2, jobH*0.6);
+		// Weather 20% left
+		weatherRect = QRectF(jobX, jobY + jobH*0.1, jobW*0.2, jobH*0.8);
+		// Name rect middle
 		nameRect.setX(jobX + jobW*0.2);
 		nameRect.setWidth(jobW*0.6);
 	}
 	else{
+		// Name rect full width
 		nameRect.setX(jobX);
 		nameRect.setWidth(jobW);
 	}
@@ -211,6 +246,6 @@ void JobGraphicsItem::updateLayout(){
 	m_nameItem->setRect(nameRect);
 	m_descriptionItem->setRect(descRect);
 	m_estEndTimeItem->setRect(estEndRect);
-	//m_weatherItem->setRect(weatherRect);
+	m_weatherItem->setRect(weatherRect);
 }
 //------------------------------------------------------------------------------

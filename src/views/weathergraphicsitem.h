@@ -1,29 +1,29 @@
 //------------------------------------------------------------------------------
-#ifndef JOBGRAPHICSITEM_H
-#define JOBGRAPHICSITEM_H
+#ifndef WEATHERGRAPHICSITEM_H
+#define WEATHERGRAPHICSITEM_H
 //------------------------------------------------------------------------------
-#include "jobdisplaydata.h"
-
-#include <QGraphicsObject>
+#include <QGraphicsPixmapItem>
 //------------------------------------------------------------------------------
-class QSizeF;
-class QGraphicsPixmapItem;
-class WeatherGraphicsItem;
-class AutoResizingTextItem;
-//------------------------------------------------------------------------------
-class JobGraphicsItem : public QGraphicsObject {
+class WeatherGraphicsItem : public QGraphicsObject {
 	Q_OBJECT
+//------------------------------------------------------------------------------
+// Enum(s)
+//------------------------------------------------------------------------------
+	public:
+		enum eWeatherIcon {
+			NoIcon			= -1,
+			Sunny				= 0,
+			PartlyCloudy	= 1,
+			Cloudy			= 2,
+			Rain				= 3,
+			Thunder			= 4
+		};
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit JobGraphicsItem(QGraphicsItem *parent = 0);
-		~JobGraphicsItem();
-
-//------------------------------------------------------------------------------
-// Signals
-//------------------------------------------------------------------------------
-	signals:
+		explicit WeatherGraphicsItem(QGraphicsItem *parent = 0);
+		~WeatherGraphicsItem();
 
 //------------------------------------------------------------------------------
 // Public functions
@@ -32,8 +32,7 @@ class JobGraphicsItem : public QGraphicsObject {
 		QRectF boundingRect() const;
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-		const QString & getName() const;
-		bool isRunning() const;
+		eWeatherIcon weatherIcon() const;
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -42,36 +41,24 @@ class JobGraphicsItem : public QGraphicsObject {
 		void setSize(qreal w, qreal h);
 		void setSize(const QSizeF & size);
 		void setRect(const QRectF &rect);
-
-		void setName(const QString &name);
-		void update(const JobDisplayData& data);
-		void updateProgress();
+		void setWeatherIcon(eWeatherIcon);
 
 //------------------------------------------------------------------------------
-// Private
+// Private functions
 //------------------------------------------------------------------------------
 	private:
-		void updateLayout();
+		void updateIcon();
 
 //------------------------------------------------------------------------------
 // Members
 //------------------------------------------------------------------------------
 	private:
-		QString	m_name;
-		QSizeF	m_size;
-		QColor	m_rectColor;
-
-		AutoResizingTextItem	*m_nameItem;
-		AutoResizingTextItem	*m_estEndTimeItem;
-		AutoResizingTextItem	*m_descriptionItem;
-		WeatherGraphicsItem	*m_weatherItem;
-
-		bool			m_running;
-		qreal			m_progressFactor;
-		qint64		m_buildStartTime;
-		qint64		m_buildEstEndTime;
+		eWeatherIcon			m_weatherIcon;
+		QSizeF					m_size;
+		QPixmap					m_weatherPixmap;
+		QGraphicsPixmapItem	*m_weatherItem;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------
-#endif // JOBGRAPHICSITEM_H
+#endif // WEATHERGRAPHICSITEM_H
 //------------------------------------------------------------------------------
