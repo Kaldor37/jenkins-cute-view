@@ -39,6 +39,11 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	// Selected view
 	int index = ui->m_viewDisplayComboBox->findData(prefs.getSelectedView());
 	ui->m_viewDisplayComboBox->setCurrentIndex((index >= 0)?index:0);
+
+	ui->m_showBuildNumberCheckBox->setChecked(prefs.getShowBuildNumber());
+	ui->m_showWeatherCheckBox->setChecked(prefs.getShowWeatherIcon());
+	ui->m_showEstEndTimeCheckBox->setChecked(prefs.getShowEstimatedEndTime());
+	ui->m_showLastBuildDescCheckBox->setChecked(prefs.getShowLastBuildDescription());
 	//----------------------------------------------------------
 
 	QWidget::showEvent(event);
@@ -108,5 +113,9 @@ void PreferencesDialog::savePreferences(){
 	// Display tab
 	QVariant selectedViewData = ui->m_viewDisplayComboBox->itemData(ui->m_viewDisplayComboBox->currentIndex());
 	Prefs.setSelectedView((selectedViewData.isValid())?selectedViewData.toString():"");
+	Prefs.setShowBuildNumber(ui->m_showBuildNumberCheckBox->isChecked());
+	Prefs.setShowWeatherIcon(ui->m_showWeatherCheckBox->isChecked());
+	Prefs.setShowEstimatedEndTime(ui->m_showEstEndTimeCheckBox->isChecked());
+	Prefs.setShowLastBuildDescription(ui->m_showLastBuildDescCheckBox->isChecked());
 }
 //------------------------------------------------------------------------------

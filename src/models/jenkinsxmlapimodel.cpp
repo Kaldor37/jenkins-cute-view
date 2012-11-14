@@ -190,7 +190,7 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 	if(!m_selectedView && m_primaryView)
 		m_selectedView = m_primaryView;
 
-	qDebug()<<"JenkinsXMLAPIModel::parseViews - Parsed "<<m_views.size()<<" views - Primary : "<<m_primaryView->getName()<<" - Selected : "<<m_selectedView->getName();
+	//qDebug()<<"JenkinsXMLAPIModel::parseViews - Parsed "<<m_views.size()<<" views - Primary : "<<m_primaryView->getName()<<" - Selected : "<<m_selectedView->getName();
 
 	loadSelectedView();
 

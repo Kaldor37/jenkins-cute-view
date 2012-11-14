@@ -34,6 +34,7 @@ void JenkinsGraphicsView::resizeEvent(QResizeEvent *event){
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 	QVector<QString> jobsList;
+	QVector<QString> jobsDeleteList;
 
 	// Add new jobs - Update existing jobs
 	foreach(const JobDisplayData &job, jobs){
@@ -65,18 +66,20 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 		}
 	}
 
-	// Delete jobs
-	for(JobsItems::Iterator it=m_jobItems.begin() ; it != m_jobItems.end() ; ++it){
-		JobGraphicsItem *jobItem = *it;
-		const QString &name = jobItem->getName();
-		if(!jobsList.contains(name)){
-			m_scene->removeItem(jobItem);
-			jobItem->deleteLater();
+	// Builing job delete list
+	const JobsItems::Iterator &end = m_jobItems.end();
+	for(JobsItems::Iterator it = m_jobItems.begin() ; it != end; ++it){
+		const QString &name = it.key();
+		if(!jobsList.contains(name))
+			jobsDeleteList.push_back(name);
+	}
 
-			it = m_jobItems.erase(it);
-			if(it == m_jobItems.end())
-				break;
-		}
+	foreach(QString name, jobsDeleteList){
+		Q_ASSERT(m_jobItems.contains(name));
+		JobGraphicsItem *jobItem = m_jobItems.take(name);
+		m_scene->removeItem(jobItem);
+		jobItem->deleteLater();
+		//qDebug()<<"Removed job "<<name;
 	}
 
 	updateDisplay();

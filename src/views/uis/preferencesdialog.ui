@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="m_jenkinsTabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="m_jenkinsTabWidgetPage">
       <attribute name="title">
@@ -150,6 +150,34 @@
           </spacer>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="m_showBuildNumberCheckBox">
+         <property name="text">
+          <string>Show build number</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="m_showWeatherCheckBox">
+         <property name="text">
+          <string>Show weather icon</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="m_showEstEndTimeCheckBox">
+         <property name="text">
+          <string>Show estimated end time</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="m_showLastBuildDescCheckBox">
+         <property name="text">
+          <string>Show last build description</string>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="verticalSpacer_2">

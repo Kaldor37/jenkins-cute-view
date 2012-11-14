@@ -59,6 +59,10 @@ class Preferences : public QSettings {
 PREFS_DECLARE_FIELD(QString,	JenkinsUrl)
 PREFS_DECLARE_FIELD(uint,		APIUpdateInterval)
 PREFS_DECLARE_FIELD(QString,	SelectedView)
+PREFS_DECLARE_FIELD(bool,		ShowBuildNumber)
+PREFS_DECLARE_FIELD(bool,		ShowWeatherIcon)
+PREFS_DECLARE_FIELD(bool,		ShowEstimatedEndTime)
+PREFS_DECLARE_FIELD(bool,		ShowLastBuildDescription)
 //------------------------------------------------------------------------------
 #undef PREFS_DECLARE_FIELD
 
@@ -69,6 +73,10 @@ PREFS_DECLARE_FIELD(QString,	SelectedView)
 		void sigJenkinsUrlChanged(QString);
 		void sigAPIUpdateIntervalChanged(uint);
 		void sigSelectedViewChanged(QString);
+		void sigShowBuildNumberChanged(bool);
+		void sigShowWeatherIconChanged(bool);
+		void sigShowEstimatedEndTimeChanged(bool);
+		void sigShowLastBuildDescriptionChanged(bool);
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

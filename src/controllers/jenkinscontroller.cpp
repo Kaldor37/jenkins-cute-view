@@ -59,7 +59,7 @@ void JenkinsController::selectedViewDataUpdated(){
 
 	// View's jobs
 	const ViewModel::JobsList &jobs = selectedView->getJobs();
-	qDebug()<<"JenkinsController::selectedViewDataUpdated - Jobs to display : "<<jobs.size();
+	//qDebug()<<"JenkinsController::selectedViewDataUpdated - Jobs to display : "<<jobs.size();
 
 	foreach(const JobModel *job, jobs){
 		const BuildModel *jobLastBuild = job->getLastBuild();
