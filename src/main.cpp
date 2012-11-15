@@ -15,10 +15,12 @@ int main(int argc, char *argv[]){
 	Preferences::create();
 	HttpGetter::create();
 
+	/* For now, weather icons are embeded
 	bool weatherIconsLoaded = QResource::registerResource("weather-icons.rcc");
 	Q_ASSERT(weatherIconsLoaded);
 	if(!weatherIconsLoaded)
 		qWarning()<<"Cannot load weather icons (weather-icons.rcc)";
+	*/
 
 	// Application scope
 	{

@@ -1,12 +1,12 @@
 #-------------------------------------------------------------------------------
 # Project Jenkins Cute View
 #-------------------------------------------------------------------------------
-QT			+=		core gui xml network
+QT				+=	core gui xml network
 #-------------------------------------------------------------------------------
-TARGET	=		jenkins-cute-view
-TEMPLATE	=		app
+TARGET		=	jenkins-cute-view
+TEMPLATE		=	app
 #-------------------------------------------------------------------------------
-SOURCES	+=		main.cpp \
+SOURCES		+=	main.cpp \
 					application.cpp \
 					preferences.cpp \
 					controllers/jenkinscontroller.cpp \
@@ -21,10 +21,11 @@ SOURCES	+=		main.cpp \
 					views/jobdisplaydata.cpp \
 					views/jobgraphicsitem.cpp \
 					views/mainwindow.cpp \
+					views/messagegraphicsitem.cpp \
 					views/preferencesdialog.cpp \
 					views/weathergraphicsitem.cpp
 #-------------------------------------------------------------------------------
-HEADERS	+=		application.h \
+HEADERS		+=	application.h \
 					preferences.h \
 					controllers/jenkinscontroller.h \
 					models/buildmodel.h \
@@ -38,10 +39,13 @@ HEADERS	+=		application.h \
 					views/jobdisplaydata.h \
 					views/jobgraphicsitem.h \
 					views/mainwindow.h \
+					views/messagegraphicsitem.h \
 					views/preferencesdialog.h \
 					views/weathergraphicsitem.h
 #-------------------------------------------------------------------------------
-FORMS		+=		views/uis/aboutdialog.ui \
+FORMS			+=	views/uis/aboutdialog.ui \
 					views/uis/mainwindow.ui \
 					views/uis/preferencesdialog.ui
+#-------------------------------------------------------------------------------
+RESOURCES	+=	../res/weather-icons.qrc
 #-------------------------------------------------------------------------------

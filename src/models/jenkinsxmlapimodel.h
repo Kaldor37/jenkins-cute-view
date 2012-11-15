@@ -38,6 +38,10 @@ class JenkinsXMLAPIModel : public QObject {
 		void viewsNamesUpdated(QStringList viewsNames, QString selectedViewName);
 		void selectedViewLoaded();
 
+		void message(QString);
+		void warning(QString);
+		void error(QString);
+
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------

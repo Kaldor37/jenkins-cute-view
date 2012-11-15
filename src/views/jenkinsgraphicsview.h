@@ -3,13 +3,16 @@
 #define JENKINSGRAPHICSVIEW_H
 //------------------------------------------------------------------------------
 #include "jobdisplaydata.h"
+#include "messagegraphicsitem.h"
 
 #include <QGraphicsView>
 #include <QMap>
+#include <QMutex>
 //------------------------------------------------------------------------------
 class JenkinsGraphicsScene;
 class JobGraphicsItem;
 class QTimer;
+class AutoResizingTextItem;
 //------------------------------------------------------------------------------
 // Graphics View
 //------------------------------------------------------------------------------
@@ -27,6 +30,10 @@ class JenkinsGraphicsView : public QGraphicsView {
 //------------------------------------------------------------------------------
 	public slots:
 		void updateJobs(const QList<JobDisplayData> &);
+
+		void displayMessage(const QString & msg, MessageGraphicsItem::eMessageType type=MessageGraphicsItem::Normal);
+		void displayWarning(const QString & msg);
+		void displayError(const QString & msg);
 
 //------------------------------------------------------------------------------
 // Protected functions
@@ -50,11 +57,13 @@ class JenkinsGraphicsView : public QGraphicsView {
 // Members
 //------------------------------------------------------------------------------
 	private:
-		JenkinsGraphicsScene *m_scene;
-
 		typedef QMap<QString,JobGraphicsItem*> JobsItems;
-		JobsItems m_jobItems;
-		QTimer *m_progressUpdateTimer;
+
+		JenkinsGraphicsScene	*m_scene;
+		JobsItems				m_jobItems;
+		QMutex					m_jobsMutex;
+		QTimer					*m_progressUpdateTimer;
+		MessageGraphicsItem	*m_messageItem;
 
 //------------------------------------------------------------------------------
 // Constants

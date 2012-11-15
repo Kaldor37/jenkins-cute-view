@@ -9,9 +9,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>270</height>
+    <width>375</width>
+    <height>275</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>375</width>
+    <height>275</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>375</width>
+    <height>275</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Preferences</string>
@@ -20,7 +32,7 @@
    <item>
     <widget class="QTabWidget" name="m_jenkinsTabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="m_jenkinsTabWidgetPage">
       <attribute name="title">

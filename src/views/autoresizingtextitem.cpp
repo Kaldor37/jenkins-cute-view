@@ -3,8 +3,6 @@
 
 #include <QPainter>
 #include <QDebug>
-
-//#define DEBUG_RECT	1
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
@@ -34,13 +32,6 @@ void AutoResizingTextItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 		return;
 
 	painter->save();
-
-#if DEBUG_RECT
-	painter->setPen(Qt::red);
-	painter->drawRect(boundingRect());
-	painter->restore();
-	painter->save();
-#endif
 
 	painter->setFont(m_font);
 	painter->setPen(m_pen);

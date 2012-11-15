@@ -10,9 +10,7 @@
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 JenkinsXMLAPIModel::JenkinsXMLAPIModel(QObject *parent/*=0*/): QObject(parent),
-	m_jenkinsUrl(),
 	m_viewsListLoaded(false),
-	m_views(),
 	m_primaryView(0),
 	m_selectedView(0){
 }
@@ -50,8 +48,12 @@ void JenkinsXMLAPIModel::setJenkinsUrl(const QString &url){
 
 		m_jenkinsUrl = trimmed;
 
-		if(!m_jenkinsUrl.isEmpty())
+		if(!m_jenkinsUrl.isEmpty()){
+			emit message(tr("Loading..."));
 			loadViews();
+		}
+		else
+			emit message(tr("Please set jenkins URL"));
 	}
 }
 //------------------------------------------------------------------------------
@@ -84,8 +86,10 @@ void JenkinsXMLAPIModel::setSelectedView(const QString &name){
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::loadViews(){
-	if(m_jenkinsUrl.isEmpty())
+	if(m_jenkinsUrl.isEmpty()){
+		emit message(tr("Please set jenkins URL"));
 		return;
+	}
 
 	m_viewsListLoaded = false;
 
@@ -105,6 +109,7 @@ void JenkinsXMLAPIModel::loadSelectedView(){
 void JenkinsXMLAPIModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
 	if(errCode != QNetworkReply::NoError){
 		qWarning()<<"JenkinsXMLAPIModel::httpGetter_finished - Error : "<<errCode<<" ("<<error<<")";
+		emit this->error(error);
 		return;
 	}
 
@@ -112,6 +117,7 @@ void JenkinsXMLAPIModel::http_finished(const QString &content, QNetworkReply::Ne
 	bool parsed = doc.setContent(content);
 	if(!parsed){
 		qWarning()<<"JenkinsXMLAPIModel::httpGetter_finished - Error parsing XML !";
+		emit this->error(tr("Error parsing views list data"));
 		return;
 	}
 
@@ -141,6 +147,7 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 	QString primaryViewName;
 	QDomNodeList primaryViewsList = doc.elementsByTagName("primaryView");
 	if(primaryViewsList.length() <= 0){
+		emit error(tr("No primary view found"));
 		qWarning()<<"JenkinsXMLAPIModel::parseViews - No primary view !";
 		return;
 	}
@@ -153,6 +160,7 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 	QDomNodeList viewsList = doc.elementsByTagName("view");
 	int nbViews = viewsList.length();
 	if(nbViews <= 0){
+		emit error(tr("No view found"));
 		qWarning()<<"JenkinsXMLAPIModel::parseViews - No view found !";
 		return;
 	}

@@ -39,6 +39,9 @@ void JenkinsController::control(MainWindow *wnd){
 
 	// To graphics view
 	QObject::connect(this, SIGNAL(jobs_updated(QList<JobDisplayData>)), wnd->getGraphicsView(), SLOT(updateJobs(QList<JobDisplayData>)));
+	QObject::connect(m_XMLAPIModel, SIGNAL(message(QString)), wnd->getGraphicsView(), SLOT(displayMessage(QString)));
+	QObject::connect(m_XMLAPIModel, SIGNAL(warning(QString)), wnd->getGraphicsView(), SLOT(displayWarning(QString)));
+	QObject::connect(m_XMLAPIModel, SIGNAL(error(QString)), wnd->getGraphicsView(), SLOT(displayError(QString)));
 }
 //------------------------------------------------------------------------------
 void JenkinsController::prefs_APIUpdateIntervalChanged(uint value){
