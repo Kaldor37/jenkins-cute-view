@@ -38,7 +38,7 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	m_estEndTimeItem->setPen(QPen(Qt::white));
 
 	m_descriptionItem = new AutoResizingTextItem(this);
-	m_descriptionItem->setFont(QFont("Arial")); // TODO - Manage in prefs
+	m_descriptionItem->setFont(QFont("Arial", -1, QFont::DemiBold)); // TODO - Manage in prefs
 	m_descriptionItem->setPen(QPen(Qt::white));
 	m_descriptionItem->setVisible(false);
 
@@ -273,14 +273,14 @@ void JobGraphicsItem::updateLayout(){
 
 	// Job description under name
 	if(m_descriptionItem->isVisible()){
-		descRect.setY(jobY + jobH * 0.7);
-		descRect.setHeight(jobH * 0.3);
+		descRect.setY(jobY + jobH * 0.6);
+		descRect.setHeight(jobH * 0.4);
 		nameRect.setY(jobY);
 	}
 	else
 		nameRect.setY(jobY + jobH*0.15);
 
-	nameRect.setHeight(jobH * 0.7);
+	nameRect.setHeight(jobH * 0.6);
 
 	// Estimated end time and weather on both sides
 	if(m_estEndTimeItem->isVisible() || m_weatherItem->isVisible()){
