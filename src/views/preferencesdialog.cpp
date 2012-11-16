@@ -17,6 +17,10 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 	m_updateIntervalValidator = new QIntValidator(ui->m_updateIntervalLineEdit);
 	m_updateIntervalValidator->setRange(1, UINT_MAX);
 	ui->m_updateIntervalLineEdit->setValidator(m_updateIntervalValidator);
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+	ui->m_jenkinsURLLineEdit->setPlaceholderText(tr("Enter url..."));
+#endif
 }
 //------------------------------------------------------------------------------
 PreferencesDialog::~PreferencesDialog(){
