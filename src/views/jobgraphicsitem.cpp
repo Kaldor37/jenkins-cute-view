@@ -158,7 +158,10 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
 		m_estEndTimeItem->setText(QDateTime::fromMSecsSinceEpoch(m_buildEstEndTime).time().toString(QLocale().timeFormat(QLocale::ShortFormat)));
 #else
-		m_estEndTimeItem->setText(QDateTime::fromTime_t(((uint)m_buildEstEndTime)/1000).time().toString(QLocale().timeFormat(QLocale::ShortFormat)));
+		{
+		qint64 estEndTime = (m_buildEstEndTime/1000);
+		m_estEndTimeItem->setText(QDateTime::fromTime_t((uint)estEndTime).time().toString(QLocale().timeFormat(QLocale::ShortFormat)));
+		}
 #endif
 
 	}
