@@ -154,7 +154,13 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 	if(m_running){
 		m_buildStartTime = data.getStartTime();
 		m_buildEstEndTime	= m_buildStartTime + data.getEstimatedDuration();
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
 		m_estEndTimeItem->setText(QDateTime::fromMSecsSinceEpoch(m_buildEstEndTime).time().toString(QLocale().timeFormat(QLocale::ShortFormat)));
+#else
+		m_estEndTimeItem->setText(QDateTime::fromTime_t(((uint)m_buildEstEndTime)/1000).time().toString(QLocale().timeFormat(QLocale::ShortFormat)));
+#endif
+
 	}
 	else
 		m_progressFactor = 0;
@@ -197,7 +203,16 @@ void JobGraphicsItem::updateName(){
 //------------------------------------------------------------------------------
 void JobGraphicsItem::updateProgress(){
 	if(m_running){
-		qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+		qint64 now = 0;
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+		now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+#else
+		{
+			QDateTime dt = QDateTime::currentDateTime();
+			now = (((qint64)dt.toTime_t())*1000) + dt.time().msec();
+		}
+#endif
 
 		if(now < m_buildStartTime){
 			//qWarning()<<"JobGraphicsItem::update("<<data.getName()<<") - Current time is smaller than start time, maybe computers are out of sync (Now : "<<now<<" - Start time : "<<m_buildStartTime<<")";
