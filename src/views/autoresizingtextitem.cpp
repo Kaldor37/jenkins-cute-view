@@ -7,12 +7,11 @@
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 AutoResizingTextItem::AutoResizingTextItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
-	m_visible(true)
-{
+	m_visible(true),
+	m_shadowed(false){
 }
 //------------------------------------------------------------------------------
-AutoResizingTextItem::~AutoResizingTextItem(){
-}
+AutoResizingTextItem::~AutoResizingTextItem(){}
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------
@@ -34,8 +33,23 @@ void AutoResizingTextItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	painter->save();
 
 	painter->setFont(m_font);
+
+	QRect rect = boundingRect().toRect();
+
+	if(m_shadowed){
+		QPen shadowPen(m_pen);
+		shadowPen.setColor(Qt::black);
+		painter->setPen(shadowPen);
+
+		QRect shadowRect(rect);
+		shadowRect.setX(shadowRect.x()+m_shadowOffset);
+		shadowRect.setY(shadowRect.y()+m_shadowOffset);
+
+		painter->drawText(shadowRect, Qt::AlignCenter, m_text);
+	}
+
 	painter->setPen(m_pen);
-	painter->drawText(boundingRect().toRect(), Qt::AlignCenter, m_text);
+	painter->drawText(rect, Qt::AlignCenter, m_text);
 
 	painter->restore();
 }
@@ -54,6 +68,9 @@ const QPen & AutoResizingTextItem::pen() const{
 //------------------------------------------------------------------------------
 bool AutoResizingTextItem::isVisible() const{
 	return m_visible;
+}
+bool AutoResizingTextItem::isShadowed() const{
+	return m_shadowed;
 }
 //------------------------------------------------------------------------------
 // Public slots
@@ -76,6 +93,11 @@ void AutoResizingTextItem::setRect(const QRectF &rect){
 //------------------------------------------------------------------------------
 void AutoResizingTextItem::setVisible(bool visible){
 	m_visible = visible;
+}
+//------------------------------------------------------------------------------
+void AutoResizingTextItem::setShadowed(bool value){
+	m_shadowed = value;
+	adjustText();
 }
 //------------------------------------------------------------------------------
 void AutoResizingTextItem::setText(const QString &text){
@@ -126,5 +148,8 @@ void AutoResizingTextItem::adjustText(){
 		}while(fm.width(m_text) <= maxWidth && fm.height() <= maxHeight);
 		m_font = lastFont;
 	}
+
+	if(m_shadowed)
+		m_shadowOffset = QFontMetrics(m_font).height()/shadowOffsetFontHeightFactor;
 }
 //------------------------------------------------------------------------------

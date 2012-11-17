@@ -27,6 +27,7 @@ class AutoResizingTextItem : public QGraphicsObject {
 		const QFont & font() const;
 		const QPen & pen() const;
 		bool isVisible() const;
+		bool isShadowed() const;
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -39,6 +40,7 @@ class AutoResizingTextItem : public QGraphicsObject {
 		void setText(const QString &text);
 		void setFont(const QFont &font);
 		void setPen(const QPen &pen);
+		void setShadowed(bool value);
 
 //------------------------------------------------------------------------------
 // Private functions
@@ -55,6 +57,10 @@ class AutoResizingTextItem : public QGraphicsObject {
 		QString	m_text;
 		QFont		m_font;
 		QPen		m_pen;
+		bool		m_shadowed;
+		uint		m_shadowOffset;
+
+		const static int shadowOffsetFontHeightFactor = 20;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------
