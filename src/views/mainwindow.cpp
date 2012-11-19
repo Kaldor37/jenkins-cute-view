@@ -34,6 +34,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	createPrefsDialog();
 
+	connect(ui->m_graphicsView, SIGNAL(fullScreenTriggered()), SLOT(fullScreenShortcut_activated()));
+	connect(ui->m_graphicsView, SIGNAL(preferencesTriggered()), SLOT(on_m_actionPreferences_triggered()));
+	connect(ui->m_graphicsView, SIGNAL(quitTriggered()), SLOT(on_m_actionQuit_triggered()));
+	connect(this, SIGNAL(fullscreenModeChanged(bool)), ui->m_graphicsView, SLOT(fullscreenModeChanged(bool)));
+
 	// Display window
 	show();
 }
@@ -89,11 +94,13 @@ void MainWindow::on_m_actionFullscreen_triggered(){
 	if(!isFullScreen()){
 		showFullScreen();
 		ui->m_menuBar->setVisible(false);
+		emit fullscreenModeChanged(true);
 	}
 	// Set to normal
 	else{
 		showNormal();
 		ui->m_menuBar->setVisible(true);
+		emit fullscreenModeChanged(false);
 	}
 }
 //------------------------------------------------------------------------------

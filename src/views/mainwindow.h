@@ -41,6 +41,7 @@ class MainWindow : public QMainWindow{
 	signals:
 		void preferencesUpdated();
 		void viewsNamesUpdated(QStringList,QString);
+		void fullscreenModeChanged(bool enabled);
 
 //------------------------------------------------------------------------------
 // Protected functions

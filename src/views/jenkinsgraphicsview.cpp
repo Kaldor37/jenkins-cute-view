@@ -7,10 +7,16 @@
 #include <QResizeEvent>
 #include <QTimer>
 #include <QMutexLocker>
+#include <QMenu>
 //------------------------------------------------------------------------------
 // JenkinsGraphicsScene
 //------------------------------------------------------------------------------
-JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent){
+JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent),
+	m_contextMenu(0),
+	m_fullscreenAction(0),
+	m_preferencesAction(0),
+	m_quitAction(0)
+{
 	m_scene = new JenkinsGraphicsScene(this);
 	setScene(m_scene);
 
@@ -21,9 +27,13 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	m_messageItem = new MessageGraphicsItem();
 	m_messageItem->setVisible(false);
 	m_scene->addItem(m_messageItem);
+
+	initContextMenu();
 }
 //------------------------------------------------------------------------------
 JenkinsGraphicsView::~JenkinsGraphicsView(){
+	if(m_contextMenu)
+		m_contextMenu->deleteLater();
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::resizeEvent(QResizeEvent *event){
@@ -34,6 +44,12 @@ void JenkinsGraphicsView::resizeEvent(QResizeEvent *event){
 	updateDisplay();
 
 	QGraphicsView::resizeEvent(event);
+}
+//------------------------------------------------------------------------------
+void JenkinsGraphicsView::contextMenuEvent(QContextMenuEvent *event){
+	Q_ASSERT(m_contextMenu);
+	m_contextMenu->exec(event->globalPos());
+	QGraphicsView::contextMenuEvent(event);
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
@@ -120,6 +136,11 @@ void JenkinsGraphicsView::displayError(const QString &msg){
 	displayMessage(msg, MessageGraphicsItem::Error);
 }
 //------------------------------------------------------------------------------
+void JenkinsGraphicsView::fullscreenModeChanged(bool enabled){
+	if(m_fullscreenAction)
+		m_fullscreenAction->setChecked(enabled);
+}
+//------------------------------------------------------------------------------
 void JenkinsGraphicsView::updateDisplay(){
 	QMutexLocker locker(&m_jobsMutex);
 	Q_UNUSED(locker);
@@ -161,6 +182,24 @@ void JenkinsGraphicsView::updateDisplay(){
 
 		++i;
 	}
+}
+//------------------------------------------------------------------------------
+void JenkinsGraphicsView::initContextMenu(){
+	Q_ASSERT(!m_contextMenu);
+
+	m_contextMenu = new QMenu(qobject_cast<QWidget*>(parent()));
+
+	m_fullscreenAction = m_contextMenu->addAction(tr("Fullscreen"));
+	m_fullscreenAction->setCheckable(true);
+	connect(m_fullscreenAction, SIGNAL(triggered()), SIGNAL(fullScreenTriggered()));
+
+	m_preferencesAction = m_contextMenu->addAction(tr("Preferences"));
+	connect(m_preferencesAction, SIGNAL(triggered()), SIGNAL(preferencesTriggered()));
+
+	m_contextMenu->addSeparator();
+
+	m_quitAction = m_contextMenu->addAction(tr("Quit"));
+	connect(m_quitAction, SIGNAL(triggered()), SIGNAL(quitTriggered()));
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::progressTimer_timeout(){

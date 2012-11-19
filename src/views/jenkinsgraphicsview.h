@@ -13,6 +13,8 @@ class JenkinsGraphicsScene;
 class JobGraphicsItem;
 class QTimer;
 class AutoResizingTextItem;
+class QMenu;
+class QAction;
 //------------------------------------------------------------------------------
 // Graphics View
 //------------------------------------------------------------------------------
@@ -26,6 +28,14 @@ class JenkinsGraphicsView : public QGraphicsView {
 		~JenkinsGraphicsView();
 
 //------------------------------------------------------------------------------
+// Signals
+//------------------------------------------------------------------------------
+	signals:
+		void fullScreenTriggered();
+		void preferencesTriggered();
+		void quitTriggered();
+
+//------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
 	public slots:
@@ -35,17 +45,21 @@ class JenkinsGraphicsView : public QGraphicsView {
 		void displayWarning(const QString & msg);
 		void displayError(const QString & msg);
 
+		void fullscreenModeChanged(bool enabled);
+
 //------------------------------------------------------------------------------
 // Protected functions
 //------------------------------------------------------------------------------
 	protected:
 		void resizeEvent(QResizeEvent *event);
+		void contextMenuEvent(QContextMenuEvent *event);
 
 //------------------------------------------------------------------------------
 // Private functions
 //------------------------------------------------------------------------------
 	private:
 		void updateDisplay();
+		void initContextMenu();
 
 //------------------------------------------------------------------------------
 // Private slots
@@ -64,6 +78,11 @@ class JenkinsGraphicsView : public QGraphicsView {
 		QMutex					m_jobsMutex;
 		QTimer					*m_progressUpdateTimer;
 		MessageGraphicsItem	*m_messageItem;
+
+		QMenu						*m_contextMenu;
+		QAction					*m_fullscreenAction;
+		QAction					*m_preferencesAction;
+		QAction					*m_quitAction;
 
 //------------------------------------------------------------------------------
 // Constants
