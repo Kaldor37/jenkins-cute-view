@@ -18,6 +18,10 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 	m_updateIntervalValidator->setRange(1, UINT_MAX);
 	ui->m_updateIntervalLineEdit->setValidator(m_updateIntervalValidator);
 
+	m_columnsValidator = new QIntValidator(ui->m_columnsLineEdit);
+	m_columnsValidator->setRange(1, 100);
+	ui->m_columnsLineEdit->setValidator(m_columnsValidator);
+
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
 	ui->m_jenkinsURLLineEdit->setPlaceholderText(tr("Enter url..."));
 #endif
@@ -44,10 +48,14 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	int index = ui->m_viewDisplayComboBox->findData(prefs.getSelectedView());
 	ui->m_viewDisplayComboBox->setCurrentIndex((index >= 0)?index:0);
 
+	// Checkboxes
 	ui->m_showBuildNumberCheckBox->setChecked(prefs.getShowBuildNumber());
 	ui->m_showWeatherCheckBox->setChecked(prefs.getShowWeatherIcon());
 	ui->m_showEstEndTimeCheckBox->setChecked(prefs.getShowEstimatedEndTime());
 	ui->m_showLastBuildDescCheckBox->setChecked(prefs.getShowLastBuildDescription());
+
+	// Number of columns
+	ui->m_columnsLineEdit->setText(QString("%1").arg(prefs.getColumns()));
 	//----------------------------------------------------------
 
 	QWidget::showEvent(event);
@@ -110,13 +118,28 @@ void PreferencesDialog::on_m_buttonBox_clicked(QAbstractButton *btn){
 }
 //------------------------------------------------------------------------------
 void PreferencesDialog::savePreferences(){
-	// Jenkins tab
+	int pos=0;
+	QString text;
+
+	// Jenkins tab --------------------------------------------------------------
+	text = ui->m_updateIntervalLineEdit->text();
+	if(m_updateIntervalValidator->validate(text, pos) == QValidator::Acceptable)
+		Prefs.setAPIUpdateInterval(ui->m_updateIntervalLineEdit->text().toUInt());
+	else
+		ui->m_updateIntervalLineEdit->setText(QString("%1").arg(Prefs.getAPIUpdateInterval()));
+
 	Prefs.setAPIUpdateInterval(ui->m_updateIntervalLineEdit->text().toUInt());
 	Prefs.setJenkinsUrl(ui->m_jenkinsURLLineEdit->text());
-
-	// Display tab
 	QVariant selectedViewData = ui->m_viewDisplayComboBox->itemData(ui->m_viewDisplayComboBox->currentIndex());
 	Prefs.setSelectedView((selectedViewData.isValid())?selectedViewData.toString():"");
+
+	// Display tab --------------------------------------------------------------
+	text = ui->m_columnsLineEdit->text();
+	if(m_columnsValidator->validate(text, pos) == QValidator::Acceptable)
+		Prefs.setColumns(ui->m_columnsLineEdit->text().toUInt());
+	else
+		ui->m_columnsLineEdit->setText(QString("%1").arg(Prefs.getColumns()));
+
 	Prefs.setShowBuildNumber(ui->m_showBuildNumberCheckBox->isChecked());
 	Prefs.setShowWeatherIcon(ui->m_showWeatherCheckBox->isChecked());
 	Prefs.setShowEstimatedEndTime(ui->m_showEstEndTimeCheckBox->isChecked());

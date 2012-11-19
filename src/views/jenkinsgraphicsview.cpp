@@ -2,12 +2,13 @@
 #include "jenkinsgraphicsview.h"
 #include "jobgraphicsitem.h"
 #include "autoresizingtextitem.h"
+#include "preferences.h"
 
 #include <QDebug>
 #include <QResizeEvent>
 #include <QTimer>
-#include <QMutexLocker>
 #include <QMenu>
+#include <qmath.h>
 //------------------------------------------------------------------------------
 // JenkinsGraphicsScene
 //------------------------------------------------------------------------------
@@ -15,7 +16,8 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	m_contextMenu(0),
 	m_fullscreenAction(0),
 	m_preferencesAction(0),
-	m_quitAction(0)
+	m_quitAction(0),
+	m_columns(1)
 {
 	m_scene = new JenkinsGraphicsScene(this);
 	setScene(m_scene);
@@ -27,6 +29,8 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	m_messageItem = new MessageGraphicsItem();
 	m_messageItem->setVisible(false);
 	m_scene->addItem(m_messageItem);
+
+	connect(&Prefs, SIGNAL(sigColumnsChanged(uint)), SLOT(setColumns(uint)));
 
 	initContextMenu();
 }
@@ -56,55 +60,50 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 	QVector<QString> jobsList;
 	QVector<QString> jobsDeleteList;
 
-	{
-		QMutexLocker locker(&m_jobsMutex);
-		Q_UNUSED(locker);
+	// Add new jobs - Update existing jobs
+	foreach(const JobDisplayData &job, jobs){
+		const QString &name = job.getName();
+		jobsList.push_back(name);
 
-		// Add new jobs - Update existing jobs
-		foreach(const JobDisplayData &job, jobs){
-			const QString &name = job.getName();
-			jobsList.push_back(name);
-
-			// Find job
-			JobGraphicsItem *foundJob = NULL;
-			JobsItems::Iterator found = m_jobItems.find(name);
-			if(found != m_jobItems.end()){
-				foundJob = found.value();
-				Q_ASSERT(foundJob);
-			}
-
-			// Job found, update
-			if(foundJob){
-				foundJob->setName(name);
-				foundJob->update(job);
-				//qDebug()<<"Updated job "<<name;
-			}
-			// Job not found, add
-			else{
-				JobGraphicsItem *newJob = new JobGraphicsItem(); // Deleted with scene
-				newJob->setName(name);
-				newJob->update(job);
-				m_jobItems[name] = newJob;
-				m_scene->addItem(newJob);
-				//qDebug()<<"Added job "<<name;
-			}
+		// Find job
+		JobGraphicsItem *foundJob = NULL;
+		JobsItems::Iterator found = m_jobItems.find(name);
+		if(found != m_jobItems.end()){
+			foundJob = found.value();
+			Q_ASSERT(foundJob);
 		}
 
-		// Builing job delete list
-		const JobsItems::Iterator &end = m_jobItems.end();
-		for(JobsItems::Iterator it = m_jobItems.begin() ; it != end; ++it){
-			const QString &name = it.key();
-			if(!jobsList.contains(name))
-				jobsDeleteList.push_back(name);
+		// Job found, update
+		if(foundJob){
+			foundJob->setName(name);
+			foundJob->update(job);
+			//qDebug()<<"Updated job "<<name;
 		}
+		// Job not found, add
+		else{
+			JobGraphicsItem *newJob = new JobGraphicsItem(); // Deleted with scene
+			newJob->setName(name);
+			newJob->update(job);
+			m_jobItems[name] = newJob;
+			m_scene->addItem(newJob);
+			//qDebug()<<"Added job "<<name;
+		}
+	}
 
-		foreach(QString name, jobsDeleteList){
-			Q_ASSERT(m_jobItems.contains(name));
-			JobGraphicsItem *jobItem = m_jobItems.take(name);
-			m_scene->removeItem(jobItem);
-			jobItem->deleteLater();
-			//qDebug()<<"Removed job "<<name;
-		}
+	// Builing job delete list
+	const JobsItems::Iterator &end = m_jobItems.end();
+	for(JobsItems::Iterator it = m_jobItems.begin() ; it != end; ++it){
+		const QString &name = it.key();
+		if(!jobsList.contains(name))
+			jobsDeleteList.push_back(name);
+	}
+
+	foreach(QString name, jobsDeleteList){
+		Q_ASSERT(m_jobItems.contains(name));
+		JobGraphicsItem *jobItem = m_jobItems.take(name);
+		m_scene->removeItem(jobItem);
+		jobItem->deleteLater();
+		//qDebug()<<"Removed job "<<name;
 	}
 
 	// Nothing to display
@@ -141,10 +140,17 @@ void JenkinsGraphicsView::fullscreenModeChanged(bool enabled){
 		m_fullscreenAction->setChecked(enabled);
 }
 //------------------------------------------------------------------------------
-void JenkinsGraphicsView::updateDisplay(){
-	QMutexLocker locker(&m_jobsMutex);
-	Q_UNUSED(locker);
+void JenkinsGraphicsView::setColumns(uint value){
+	Q_ASSERT(value > 0);
+	if(value == 0)
+		return;
 
+	m_columns = value;
+	updateDisplay();
+	update();
+}
+//------------------------------------------------------------------------------
+void JenkinsGraphicsView::updateDisplay(){
 	QSizeF size = m_scene->sceneRect().size();
 	qreal width = size.width();
 	qreal height = size.height();
@@ -168,14 +174,19 @@ void JenkinsGraphicsView::updateDisplay(){
 
 	// Resize jobs
 	qreal numJobs = m_jobItems.size();
-	qreal jobWidth = width-(2*margin);
-	qreal jobHeight = (height-((numJobs+1)*margin))/numJobs;
+	int numColumns = (m_columns > numJobs)?numJobs:m_columns;
+	int jobsPerCol = qCeil(numJobs/numColumns);
+	qreal jobWidth = (width-((numColumns+1)*margin))/numColumns;
+	qreal jobHeight = (height-((jobsPerCol+1)*margin))/jobsPerCol;
 
 	int i=0;
 	for(JobsItems::Iterator it=m_jobItems.begin() ; it != end ; ++it){
+		int col = i%numColumns;
+		int row = i/numColumns;
+
 		JobGraphicsItem *job = it.value();
 		Q_ASSERT(job);
-		job->setRect(QRectF(margin, margin + ((jobHeight+margin)*i), jobWidth, jobHeight));
+		job->setRect(QRectF(margin + ((jobWidth+margin)*col), margin + ((jobHeight+margin)*row), jobWidth, jobHeight));
 
 		if(!job->isVisible())
 			job->setVisible(true);
@@ -203,9 +214,6 @@ void JenkinsGraphicsView::initContextMenu(){
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::progressTimer_timeout(){
-	QMutexLocker locker(&m_jobsMutex);
-	Q_UNUSED(locker);
-
 	bool repaint = false;
 
 	// Update running jobs

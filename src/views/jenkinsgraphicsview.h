@@ -46,6 +46,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 		void displayError(const QString & msg);
 
 		void fullscreenModeChanged(bool enabled);
+		void setColumns(uint value);
 
 //------------------------------------------------------------------------------
 // Protected functions
@@ -75,7 +76,6 @@ class JenkinsGraphicsView : public QGraphicsView {
 
 		JenkinsGraphicsScene	*m_scene;
 		JobsItems				m_jobItems;
-		QMutex					m_jobsMutex;
 		QTimer					*m_progressUpdateTimer;
 		MessageGraphicsItem	*m_messageItem;
 
@@ -83,6 +83,8 @@ class JenkinsGraphicsView : public QGraphicsView {
 		QAction					*m_fullscreenAction;
 		QAction					*m_preferencesAction;
 		QAction					*m_quitAction;
+
+		uint						m_columns;
 
 //------------------------------------------------------------------------------
 // Constants

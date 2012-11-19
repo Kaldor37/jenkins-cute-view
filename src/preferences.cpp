@@ -21,13 +21,14 @@ Preferences * Preferences::m_instance = 0;
 #define PREFS_IMPL_UINT_FIELD(FieldName, PrefFieldName, DefaultValue)		PREFS_IMPL_FIELD(uint, FieldName, UInt, PrefFieldName, DefaultValue)
 #define PREFS_IMPL_BOOL_FIELD(FieldName, PrefFieldName, DefaultValue)		PREFS_IMPL_FIELD(bool, FieldName, Bool, PrefFieldName, DefaultValue)
 //------------------------------------------------------------------------------
-PREFS_IMPL_STRING_FIELD(JenkinsUrl,			"Jenkins/url", "")
-PREFS_IMPL_UINT_FIELD(APIUpdateInterval,	"Jenkins/APIUpdateInterval", 15)
+PREFS_IMPL_STRING_FIELD(JenkinsUrl,					"Jenkins/url", "")
+PREFS_IMPL_UINT_FIELD(APIUpdateInterval,			"Jenkins/APIUpdateInterval", 15)
 PREFS_IMPL_STRING_FIELD(SelectedView,				"Display/SelectedView", "")
 PREFS_IMPL_BOOL_FIELD(ShowBuildNumber,				"Display/ShowBuildNumber", true)
 PREFS_IMPL_BOOL_FIELD(ShowWeatherIcon,				"Display/ShowWeatherIcon", true)
 PREFS_IMPL_BOOL_FIELD(ShowEstimatedEndTime,		"Display/ShowEstimatedEndTime", true)
 PREFS_IMPL_BOOL_FIELD(ShowLastBuildDescription,	"Display/ShowLastBuildDescription", true)
+PREFS_IMPL_UINT_FIELD(Columns,						"Display/Columns", 1)
 //------------------------------------------------------------------------------
 #undef PREFS_IMPL_UINT_FIELD
 #undef PREFS_IMPL_STRING_FIELD

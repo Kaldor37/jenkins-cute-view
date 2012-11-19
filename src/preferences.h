@@ -63,6 +63,7 @@ PREFS_DECLARE_FIELD(bool,		ShowBuildNumber)
 PREFS_DECLARE_FIELD(bool,		ShowWeatherIcon)
 PREFS_DECLARE_FIELD(bool,		ShowEstimatedEndTime)
 PREFS_DECLARE_FIELD(bool,		ShowLastBuildDescription)
+PREFS_DECLARE_FIELD(uint,		Columns)
 //------------------------------------------------------------------------------
 #undef PREFS_DECLARE_FIELD
 
@@ -77,6 +78,7 @@ PREFS_DECLARE_FIELD(bool,		ShowLastBuildDescription)
 		void sigShowWeatherIconChanged(bool);
 		void sigShowEstimatedEndTimeChanged(bool);
 		void sigShowLastBuildDescriptionChanged(bool);
+		void sigColumnsChanged(uint);
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

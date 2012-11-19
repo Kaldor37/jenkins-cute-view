@@ -51,6 +51,7 @@ class PreferencesDialog : public QDialog{
 	private:
 		Ui::PreferencesDialog *ui;
 		QIntValidator	*m_updateIntervalValidator;
+		QIntValidator	*m_columnsValidator;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------
