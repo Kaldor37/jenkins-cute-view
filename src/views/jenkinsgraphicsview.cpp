@@ -16,8 +16,7 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	m_contextMenu(0),
 	m_fullscreenAction(0),
 	m_preferencesAction(0),
-	m_quitAction(0),
-	m_columns(1)
+	m_quitAction(0)
 {
 	m_scene = new JenkinsGraphicsScene(this);
 	setScene(m_scene);
@@ -30,6 +29,7 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	m_messageItem->setVisible(false);
 	m_scene->addItem(m_messageItem);
 
+	m_columns = Prefs.getColumns();
 	connect(&Prefs, SIGNAL(sigColumnsChanged(uint)), SLOT(setColumns(uint)));
 
 	initContextMenu();
