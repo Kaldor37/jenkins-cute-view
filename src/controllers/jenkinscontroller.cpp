@@ -31,7 +31,7 @@ JenkinsController::JenkinsController(QObject *parent/*=0*/):
 
 	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadViews()));
 	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadNodes()));
-	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadQueue()));
+	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadJobsQueue()));
 }
 //------------------------------------------------------------------------------
 JenkinsController::~JenkinsController(){}
@@ -71,6 +71,8 @@ void JenkinsController::selectedViewDataUpdated(){
 	Q_ASSERT(selectedView);
 
 	QList<JobDisplayData> jobsList;
+	const QVector<QString> &jobsQueue = m_XMLAPIModel->jobsQueue();
+	uint queueSize = jobsQueue.size();
 
 	// View's jobs
 	const ViewModel::JobsList &jobs = selectedView->getJobs();
@@ -116,6 +118,16 @@ void JenkinsController::selectedViewDataUpdated(){
 
 		if(!job->getBuildable())
 			jobData.setStatus(JobDisplayData::StatusInactiveOrNeverBuilt);
+
+		// Position in queue
+		uint queuePos = 0;
+		for(uint i = 0 ; i < queueSize ; ++i){
+			if(job->getName() == jobsQueue[i]){
+				queuePos = i+1;
+				break;
+			}
+		}
+		jobData.setPositionInQueue(queuePos);
 
 		jobsList.push_back(jobData);
 	}

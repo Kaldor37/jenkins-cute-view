@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-#include "views/jobgraphicsitem.h"
+#include "jobgraphicsitem.h"
 #include "autoresizingtextitem.h"
 #include "weathergraphicsitem.h"
 #include "preferences.h"
@@ -14,12 +14,12 @@
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
-	m_name(),
 	m_lastBuildNum(0),
 	m_nameItem(0),
 	m_estEndTimeItem(0),
 	m_descriptionItem(0),
 	m_weatherItem(0),
+	m_positionInQueueItem(0),
 	m_running(false),
 	m_progressFactor(0),
 	m_buildStartTime(0),
@@ -27,7 +27,8 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	m_showBuildNumber(Prefs.getShowBuildNumber()),
 	m_showWeather(Prefs.getShowWeatherIcon()),
 	m_showLastBuildDesc(Prefs.getShowLastBuildDescription()),
-	m_showEstEndTime(Prefs.getShowEstimatedEndTime())
+	m_showEstEndTime(Prefs.getShowEstimatedEndTime()),
+	m_showPositionInQueue(Prefs.getShowPositionInQueue())
 {
 	m_nameItem = new AutoResizingTextItem(this);
 	m_nameItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
@@ -46,11 +47,17 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 
 	m_weatherItem = new WeatherGraphicsItem(this);
 
+	m_positionInQueueItem = new AutoResizingTextItem(this);
+	m_positionInQueueItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
+	m_positionInQueueItem->setPen(QPen(Qt::white));
+	m_positionInQueueItem->setShadowed(true);
+
 	Preferences *prefs = &Prefs;
 	connect(prefs, SIGNAL(sigShowBuildNumberChanged(bool)), SLOT(setShowBuildNumber(bool)));
 	connect(prefs, SIGNAL(sigShowEstimatedEndTimeChanged(bool)), SLOT(setShowEstEndTime(bool)));
 	connect(prefs, SIGNAL(sigShowLastBuildDescriptionChanged(bool)), SLOT(setShowLastBuildDesc(bool)));
 	connect(prefs, SIGNAL(sigShowWeatherIconChanged(bool)), SLOT(setShowWeather(bool)));
+	connect(prefs, SIGNAL(sigShowPositionInQueueChanged(bool)), SLOT(setShowPositionInQueue(bool)));
 }
 //------------------------------------------------------------------------------
 JobGraphicsItem::~JobGraphicsItem(){
@@ -64,6 +71,9 @@ JobGraphicsItem::~JobGraphicsItem(){
 		m_descriptionItem->deleteLater();
 
 	if(m_weatherItem)
+		m_weatherItem->deleteLater();
+
+	if(m_positionInQueueItem)
 		m_weatherItem->deleteLater();
 }
 //------------------------------------------------------------------------------
@@ -194,6 +204,15 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 		m_weatherItem->setVisible(false);
 	}
 
+	// Position in queue
+	m_positionInQueue = data.getPositionInQueue();
+	if(m_positionInQueue > 0 && m_showPositionInQueue && (!m_running || !m_showEstEndTime)){
+		m_positionInQueueItem->setText(QString("%1").arg(m_positionInQueue));
+		m_positionInQueueItem->setVisible(true);
+	}
+	else
+		m_positionInQueueItem->setVisible(false);
+
 	updateName();
 	updateProgress();
 	updateLayout();
@@ -256,6 +275,13 @@ void JobGraphicsItem::setShowLastBuildDesc(bool val){
 void JobGraphicsItem::setShowEstEndTime(bool val){
 	m_showEstEndTime = val;
 	m_estEndTimeItem->setVisible(val && m_running);
+	m_positionInQueueItem->setVisible(m_showPositionInQueue && m_positionInQueue > 0 && (!m_running || !val));
+	updateLayout();
+}
+//------------------------------------------------------------------------------
+void JobGraphicsItem::setShowPositionInQueue(bool val){
+	m_showPositionInQueue = val;
+	m_positionInQueueItem->setVisible(val && m_positionInQueue > 0 && (!m_running || !m_showEstEndTime));
 	updateLayout();
 }
 //------------------------------------------------------------------------------
@@ -307,5 +333,6 @@ void JobGraphicsItem::updateLayout(){
 	m_descriptionItem->setRect(descRect);
 	m_estEndTimeItem->setRect(estEndRect);
 	m_weatherItem->setRect(weatherRect);
+	m_positionInQueueItem->setRect(estEndRect);
 }
 //------------------------------------------------------------------------------

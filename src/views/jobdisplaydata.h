@@ -34,6 +34,7 @@ class JobDisplayData{
 		bool					isRunning() const;
 		qint64				getStartTime() const;
 		qint64				getEstimatedDuration() const;
+		uint					getPositionInQueue() const;
 
 //------------------------------------------------------------------------------
 // Setters
@@ -47,6 +48,7 @@ class JobDisplayData{
 		void setRunning(bool value);
 		void setStartTime(qint64 value);
 		void setEstimatedDuration(qint64 value);
+		void setPositionInQueue(uint value);
 //------------------------------------------------------------------------------
 // Members
 //------------------------------------------------------------------------------
@@ -59,6 +61,7 @@ class JobDisplayData{
 		bool			m_running;
 		qint64		m_startTime;
 		qint64		m_estimatedDuration;
+		uint			m_positionInQueue;
 
 //------------------------------------------------------------------------------
 };

@@ -1,7 +1,6 @@
 //------------------------------------------------------------------------------
 #include "jenkinsxmlapimodel.h"
 #include "utils/httpgetter.h"
-#include "models/queuemodel.h"
 #include "models/nodemodel.h"
 #include "models/viewmodel.h"
 
@@ -16,7 +15,8 @@ JenkinsXMLAPIModel::JenkinsXMLAPIModel(QObject *parent/*=0*/): QObject(parent),
 	m_viewsListLoaded(false),
 	m_primaryView(0),
 	m_selectedView(0),
-	m_nodesListLoaded(false)
+	m_nodesListLoaded(false),
+	m_jobsQueueLoaded(false)
 {
 }
 //------------------------------------------------------------------------------
@@ -47,6 +47,10 @@ const JenkinsXMLAPIModel::NodesList & JenkinsXMLAPIModel::nodes() const {
 	return m_nodes;
 }
 //------------------------------------------------------------------------------
+const QVector<QString> & JenkinsXMLAPIModel::jobsQueue() const {
+	return m_jobsQueue;
+}
+//------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::setJenkinsUrl(const QString &url){
@@ -62,7 +66,7 @@ void JenkinsXMLAPIModel::setJenkinsUrl(const QString &url){
 			emit message(tr("Loading..."));
 			loadViews();
 			loadNodes();
-			loadQueue();
+			loadJobsQueue();
 		}
 		else
 			emit message(tr("Please set jenkins URL"));
@@ -125,8 +129,13 @@ void JenkinsXMLAPIModel::loadNodes(){
 	httpGetter.get(m_jenkinsUrl + "/computer/api/xml", this, SLOT(nodesList_httpFinished(QString,QNetworkReply::NetworkError,QString)));
 }
 //------------------------------------------------------------------------------
-void JenkinsXMLAPIModel::loadQueue(){
+void JenkinsXMLAPIModel::loadJobsQueue(){
+	if(m_jenkinsUrl.isEmpty())
+		return;
 
+	m_jobsQueueLoaded = false;
+
+	httpGetter.get(m_jenkinsUrl + "/queue/api/xml", this, SLOT(jobsQueue_httpFinished(QString,QNetworkReply::NetworkError,QString)));
 }
 //------------------------------------------------------------------------------
 // Private slots
@@ -167,8 +176,22 @@ void JenkinsXMLAPIModel::nodesList_httpFinished(const QString &content, QNetwork
 	parseNodes(doc);
 }
 //------------------------------------------------------------------------------
-void JenkinsXMLAPIModel::queue_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
-	// TODO
+void JenkinsXMLAPIModel::jobsQueue_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
+	if(errCode != QNetworkReply::NoError){
+		qWarning()<<"JenkinsXMLAPIModel::jobsQueue_httpFinished - Error : "<<errCode<<" ("<<error<<")";
+		emit this->error(error);
+		return;
+	}
+
+	QDomDocument doc;
+	bool parsed = doc.setContent(content);
+	if(!parsed){
+		qWarning()<<"JenkinsXMLAPIModel::jobsQueue_httpFinished - Error parsing XML !";
+		emit this->error(tr("Error parsing views list data"));
+		return;
+	}
+
+	parseJobsQueue(doc);
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::selectedView_jobsListLoaded(){
@@ -287,8 +310,25 @@ void JenkinsXMLAPIModel::parseNodes(const QDomDocument &doc){
 	emit nodesListLoaded();
 }
 //------------------------------------------------------------------------------
-void JenkinsXMLAPIModel::parseQueue(const QDomDocument &doc){
+void JenkinsXMLAPIModel::parseJobsQueue(const QDomDocument &doc){
+	m_jobsQueue.clear();
 
+	QDomNodeList nodesList = doc.elementsByTagName("item");
+	int nbJobs = nodesList.size();
+	m_jobsQueue.reserve(nbJobs);
+
+	for(int i=0 ; i < nbJobs ; ++i){
+		QDomNode itemNode = nodesList.at(i);
+		QDomElement taskElm = itemNode.firstChildElement("task");
+		if(!taskElm.isNull()){
+			QDomElement nameElm = taskElm.firstChildElement("name");
+			if(!nameElm.isNull()){
+				m_jobsQueue.push_back(nameElm.text());
+			}
+		}
+	}
+
+	emit jobsQueueLoaded();
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::clearViews(){

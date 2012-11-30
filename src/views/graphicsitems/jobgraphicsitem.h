@@ -2,7 +2,7 @@
 #ifndef JOBGRAPHICSITEM_H
 #define JOBGRAPHICSITEM_H
 //------------------------------------------------------------------------------
-#include "jobdisplaydata.h"
+#include "views/jobdisplaydata.h"
 
 #include <QGraphicsObject>
 //------------------------------------------------------------------------------
@@ -51,6 +51,7 @@ class JobGraphicsItem : public QGraphicsObject {
 		void setShowWeather(bool val);
 		void setShowLastBuildDesc(bool val);
 		void setShowEstEndTime(bool val);
+		void setShowPositionInQueue(bool val);
 
 //------------------------------------------------------------------------------
 // Private
@@ -72,16 +73,19 @@ class JobGraphicsItem : public QGraphicsObject {
 		AutoResizingTextItem	*m_estEndTimeItem;
 		AutoResizingTextItem	*m_descriptionItem;
 		WeatherGraphicsItem	*m_weatherItem;
+		AutoResizingTextItem	*m_positionInQueueItem;
 
 		bool			m_running;
 		qreal			m_progressFactor;
 		qint64		m_buildStartTime;
 		qint64		m_buildEstEndTime;
+		uint			m_positionInQueue;
 
 		bool m_showBuildNumber;
 		bool m_showWeather;
 		bool m_showLastBuildDesc;
 		bool m_showEstEndTime;
+		bool m_showPositionInQueue;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

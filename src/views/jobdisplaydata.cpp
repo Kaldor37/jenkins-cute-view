@@ -11,7 +11,8 @@ JobDisplayData::JobDisplayData():
 	m_lastBuildDesc(),
 	m_running(false),
 	m_startTime(0),
-	m_estimatedDuration(0)
+	m_estimatedDuration(0),
+	m_positionInQueue(0)
 {}
 //------------------------------------------------------------------------------
 JobDisplayData::JobDisplayData(const JobDisplayData &src){
@@ -23,6 +24,7 @@ JobDisplayData::JobDisplayData(const JobDisplayData &src){
 	m_running = src.m_running;
 	m_startTime = src.m_startTime;
 	m_estimatedDuration = src.m_estimatedDuration;
+	m_positionInQueue = src.m_positionInQueue;
 }
 //------------------------------------------------------------------------------
 JobDisplayData & JobDisplayData::operator=(const JobDisplayData &src){
@@ -35,6 +37,7 @@ JobDisplayData & JobDisplayData::operator=(const JobDisplayData &src){
 		m_running = src.m_running;
 		m_startTime = src.m_startTime;
 		m_estimatedDuration = src.m_estimatedDuration;
+		m_positionInQueue = src.m_positionInQueue;
 	}
 	return *this;
 }
@@ -75,6 +78,10 @@ qint64 JobDisplayData::getEstimatedDuration() const {
 	return m_estimatedDuration;
 }
 //------------------------------------------------------------------------------
+uint JobDisplayData::getPositionInQueue() const {
+	return m_positionInQueue;
+}
+//------------------------------------------------------------------------------
 // Setters
 //------------------------------------------------------------------------------
 void JobDisplayData::setName(const QString &value){
@@ -107,5 +114,9 @@ void JobDisplayData::setStartTime(qint64 value){
 //------------------------------------------------------------------------------
 void JobDisplayData::setEstimatedDuration(qint64 value){
 	m_estimatedDuration = value;
+}
+//------------------------------------------------------------------------------
+void JobDisplayData::setPositionInQueue(uint value){
+	m_positionInQueue = value;
 }
 //------------------------------------------------------------------------------

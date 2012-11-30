@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-#include "views/messagegraphicsitem.h"
+#include "messagegraphicsitem.h"
 #include "autoresizingtextitem.h"
 
 #include <QPainter>

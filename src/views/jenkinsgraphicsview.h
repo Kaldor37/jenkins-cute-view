@@ -3,7 +3,7 @@
 #define JENKINSGRAPHICSVIEW_H
 //------------------------------------------------------------------------------
 #include "jobdisplaydata.h"
-#include "messagegraphicsitem.h"
+#include "graphicsitems/messagegraphicsitem.h"
 
 #include <QGraphicsView>
 #include <QMap>

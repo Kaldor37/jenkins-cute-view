@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-#include "views/autoresizingtextitem.h"
+#include "autoresizingtextitem.h"
 
 #include <QPainter>
 #include <QDebug>

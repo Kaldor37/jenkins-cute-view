@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
 #include "jenkinsgraphicsview.h"
-#include "jobgraphicsitem.h"
-#include "nodegraphicsitem.h"
-#include "autoresizingtextitem.h"
+#include "graphicsitems/jobgraphicsitem.h"
+#include "graphicsitems/nodegraphicsitem.h"
+#include "graphicsitems/autoresizingtextitem.h"
 #include "preferences.h"
 
 #include <QDebug>

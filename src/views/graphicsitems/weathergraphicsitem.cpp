@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-#include "views/weathergraphicsitem.h"
+#include "weathergraphicsitem.h"
 
 #include <QGraphicsPixmapItem>
 #include <QPainter>

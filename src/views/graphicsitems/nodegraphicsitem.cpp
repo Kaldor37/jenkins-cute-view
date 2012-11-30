@@ -81,6 +81,6 @@ const QString & NodeGraphicsItem::getName() const{
 //------------------------------------------------------------------------------
 void NodeGraphicsItem::updateLayout(){
 	QRectF rect(boundingRect());
-	m_nameItem->setRect(QRectF(rect.x(), rect.height()*0.2, rect.width(), rect.height()*0.6));
+	m_nameItem->setRect(QRectF(rect.x()+(rect.width()*0.05), rect.height()*0.2, rect.width()*0.9, rect.height()*0.6));
 }
 //------------------------------------------------------------------------------

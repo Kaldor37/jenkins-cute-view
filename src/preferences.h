@@ -65,6 +65,7 @@ PREFS_DECLARE_FIELD(bool,		ShowEstimatedEndTime)
 PREFS_DECLARE_FIELD(bool,		ShowLastBuildDescription)
 PREFS_DECLARE_FIELD(uint,		Columns)
 PREFS_DECLARE_FIELD(bool,		ShowNodes)
+PREFS_DECLARE_FIELD(bool,		ShowPositionInQueue)
 //------------------------------------------------------------------------------
 #undef PREFS_DECLARE_FIELD
 
@@ -81,6 +82,7 @@ PREFS_DECLARE_FIELD(bool,		ShowNodes)
 		void sigShowLastBuildDescriptionChanged(bool);
 		void sigColumnsChanged(uint);
 		void sigShowNodesChanged(bool);
+		void sigShowPositionInQueueChanged(bool);
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

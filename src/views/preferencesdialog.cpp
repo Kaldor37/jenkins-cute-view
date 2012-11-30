@@ -54,6 +54,7 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	ui->m_showEstEndTimeCheckBox->setChecked(prefs.getShowEstimatedEndTime());
 	ui->m_showLastBuildDescCheckBox->setChecked(prefs.getShowLastBuildDescription());
 	ui->m_showNodesCheckBox->setChecked(prefs.getShowNodes());
+	ui->m_showPositionInQueue->setChecked(prefs.getShowPositionInQueue());
 
 	// Number of columns
 	ui->m_columnsLineEdit->setText(QString("%1").arg(prefs.getColumns()));
@@ -146,5 +147,6 @@ void PreferencesDialog::savePreferences(){
 	Prefs.setShowEstimatedEndTime(ui->m_showEstEndTimeCheckBox->isChecked());
 	Prefs.setShowLastBuildDescription(ui->m_showLastBuildDescCheckBox->isChecked());
 	Prefs.setShowNodes(ui->m_showNodesCheckBox->isChecked());
+	Prefs.setShowPositionInQueue(ui->m_showPositionInQueue->isChecked());
 }
 //------------------------------------------------------------------------------

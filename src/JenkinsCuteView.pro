@@ -14,19 +14,18 @@ SOURCES		+=	main.cpp \
 					models/jenkinsxmlapimodel.cpp \
 					models/jobmodel.cpp \
 					models/nodemodel.cpp \
-					models/queuemodel.cpp \
 					models/viewmodel.cpp \
 					utils/httpgetter.cpp \
 					views/aboutdialog.cpp \
-					views/autoresizingtextitem.cpp \
 					views/jenkinsgraphicsview.cpp \
 					views/jobdisplaydata.cpp \
-					views/jobgraphicsitem.cpp \
 					views/mainwindow.cpp \
-					views/messagegraphicsitem.cpp \
-					views/nodegraphicsitem.cpp \
 					views/preferencesdialog.cpp \
-					views/weathergraphicsitem.cpp
+					views/graphicsitems/autoresizingtextitem.cpp \
+					views/graphicsitems/jobgraphicsitem.cpp \
+					views/graphicsitems/messagegraphicsitem.cpp \
+					views/graphicsitems/nodegraphicsitem.cpp \
+					views/graphicsitems/weathergraphicsitem.cpp
 #-------------------------------------------------------------------------------
 HEADERS		+=	application.h \
 					preferences.h \
@@ -35,19 +34,18 @@ HEADERS		+=	application.h \
 					models/jenkinsxmlapimodel.h \
 					models/jobmodel.h \
 					models/nodemodel.h \
-					models/queuemodel.h \
 					models/viewmodel.h \
 					utils/httpgetter.h \
 					views/aboutdialog.h \
-					views/autoresizingtextitem.h \
 					views/jenkinsgraphicsview.h \
 					views/jobdisplaydata.h \
-					views/jobgraphicsitem.h \
-					views/mainwindow.h \
-					views/messagegraphicsitem.h \
-					views/nodegraphicsitem.h \
 					views/preferencesdialog.h \
-					views/weathergraphicsitem.h
+					views/mainwindow.h \
+					views/graphicsitems/autoresizingtextitem.h \
+					views/graphicsitems/jobgraphicsitem.h \
+					views/graphicsitems/messagegraphicsitem.h \
+					views/graphicsitems/nodegraphicsitem.h \
+					views/graphicsitems/weathergraphicsitem.h
 #-------------------------------------------------------------------------------
 FORMS			+=	views/uis/aboutdialog.ui \
 					views/uis/mainwindow.ui \

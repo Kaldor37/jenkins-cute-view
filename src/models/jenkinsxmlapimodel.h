@@ -3,7 +3,6 @@
 #define JENKINSXMLAPIMODEL_H
 //------------------------------------------------------------------------------
 #include "models/jobmodel.h"
-//#include "models/viewmodel.h"
 
 #include <QObject>
 #include <QNetworkReply>
@@ -15,7 +14,6 @@ class HttpGetter;
 class JobModel;
 class ViewModel;
 class NodeModel;
-class QueueModel;
 class QDomDocument;
 //------------------------------------------------------------------------------
 class JenkinsXMLAPIModel : public QObject {
@@ -41,6 +39,7 @@ class JenkinsXMLAPIModel : public QObject {
 		void viewsNamesUpdated(QStringList viewsNames, QString selectedViewName);
 		void selectedViewLoaded();
 		void nodesListLoaded();
+		void jobsQueueLoaded();
 
 		void message(QString);
 		void warning(QString);
@@ -75,6 +74,11 @@ class JenkinsXMLAPIModel : public QObject {
 		 */
 		const NodesList & nodes() const;
 
+		/**
+		 * List of jobs in queue
+		 */
+		const QVector<QString> & jobsQueue() const;
+
 //------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
@@ -107,7 +111,7 @@ class JenkinsXMLAPIModel : public QObject {
 		/**
 		 * Starts loading jobs queue
 		 */
-		void loadQueue();
+		void loadJobsQueue();
 
 //------------------------------------------------------------------------------
 // Private slots
@@ -115,7 +119,7 @@ class JenkinsXMLAPIModel : public QObject {
 	private slots:
 		void viewsList_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 		void nodesList_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
-		void queue_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
+		void jobsQueue_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 
 		void selectedView_jobsListLoaded();
 
@@ -125,7 +129,7 @@ class JenkinsXMLAPIModel : public QObject {
 	private:
 		void parseViews(const QDomDocument &doc);
 		void parseNodes(const QDomDocument &doc);
-		void parseQueue(const QDomDocument &doc);
+		void parseJobsQueue(const QDomDocument &doc);
 
 		void clearViews();
 		void clearNodes();
@@ -134,16 +138,19 @@ class JenkinsXMLAPIModel : public QObject {
 // Members
 //------------------------------------------------------------------------------
 	private:
-		QString			m_jenkinsUrl;
-		QString			m_selectedViewName;
+		QString				m_jenkinsUrl;
+		QString				m_selectedViewName;
 
-		bool				m_viewsListLoaded;
-		ViewsList		m_views;
-		ViewModel *		m_primaryView;
-		ViewModel *		m_selectedView;
+		bool					m_viewsListLoaded;
+		ViewsList			m_views;
+		ViewModel *			m_primaryView;
+		ViewModel *			m_selectedView;
 
-		bool				m_nodesListLoaded;
-		NodesList		m_nodes;
+		bool					m_nodesListLoaded;
+		NodesList			m_nodes;
+
+		bool					m_jobsQueueLoaded;
+		QVector<QString>	m_jobsQueue;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------
