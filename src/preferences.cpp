@@ -29,6 +29,7 @@ PREFS_IMPL_BOOL_FIELD(ShowWeatherIcon,				"Display/ShowWeatherIcon", true)
 PREFS_IMPL_BOOL_FIELD(ShowEstimatedEndTime,		"Display/ShowEstimatedEndTime", true)
 PREFS_IMPL_BOOL_FIELD(ShowLastBuildDescription,	"Display/ShowLastBuildDescription", true)
 PREFS_IMPL_UINT_FIELD(Columns,						"Display/Columns", 1)
+PREFS_IMPL_BOOL_FIELD(ShowNodes,						"Display/ShowNodes", true)
 //------------------------------------------------------------------------------
 #undef PREFS_IMPL_UINT_FIELD
 #undef PREFS_IMPL_STRING_FIELD

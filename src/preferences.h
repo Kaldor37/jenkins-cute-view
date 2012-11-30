@@ -64,11 +64,12 @@ PREFS_DECLARE_FIELD(bool,		ShowWeatherIcon)
 PREFS_DECLARE_FIELD(bool,		ShowEstimatedEndTime)
 PREFS_DECLARE_FIELD(bool,		ShowLastBuildDescription)
 PREFS_DECLARE_FIELD(uint,		Columns)
+PREFS_DECLARE_FIELD(bool,		ShowNodes)
 //------------------------------------------------------------------------------
 #undef PREFS_DECLARE_FIELD
 
 //------------------------------------------------------------------------------
-// Signals (cannot be declared with macro)
+// Signals
 //------------------------------------------------------------------------------
 	signals:
 		void sigJenkinsUrlChanged(QString);
@@ -79,6 +80,7 @@ PREFS_DECLARE_FIELD(uint,		Columns)
 		void sigShowEstimatedEndTimeChanged(bool);
 		void sigShowLastBuildDescriptionChanged(bool);
 		void sigColumnsChanged(uint);
+		void sigShowNodesChanged(bool);
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

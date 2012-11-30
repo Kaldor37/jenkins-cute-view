@@ -6,6 +6,8 @@
 
 #include <QObject>
 #include <QList>
+#include <QColor>
+#include <QVector>
 
 class MainWindow;
 class QTimer;
@@ -20,6 +22,8 @@ class JenkinsController : public QObject {
 //------------------------------------------------------------------------------
 	signals:
 		void jobs_updated(QList<JobDisplayData> jobs);
+		void nodes_updated(QVector<QString> nodesNames, QVector<QColor> nodesColors);
+
 //------------------------------------------------------------------------------
 	public slots:
 		void control(MainWindow *wnd);
@@ -27,9 +31,7 @@ class JenkinsController : public QObject {
 		void start();
 
 		void selectedViewDataUpdated();
-//------------------------------------------------------------------------------
-	private slots:
-		void timerTimeout();
+		void nodesListUpdated();
 //------------------------------------------------------------------------------
 	private:
 		QTimer					*m_updateTimer;

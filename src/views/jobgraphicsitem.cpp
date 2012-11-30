@@ -37,6 +37,7 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	m_estEndTimeItem = new AutoResizingTextItem(this);
 	m_estEndTimeItem->setFont(QFont("Arial")); // TODO - Manage in prefs
 	m_estEndTimeItem->setPen(QPen(Qt::white));
+	m_estEndTimeItem->setShadowed(true);
 
 	m_descriptionItem = new AutoResizingTextItem(this);
 	m_descriptionItem->setFont(QFont("Arial", -1, QFont::DemiBold)); // TODO - Manage in prefs

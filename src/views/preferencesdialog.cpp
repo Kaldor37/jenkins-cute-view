@@ -53,6 +53,7 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	ui->m_showWeatherCheckBox->setChecked(prefs.getShowWeatherIcon());
 	ui->m_showEstEndTimeCheckBox->setChecked(prefs.getShowEstimatedEndTime());
 	ui->m_showLastBuildDescCheckBox->setChecked(prefs.getShowLastBuildDescription());
+	ui->m_showNodesCheckBox->setChecked(prefs.getShowNodes());
 
 	// Number of columns
 	ui->m_columnsLineEdit->setText(QString("%1").arg(prefs.getColumns()));
@@ -144,5 +145,6 @@ void PreferencesDialog::savePreferences(){
 	Prefs.setShowWeatherIcon(ui->m_showWeatherCheckBox->isChecked());
 	Prefs.setShowEstimatedEndTime(ui->m_showEstEndTimeCheckBox->isChecked());
 	Prefs.setShowLastBuildDescription(ui->m_showLastBuildDescCheckBox->isChecked());
+	Prefs.setShowNodes(ui->m_showNodesCheckBox->isChecked());
 }
 //------------------------------------------------------------------------------

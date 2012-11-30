@@ -2,13 +2,14 @@
 #include "jenkinscontroller.h"
 #include "models/jenkinsxmlapimodel.h"
 #include "models/buildmodel.h"
-#include "views/mainwindow.h"
+#include "models/nodemodel.h"
+#include "models/viewmodel.h"
 #include "preferences.h"
+#include "views/mainwindow.h"
 #include "views/jenkinsgraphicsview.h"
 
 #include <QDebug>
 #include <QTimer>
-
 //------------------------------------------------------------------------------
 // Constructor/Destructor
 //------------------------------------------------------------------------------
@@ -18,7 +19,6 @@ JenkinsController::JenkinsController(QObject *parent/*=0*/):
 {
 	m_updateTimer = new QTimer(this);
 	m_updateTimer->setInterval(Prefs.getAPIUpdateInterval()*1000);
-	connect(m_updateTimer, SIGNAL(timeout()), SLOT(timerTimeout()));
 	connect(&Prefs, SIGNAL(sigAPIUpdateIntervalChanged(uint)), SLOT(prefs_APIUpdateIntervalChanged(uint)));
 
 	m_XMLAPIModel = new JenkinsXMLAPIModel(this);
@@ -27,6 +27,11 @@ JenkinsController::JenkinsController(QObject *parent/*=0*/):
 	QObject::connect(&Prefs, SIGNAL(sigJenkinsUrlChanged(QString)), m_XMLAPIModel, SLOT(setJenkinsUrl(QString)));
 	QObject::connect(&Prefs, SIGNAL(sigSelectedViewChanged(QString)), m_XMLAPIModel, SLOT(setSelectedView(QString)));
 	connect(m_XMLAPIModel, SIGNAL(selectedViewLoaded()), SLOT(selectedViewDataUpdated()));
+	connect(m_XMLAPIModel, SIGNAL(nodesListLoaded()), SLOT(nodesListUpdated()));
+
+	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadViews()));
+	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadNodes()));
+	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadQueue()));
 }
 //------------------------------------------------------------------------------
 JenkinsController::~JenkinsController(){}
@@ -34,11 +39,18 @@ JenkinsController::~JenkinsController(){}
 // Public slots
 //------------------------------------------------------------------------------
 void JenkinsController::control(MainWindow *wnd){
+	qRegisterMetaType< QVector<QString> >("QVector<QString>");
+	qRegisterMetaType< QVector<QColor> >("QVector<QColor>");
+	qRegisterMetaType< QList<JobDisplayData> >("QList<JobDisplayData>");
+	qRegisterMetaType<QStringList>("QStringList");
+
 	// To UI
 	QObject::connect(m_XMLAPIModel, SIGNAL(viewsNamesUpdated(QStringList,QString)), wnd, SIGNAL(viewsNamesUpdated(QStringList,QString)));
 
 	// To graphics view
-	QObject::connect(this, SIGNAL(jobs_updated(QList<JobDisplayData>)), wnd->getGraphicsView(), SLOT(updateJobs(QList<JobDisplayData>)));
+	QObject::connect(this, SIGNAL(jobs_updated(QList<JobDisplayData>)), wnd->getGraphicsView(), SLOT(updateJobs(QList<JobDisplayData>)), Qt::QueuedConnection);
+	QObject::connect(this, SIGNAL(nodes_updated(QVector<QString>,QVector<QColor>)), wnd->getGraphicsView(), SLOT(updateNodes(QVector<QString>,QVector<QColor>)), Qt::QueuedConnection);
+
 	QObject::connect(m_XMLAPIModel, SIGNAL(message(QString)), wnd->getGraphicsView(), SLOT(displayMessage(QString)));
 	QObject::connect(m_XMLAPIModel, SIGNAL(warning(QString)), wnd->getGraphicsView(), SLOT(displayWarning(QString)));
 	QObject::connect(m_XMLAPIModel, SIGNAL(error(QString)), wnd->getGraphicsView(), SLOT(displayError(QString)));
@@ -111,9 +123,26 @@ void JenkinsController::selectedViewDataUpdated(){
 	emit jobs_updated(jobsList);
 }
 //------------------------------------------------------------------------------
-// Public methods
-//------------------------------------------------------------------------------
-void JenkinsController::timerTimeout(){
-	m_XMLAPIModel->loadViews();
+void JenkinsController::nodesListUpdated(){
+	const JenkinsXMLAPIModel::NodesList &nodesList = m_XMLAPIModel->nodes();
+
+	QVector<QString> nodesNames;
+	QVector<QColor> nodesColors;
+
+	foreach(const NodeModel * node, nodesList){
+		nodesNames.push_back(node->getDisplayName());
+
+		QColor nodeColor = Qt::darkGreen;
+		if(node->getTemporarilyOffline())
+			nodeColor = Qt::darkGray;
+		else if(node->getOffline())
+			nodeColor = Qt::darkRed;
+		else if(!node->getIdle())
+			nodeColor = QColor(Qt::darkGreen).lighter();
+
+		nodesColors.push_back(nodeColor);
+	}
+
+	emit nodes_updated(nodesNames, nodesColors);
 }
 //------------------------------------------------------------------------------

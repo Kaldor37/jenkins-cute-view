@@ -3,7 +3,7 @@
 #define JENKINSXMLAPIMODEL_H
 //------------------------------------------------------------------------------
 #include "models/jobmodel.h"
-#include "models/viewmodel.h"
+//#include "models/viewmodel.h"
 
 #include <QObject>
 #include <QNetworkReply>
@@ -14,6 +14,8 @@ class QString;
 class HttpGetter;
 class JobModel;
 class ViewModel;
+class NodeModel;
+class QueueModel;
 class QDomDocument;
 //------------------------------------------------------------------------------
 class JenkinsXMLAPIModel : public QObject {
@@ -30,6 +32,7 @@ class JenkinsXMLAPIModel : public QObject {
 //------------------------------------------------------------------------------
 	public:
 		typedef QVector<ViewModel*> ViewsList;
+		typedef QVector<NodeModel*> NodesList;
 
 //------------------------------------------------------------------------------
 // Signals
@@ -37,6 +40,7 @@ class JenkinsXMLAPIModel : public QObject {
 	signals:
 		void viewsNamesUpdated(QStringList viewsNames, QString selectedViewName);
 		void selectedViewLoaded();
+		void nodesListLoaded();
 
 		void message(QString);
 		void warning(QString);
@@ -66,6 +70,11 @@ class JenkinsXMLAPIModel : public QObject {
 		 */
 		const ViewModel * selectedView() const;
 
+		/**
+		 * List of allnodes
+		 */
+		const NodesList & nodes() const;
+
 //------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
@@ -90,18 +99,36 @@ class JenkinsXMLAPIModel : public QObject {
 		 */
 		void loadSelectedView();
 
+		/**
+		 * Starts loading nodes list
+		 */
+		void loadNodes();
+
+		/**
+		 * Starts loading jobs queue
+		 */
+		void loadQueue();
+
 //------------------------------------------------------------------------------
 // Private slots
 //------------------------------------------------------------------------------
 	private slots:
-		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
+		void viewsList_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
+		void nodesList_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
+		void queue_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
+
 		void selectedView_jobsListLoaded();
+
 //------------------------------------------------------------------------------
 // Private functions
 //------------------------------------------------------------------------------
 	private:
 		void parseViews(const QDomDocument &doc);
+		void parseNodes(const QDomDocument &doc);
+		void parseQueue(const QDomDocument &doc);
+
 		void clearViews();
+		void clearNodes();
 
 //------------------------------------------------------------------------------
 // Members
@@ -114,6 +141,9 @@ class JenkinsXMLAPIModel : public QObject {
 		ViewsList		m_views;
 		ViewModel *		m_primaryView;
 		ViewModel *		m_selectedView;
+
+		bool				m_nodesListLoaded;
+		NodesList		m_nodes;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 #include "jenkinsgraphicsview.h"
 #include "jobgraphicsitem.h"
+#include "nodegraphicsitem.h"
 #include "autoresizingtextitem.h"
 #include "preferences.h"
 
@@ -31,6 +32,9 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 
 	m_columns = Prefs.getColumns();
 	connect(&Prefs, SIGNAL(sigColumnsChanged(uint)), SLOT(setColumns(uint)));
+
+	m_showNodes = Prefs.getShowNodes();
+	connect(&Prefs, SIGNAL(sigShowNodesChanged(bool)), SLOT(setShowNodes(bool)));
 
 	initContextMenu();
 }
@@ -119,6 +123,53 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 	update();
 }
 //------------------------------------------------------------------------------
+void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const QVector<QColor> &nodeColors){
+	Q_ASSERT(nodeNames.size() == nodeColors.size());
+	int nbNodes = nodeNames.size();
+
+	for(int i=0 ; i < nbNodes ; ++i){
+		const QString &name = nodeNames[i];
+		const QColor &color = nodeColors[i];
+
+		// Find node
+		NodeGraphicsItem *foundNode = NULL;
+		NodesItems::Iterator found = m_nodeItems.find(name);
+		if(found != m_nodeItems.end()){
+			foundNode = found.value();
+			Q_ASSERT(foundNode);
+		}
+
+		// Update node
+		if(foundNode){
+			foundNode->setColor(color);
+			//qDebug()<<"Updated node "<<name;
+		}
+		// Create node
+		else{
+			NodeGraphicsItem *nodeItem = new NodeGraphicsItem();
+			nodeItem->setName(name);
+			nodeItem->setColor(color);
+			m_nodeItems[name] = nodeItem;
+			m_scene->addItem(nodeItem);
+			//qDebug()<<"Added node "<<name;
+		}
+	}
+
+	// Delete old nodes
+	QList<QString> nodesList = m_nodeItems.keys();
+	foreach(const QString &nodeName, nodesList){
+		if(!nodeNames.contains(nodeName)){
+			NodeGraphicsItem *node = m_nodeItems.take(nodeName);
+			m_scene->removeItem(node);
+			node->deleteLater();
+			//qDebug()<<"Deleted node "<<nodeName;
+		}
+	}
+
+	updateDisplay();
+	update();
+}
+//------------------------------------------------------------------------------
 void JenkinsGraphicsView::displayMessage(const QString & msg, MessageGraphicsItem::eMessageType type){
 	Q_ASSERT(!msg.isEmpty());
 	m_messageItem->setMessage(type, msg);
@@ -150,6 +201,12 @@ void JenkinsGraphicsView::setColumns(uint value){
 	update();
 }
 //------------------------------------------------------------------------------
+void JenkinsGraphicsView::setShowNodes(bool value){
+	m_showNodes = value;
+	updateDisplay();
+	update();
+}
+//------------------------------------------------------------------------------
 void JenkinsGraphicsView::updateDisplay(){
 	QSizeF size = m_scene->sceneRect().size();
 	qreal width = size.width();
@@ -157,6 +214,7 @@ void JenkinsGraphicsView::updateDisplay(){
 	qreal margin = jobsMargin;
 
 	const JobsItems::Iterator end = m_jobItems.end();
+	const NodesItems::Iterator nodesEnd = m_nodeItems.end();
 
 	// Display message instead of jobs
 	if(m_messageItem->isVisible()){
@@ -172,17 +230,41 @@ void JenkinsGraphicsView::updateDisplay(){
 		return;
 	}
 
-	// Resize jobs
-	qreal numJobs = m_jobItems.size();
-	int numColumns = (m_columns > numJobs)?numJobs:m_columns;
-	int jobsPerCol = qCeil(numJobs/numColumns);
-	qreal jobWidth = (width-((numColumns+1)*margin))/numColumns;
-	qreal jobHeight = (height-((jobsPerCol+1)*margin))/jobsPerCol;
+	Q_ASSERT(m_columns > 0);
+	if(m_columns == 0)
+		return;
+	if(m_jobItems.size() <= 0)
+		return;
 
-	int i=0;
+	// Number of nodes to display
+	qreal numNodes = (m_showNodes)?m_nodeItems.size():0;
+	// Number of jobs
+	qreal numJobs = m_jobItems.size();
+	// Number of columns
+	qreal numColumns = (m_columns > numJobs)?numJobs:m_columns;
+	// Jobs per column
+	qreal jobsPerCol = qCeil(numJobs/numColumns);
+	// Number of rows
+	qreal numRows = jobsPerCol+((numNodes > 0)?1:0);
+
+	// Job width
+	qreal jobWidth = (width-((numColumns+1)*margin))/numColumns;
+	// Job height
+	qreal jobHeight = (height-((numRows+1)*margin))/numRows;
+	// Node width
+	qreal nodeWidth = (numNodes > 0)?((width-((numNodes+1)*margin))/numNodes):0;
+
+	int i = 0;
+	for(NodesItems::Iterator it=m_nodeItems.begin() ; it != nodesEnd ; ++it){
+		NodeGraphicsItem *node = it.value();
+		node->setRect(QRectF(margin + ((nodeWidth+margin)*i), margin, nodeWidth, jobHeight));
+		++i;
+	}
+
+	i = 0;
 	for(JobsItems::Iterator it=m_jobItems.begin() ; it != end ; ++it){
-		int col = i%numColumns;
-		int row = i/numColumns;
+		int col = i%(int)numColumns;
+		int row = (i/numColumns)+((numNodes > 0)?1:0);
 
 		JobGraphicsItem *job = it.value();
 		Q_ASSERT(job);

@@ -13,6 +13,8 @@ SOURCES		+=	main.cpp \
 					models/buildmodel.cpp \
 					models/jenkinsxmlapimodel.cpp \
 					models/jobmodel.cpp \
+					models/nodemodel.cpp \
+					models/queuemodel.cpp \
 					models/viewmodel.cpp \
 					utils/httpgetter.cpp \
 					views/aboutdialog.cpp \
@@ -22,6 +24,7 @@ SOURCES		+=	main.cpp \
 					views/jobgraphicsitem.cpp \
 					views/mainwindow.cpp \
 					views/messagegraphicsitem.cpp \
+					views/nodegraphicsitem.cpp \
 					views/preferencesdialog.cpp \
 					views/weathergraphicsitem.cpp
 #-------------------------------------------------------------------------------
@@ -31,6 +34,8 @@ HEADERS		+=	application.h \
 					models/buildmodel.h \
 					models/jenkinsxmlapimodel.h \
 					models/jobmodel.h \
+					models/nodemodel.h \
+					models/queuemodel.h \
 					models/viewmodel.h \
 					utils/httpgetter.h \
 					views/aboutdialog.h \
@@ -40,6 +45,7 @@ HEADERS		+=	application.h \
 					views/jobgraphicsitem.h \
 					views/mainwindow.h \
 					views/messagegraphicsitem.h \
+					views/nodegraphicsitem.h \
 					views/preferencesdialog.h \
 					views/weathergraphicsitem.h
 #-------------------------------------------------------------------------------

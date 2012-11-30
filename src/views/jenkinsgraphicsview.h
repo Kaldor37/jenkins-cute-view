@@ -11,6 +11,7 @@
 //------------------------------------------------------------------------------
 class JenkinsGraphicsScene;
 class JobGraphicsItem;
+class NodeGraphicsItem;
 class QTimer;
 class AutoResizingTextItem;
 class QMenu;
@@ -40,6 +41,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 //------------------------------------------------------------------------------
 	public slots:
 		void updateJobs(const QList<JobDisplayData> &);
+		void updateNodes(const QVector<QString> &nodeNames, const QVector<QColor> &nodeColors);
 
 		void displayMessage(const QString & msg, MessageGraphicsItem::eMessageType type=MessageGraphicsItem::Normal);
 		void displayWarning(const QString & msg);
@@ -47,6 +49,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 
 		void fullscreenModeChanged(bool enabled);
 		void setColumns(uint value);
+		void setShowNodes(bool value);
 
 //------------------------------------------------------------------------------
 // Protected functions
@@ -73,9 +76,11 @@ class JenkinsGraphicsView : public QGraphicsView {
 //------------------------------------------------------------------------------
 	private:
 		typedef QMap<QString,JobGraphicsItem*> JobsItems;
+		typedef QMap<QString,NodeGraphicsItem*> NodesItems;
 
 		JenkinsGraphicsScene	*m_scene;
 		JobsItems				m_jobItems;
+		NodesItems				m_nodeItems;
 		QTimer					*m_progressUpdateTimer;
 		MessageGraphicsItem	*m_messageItem;
 
@@ -85,7 +90,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 		QAction					*m_quitAction;
 
 		uint						m_columns;
-
+		bool						m_showNodes;
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
