@@ -18,13 +18,18 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow),
 	m_prefsDialog(0),
 	m_aboutDialog(0),
-	m_fullscreenShortcut(0)
+	m_fullscreenShortcut(0),
+	m_emptyCursor(0)
 {
 	ui->setupUi(this);
 
 	m_fullscreenShortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
 	m_fullscreenShortcut->setContext(Qt::WindowShortcut);
 	connect(m_fullscreenShortcut, SIGNAL(activated()), SLOT(fullScreenShortcut_activated()));
+
+	QPixmap emptyCursorPixmap(QSize(1,1));
+	emptyCursorPixmap.fill(Qt::transparent);
+	m_emptyCursor = new QCursor(emptyCursorPixmap);
 
 	// Moves this window to the center of the screen
 	const QDesktopWidget &dw = *QApplication::desktop();
@@ -45,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //------------------------------------------------------------------------------
 MainWindow::~MainWindow(){
 	delete ui;
+
+	if(m_emptyCursor)
+		delete m_emptyCursor;
 }
 //------------------------------------------------------------------------------
 // Public slots
@@ -94,10 +102,16 @@ void MainWindow::on_m_actionFullscreen_triggered(){
 	if(!isFullScreen()){
 		showFullScreen();
 		ui->m_menuBar->setVisible(false);
+
+
+		setCursor(*m_emptyCursor);
+
 		emit fullscreenModeChanged(true);
 	}
 	// Set to normal
 	else{
+		setCursor(Qt::ArrowCursor);
+
 		showNormal();
 		ui->m_menuBar->setVisible(true);
 		emit fullscreenModeChanged(false);
@@ -112,5 +126,12 @@ void MainWindow::fullScreenShortcut_activated(){
 	ui->m_actionFullscreen->trigger();
 }
 //------------------------------------------------------------------------------
-// Private functions
+void MainWindow::graphicsView_contextMenuShown(){
+	setCursor(Qt::ArrowCursor);
+}
+//------------------------------------------------------------------------------
+void MainWindow::graphicsView_contextMenuHidden(){
+	if(isFullScreen())
+		setCursor(*m_emptyCursor);
+}
 //------------------------------------------------------------------------------

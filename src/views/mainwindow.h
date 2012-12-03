@@ -58,6 +58,8 @@ class MainWindow : public QMainWindow{
 		void on_m_actionAbout_triggered();
 
 		void fullScreenShortcut_activated();
+		void graphicsView_contextMenuShown();
+		void graphicsView_contextMenuHidden();
 
 //------------------------------------------------------------------------------
 // Private functions
@@ -77,6 +79,9 @@ class MainWindow : public QMainWindow{
 
 		// Shortcuts
 		QShortcut			*m_fullscreenShortcut;
+
+		// Empty cursor
+		QCursor				*m_emptyCursor;
 };
 //------------------------------------------------------------------------------
 #endif // MAINWINDOW_H

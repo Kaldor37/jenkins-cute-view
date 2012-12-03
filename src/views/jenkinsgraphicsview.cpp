@@ -56,7 +56,13 @@ void JenkinsGraphicsView::resizeEvent(QResizeEvent *event){
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::contextMenuEvent(QContextMenuEvent *event){
 	Q_ASSERT(m_contextMenu);
+
+	emit contextMenuShown();
+
 	m_contextMenu->exec(event->globalPos());
+
+	emit contextMenuHidden();
+
 	QGraphicsView::contextMenuEvent(event);
 }
 //------------------------------------------------------------------------------

@@ -35,6 +35,8 @@ class JenkinsGraphicsView : public QGraphicsView {
 		void fullScreenTriggered();
 		void preferencesTriggered();
 		void quitTriggered();
+		void contextMenuShown();
+		void contextMenuHidden();
 
 //------------------------------------------------------------------------------
 // Public slots
