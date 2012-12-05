@@ -82,8 +82,11 @@ void JenkinsController::selectedViewDataUpdated(){
 		const BuildModel *jobLastBuild = job->getLastBuild();
 		const BuildModel *jobLastCompBuild = job->getLastCompletedBuild();
 
+		QString displayName = job->getDisplayName();
+		QString name = job->getName();
+
 		JobDisplayData jobData;
-		jobData.setName(job->getName());
+		jobData.setName(displayName.isEmpty()?name:displayName);
 		jobData.setStability(job->getHealthScore());
 
 		// Last build infos
