@@ -232,6 +232,12 @@ void JenkinsGraphicsView::updateDisplay(){
 			Q_ASSERT(job);
 			job->setVisible(false);
 		}
+		// Hide nodes
+		for(NodesItems::Iterator it=m_nodeItems.begin() ; it != nodesEnd ; ++it){
+			NodeGraphicsItem *node = it.value();
+			Q_ASSERT(node);
+			node->setVisible(false);
+		}
 
 		return;
 	}
@@ -261,10 +267,18 @@ void JenkinsGraphicsView::updateDisplay(){
 	qreal nodeWidth = (numNodes > 0)?((width-((numNodes+1)*margin))/numNodes):0;
 
 	int i = 0;
-	for(NodesItems::Iterator it=m_nodeItems.begin() ; it != nodesEnd ; ++it){
-		NodeGraphicsItem *node = it.value();
-		node->setRect(QRectF(margin + ((nodeWidth+margin)*i), margin, nodeWidth, jobHeight));
-		++i;
+
+	if(m_showNodes){
+		for(NodesItems::Iterator it=m_nodeItems.begin() ; it != nodesEnd ; ++it){
+			NodeGraphicsItem *node = it.value();
+			Q_ASSERT(node);
+			node->setRect(QRectF(margin + ((nodeWidth+margin)*i), margin, nodeWidth, jobHeight));
+
+			if(!node->isVisible())
+				node->setVisible(true);
+
+			++i;
+		}
 	}
 
 	i = 0;
