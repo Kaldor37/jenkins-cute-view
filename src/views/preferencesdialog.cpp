@@ -22,6 +22,10 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 	m_columnsValidator->setRange(1, 100);
 	ui->m_columnsLineEdit->setValidator(m_columnsValidator);
 
+	m_jobsMarginValidator = new QIntValidator(ui->m_jobsMarginLineEdit);
+	m_jobsMarginValidator->setRange(0, 100);
+	ui->m_jobsMarginLineEdit->setValidator(m_jobsMarginValidator);
+
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
 	ui->m_jenkinsURLLineEdit->setPlaceholderText(tr("Enter url..."));
 #endif
@@ -58,7 +62,12 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 
 	// Number of columns
 	ui->m_columnsLineEdit->setText(QString("%1").arg(prefs.getColumns()));
+
+	// Jobs margin PX
+	ui->m_jobsMarginLineEdit->setText(QString("%1").arg(prefs.getJobsMargin()));
 	//----------------------------------------------------------
+
+	ui->m_jenkinsTabWidget->setCurrentIndex(0);
 
 	QWidget::showEvent(event);
 }
@@ -141,6 +150,12 @@ void PreferencesDialog::savePreferences(){
 		Prefs.setColumns(ui->m_columnsLineEdit->text().toUInt());
 	else
 		ui->m_columnsLineEdit->setText(QString("%1").arg(Prefs.getColumns()));
+
+	text = ui->m_jobsMarginLineEdit->text();
+	if(m_jobsMarginValidator->validate(text, pos) == QValidator::Acceptable)
+		Prefs.setJobsMargin(ui->m_jobsMarginLineEdit->text().toUInt());
+	else
+		ui->m_jobsMarginLineEdit->setText(QString("%1").arg(Prefs.getJobsMargin()));
 
 	Prefs.setShowBuildNumber(ui->m_showBuildNumberCheckBox->isChecked());
 	Prefs.setShowWeatherIcon(ui->m_showWeatherCheckBox->isChecked());

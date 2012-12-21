@@ -31,6 +31,7 @@ PREFS_IMPL_BOOL_FIELD(ShowLastBuildDescription,	"Display/ShowLastBuildDescriptio
 PREFS_IMPL_UINT_FIELD(Columns,						"Display/Columns", 1)
 PREFS_IMPL_BOOL_FIELD(ShowNodes,						"Display/ShowNodes", true)
 PREFS_IMPL_BOOL_FIELD(ShowPositionInQueue,		"Display/ShowPositionInQueue", true)
+PREFS_IMPL_UINT_FIELD(JobsMargin,					"Display/JobsMargin", 2)
 //------------------------------------------------------------------------------
 #undef PREFS_IMPL_UINT_FIELD
 #undef PREFS_IMPL_STRING_FIELD

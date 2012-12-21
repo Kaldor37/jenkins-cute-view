@@ -52,6 +52,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 		void fullscreenModeChanged(bool enabled);
 		void setColumns(uint value);
 		void setShowNodes(bool value);
+		void setJobsMargin(uint value);
 
 //------------------------------------------------------------------------------
 // Protected functions
@@ -93,11 +94,12 @@ class JenkinsGraphicsView : public QGraphicsView {
 
 		uint						m_columns;
 		bool						m_showNodes;
+
+		uint						m_jobsMargin;
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
 	private:
-		const static int jobsMargin = 4;
 		const static int jobsProgressUpdateTimer = 100;
 
 //------------------------------------------------------------------------------

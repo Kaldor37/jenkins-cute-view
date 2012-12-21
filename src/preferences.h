@@ -66,6 +66,7 @@ PREFS_DECLARE_FIELD(bool,		ShowLastBuildDescription)
 PREFS_DECLARE_FIELD(uint,		Columns)
 PREFS_DECLARE_FIELD(bool,		ShowNodes)
 PREFS_DECLARE_FIELD(bool,		ShowPositionInQueue)
+PREFS_DECLARE_FIELD(uint,		JobsMargin)
 //------------------------------------------------------------------------------
 #undef PREFS_DECLARE_FIELD
 
@@ -83,6 +84,7 @@ PREFS_DECLARE_FIELD(bool,		ShowPositionInQueue)
 		void sigColumnsChanged(uint);
 		void sigShowNodesChanged(bool);
 		void sigShowPositionInQueueChanged(bool);
+		void sigJobsMarginChanged(uint);
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

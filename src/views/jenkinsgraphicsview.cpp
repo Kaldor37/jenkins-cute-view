@@ -37,6 +37,9 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	m_showNodes = Prefs.getShowNodes();
 	connect(&Prefs, SIGNAL(sigShowNodesChanged(bool)), SLOT(setShowNodes(bool)));
 
+	m_jobsMargin = Prefs.getJobsMargin();
+	connect(&Prefs, SIGNAL(sigJobsMarginChanged(uint)), SLOT(setJobsMargin(uint)));
+
 	initContextMenu();
 }
 //------------------------------------------------------------------------------
@@ -212,11 +215,16 @@ void JenkinsGraphicsView::setShowNodes(bool value){
 	update();
 }
 //------------------------------------------------------------------------------
+void JenkinsGraphicsView::setJobsMargin(uint value){
+	m_jobsMargin = value;
+	updateDisplay();
+	update();
+}
+//------------------------------------------------------------------------------
 void JenkinsGraphicsView::updateDisplay(){
 	QSizeF size = m_scene->sceneRect().size();
 	qreal width = size.width();
 	qreal height = size.height();
-	qreal margin = jobsMargin;
 
 	const JobsItems::Iterator end = m_jobItems.end();
 	const NodesItems::Iterator nodesEnd = m_nodeItems.end();
@@ -259,11 +267,11 @@ void JenkinsGraphicsView::updateDisplay(){
 	qreal numRows = jobsPerCol+((numNodes > 0)?1:0);
 
 	// Job width
-	qreal jobWidth = (width-((numColumns+1)*margin))/numColumns;
+	qreal jobWidth = (width-((numColumns+1)*m_jobsMargin))/numColumns;
 	// Job height
-	qreal jobHeight = (height-((numRows+1)*margin))/numRows;
+	qreal jobHeight = (height-((numRows+1)*m_jobsMargin))/numRows;
 	// Node width
-	qreal nodeWidth = (numNodes > 0)?((width-((numNodes+1)*margin))/numNodes):0;
+	qreal nodeWidth = (numNodes > 0)?((width-((numNodes+1)*m_jobsMargin))/numNodes):0;
 
 	int i = 0;
 
@@ -271,7 +279,7 @@ void JenkinsGraphicsView::updateDisplay(){
 		for(NodesItems::Iterator it=m_nodeItems.begin() ; it != nodesEnd ; ++it){
 			NodeGraphicsItem *node = it.value();
 			Q_ASSERT(node);
-			node->setRect(QRectF(margin + ((nodeWidth+margin)*i), margin, nodeWidth, jobHeight));
+			node->setRect(QRectF(m_jobsMargin + ((nodeWidth+m_jobsMargin)*i), m_jobsMargin, nodeWidth, jobHeight));
 
 			if(!node->isVisible())
 				node->setVisible(true);
@@ -287,7 +295,7 @@ void JenkinsGraphicsView::updateDisplay(){
 
 		JobGraphicsItem *job = it.value();
 		Q_ASSERT(job);
-		job->setRect(QRectF(margin + ((jobWidth+margin)*col), margin + ((jobHeight+margin)*row), jobWidth, jobHeight));
+		job->setRect(QRectF(m_jobsMargin + ((jobWidth+m_jobsMargin)*col), m_jobsMargin + ((jobHeight+m_jobsMargin)*row), jobWidth, jobHeight));
 
 		if(!job->isVisible())
 			job->setVisible(true);
