@@ -9,15 +9,12 @@
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 MessageGraphicsItem::MessageGraphicsItem(QGraphicsItem *parent):QGraphicsObject(parent){
-	m_messageItem = new AutoResizingTextItem(this);
+	m_messageItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_messageItem->setPen(QPen(Qt::white));
 	m_messageItem->setFont(QFont("Arial"));
 }
 //------------------------------------------------------------------------------
-MessageGraphicsItem::~MessageGraphicsItem(){
-	if(m_messageItem)
-		m_messageItem->deleteLater();
-}
+MessageGraphicsItem::~MessageGraphicsItem(){}
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------

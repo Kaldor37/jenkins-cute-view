@@ -30,24 +30,24 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	m_showEstEndTime(Prefs.getShowEstimatedEndTime()),
 	m_showPositionInQueue(Prefs.getShowPositionInQueue())
 {
-	m_nameItem = new AutoResizingTextItem(this);
+	m_nameItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_nameItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
 	m_nameItem->setPen(QPen(Qt::white));
 	m_nameItem->setShadowed(true);
 
-	m_estEndTimeItem = new AutoResizingTextItem(this);
+	m_estEndTimeItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_estEndTimeItem->setFont(QFont("Arial")); // TODO - Manage in prefs
 	m_estEndTimeItem->setPen(QPen(Qt::white));
 	m_estEndTimeItem->setShadowed(true);
 
-	m_descriptionItem = new AutoResizingTextItem(this);
+	m_descriptionItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_descriptionItem->setFont(QFont("Arial", -1, QFont::DemiBold)); // TODO - Manage in prefs
 	m_descriptionItem->setPen(QPen(Qt::white));
 	m_descriptionItem->setVisible(false);
 
 	m_weatherItem = new WeatherGraphicsItem(this);
 
-	m_positionInQueueItem = new AutoResizingTextItem(this);
+	m_positionInQueueItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_positionInQueueItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
 	m_positionInQueueItem->setPen(QPen(Qt::white));
 	m_positionInQueueItem->setShadowed(true);
@@ -60,22 +60,7 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	connect(prefs, SIGNAL(sigShowPositionInQueueChanged(bool)), SLOT(setShowPositionInQueue(bool)));
 }
 //------------------------------------------------------------------------------
-JobGraphicsItem::~JobGraphicsItem(){
-	if(m_nameItem)
-		m_nameItem->deleteLater();
-
-	if(m_estEndTimeItem)
-		m_estEndTimeItem->deleteLater();
-
-	if(m_descriptionItem)
-		m_descriptionItem->deleteLater();
-
-	if(m_weatherItem)
-		m_weatherItem->deleteLater();
-
-	if(m_positionInQueueItem)
-		m_weatherItem->deleteLater();
-}
+JobGraphicsItem::~JobGraphicsItem(){ }
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------

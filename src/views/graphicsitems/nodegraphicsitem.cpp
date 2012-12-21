@@ -12,16 +12,13 @@
 NodeGraphicsItem::NodeGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
 	m_nameItem(0)
 {
-	m_nameItem = new AutoResizingTextItem(this);
+	m_nameItem = new AutoResizingTextItem(this); // Delete with this
 	m_nameItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
 	m_nameItem->setPen(QPen(Qt::white));
 	m_nameItem->setShadowed(true);
 }
 //------------------------------------------------------------------------------
-NodeGraphicsItem::~NodeGraphicsItem(){
-	if(m_nameItem)
-		m_nameItem->deleteLater();
-}
+NodeGraphicsItem::~NodeGraphicsItem(){ }
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------

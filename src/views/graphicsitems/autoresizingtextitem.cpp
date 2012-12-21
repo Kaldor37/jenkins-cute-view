@@ -6,17 +6,23 @@
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
-AutoResizingTextItem::AutoResizingTextItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
+AutoResizingTextItem::AutoResizingTextItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent), QGraphicsLayoutItem(),
 	m_visible(true),
 	m_shadowed(false){
+	setGraphicsItem(this);
 }
 //------------------------------------------------------------------------------
-AutoResizingTextItem::~AutoResizingTextItem(){}
+AutoResizingTextItem::~AutoResizingTextItem(){ }
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------
 QRectF AutoResizingTextItem::boundingRect() const{
 	return (m_visible)?QRectF(0,0,m_size.width(), m_size.height()):QRectF();
+}
+//------------------------------------------------------------------------------
+QSizeF AutoResizingTextItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint/* = QSizeF()*/) const {
+	Q_UNUSED(which);
+	return constraint;
 }
 //------------------------------------------------------------------------------
 void AutoResizingTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){

@@ -11,16 +11,11 @@
 WeatherGraphicsItem::WeatherGraphicsItem(QGraphicsItem *parent):QGraphicsObject(parent),
 	m_weatherIcon(NoIcon),
 	m_size(),
-	m_weatherPixmap(),
-	m_weatherItem(0)
-{
-	m_weatherItem = new QGraphicsPixmapItem(this);
+	m_weatherPixmap(){
+	m_weatherItem = new QGraphicsPixmapItem(this); // Deleted with parent (this)
 }
 //------------------------------------------------------------------------------
-WeatherGraphicsItem::~WeatherGraphicsItem(){
-	if(m_weatherItem)
-		delete m_weatherItem;
-}
+WeatherGraphicsItem::~WeatherGraphicsItem(){ }
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------

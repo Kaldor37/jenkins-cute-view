@@ -3,12 +3,14 @@
 #define AUTORESIZINGTEXTITEM_H
 //------------------------------------------------------------------------------
 #include <QGraphicsObject>
+#include <QGraphicsLayoutItem>
 #include <QFont>
 #include <QString>
 #include <QPen>
 //------------------------------------------------------------------------------
-class AutoResizingTextItem : public QGraphicsObject {
+class AutoResizingTextItem : public QGraphicsObject, public QGraphicsLayoutItem {
 	Q_OBJECT
+	Q_INTERFACES(QGraphicsLayoutItem)
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
@@ -20,8 +22,9 @@ class AutoResizingTextItem : public QGraphicsObject {
 // Public functions
 //------------------------------------------------------------------------------
 	public:
-		QRectF boundingRect() const;
-		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+		QRectF	boundingRect() const;
+		QSizeF	sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF()) const;
+		void		paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 		const QString & text() const;
 		const QFont & font() const;
