@@ -4,6 +4,7 @@
 #include "graphicsitems/nodegraphicsitem.h"
 #include "graphicsitems/autoresizingtextitem.h"
 #include "preferences.h"
+#include "application.h"
 
 #include <QDebug>
 #include <QResizeEvent>
@@ -26,7 +27,7 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	connect(m_progressUpdateTimer, SIGNAL(timeout()), SLOT(progressTimer_timeout()));
 	m_progressUpdateTimer->start(jobsProgressUpdateTimer);
 
-	m_messageItem = new MessageGraphicsItem();
+	m_messageItem = new MessageGraphicsItem(); // Destroyed by the scene
 	m_messageItem->setVisible(false);
 	m_scene->addItem(m_messageItem);
 
@@ -40,8 +41,6 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 }
 //------------------------------------------------------------------------------
 JenkinsGraphicsView::~JenkinsGraphicsView(){
-	if(m_contextMenu)
-		m_contextMenu->deleteLater();
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::resizeEvent(QResizeEvent *event){
@@ -85,9 +84,9 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 
 		// Job found, update
 		if(foundJob){
+			//qDebug()<<"Update job : "<<foundJob;
 			foundJob->setName(name);
 			foundJob->update(job);
-			//qDebug()<<"Updated job "<<name;
 		}
 		// Job not found, add
 		else{
@@ -96,7 +95,8 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 			newJob->update(job);
 			m_jobItems[name] = newJob;
 			m_scene->addItem(newJob);
-			//qDebug()<<"Added job "<<name;
+			//qDebug()<<"Job created : "<<newJob;
+			//QObject::connect(newJob, SIGNAL(destroyed()), &App, SLOT(qObjectDestroyed()));
 		}
 	}
 
@@ -113,7 +113,6 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 		JobGraphicsItem *jobItem = m_jobItems.take(name);
 		m_scene->removeItem(jobItem);
 		jobItem->deleteLater();
-		//qDebug()<<"Removed job "<<name;
 	}
 
 	// Nothing to display

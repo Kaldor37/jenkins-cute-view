@@ -17,6 +17,10 @@ class Application : public QApplication{
 		static void destroy();
 		static Application & instance();
 
+		// Debug
+	public slots:
+		void qObjectDestroyed();
+
 //------------------------------------------------------------------------------
 // Destructor
 //------------------------------------------------------------------------------
