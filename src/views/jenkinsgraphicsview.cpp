@@ -288,10 +288,8 @@ void JenkinsGraphicsView::updateDisplay(){
 		}
 	}
 
-	i = 0;
+	int col = 0, row = ((numNodes > 0)?1:0);
 	for(JobsItems::Iterator it=m_jobItems.begin() ; it != end ; ++it){
-		int col = i%(int)numColumns;
-		int row = (i/numColumns)+((numNodes > 0)?1:0);
 
 		JobGraphicsItem *job = it.value();
 		Q_ASSERT(job);
@@ -300,7 +298,11 @@ void JenkinsGraphicsView::updateDisplay(){
 		if(!job->isVisible())
 			job->setVisible(true);
 
-		++i;
+		++row;
+		if(row > jobsPerCol){
+			col++;
+			row = ((numNodes > 0)?1:0);
+		}
 	}
 }
 //------------------------------------------------------------------------------
