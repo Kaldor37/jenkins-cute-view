@@ -26,11 +26,12 @@ class AutoResizingTextItem : public QGraphicsObject, public QGraphicsLayoutItem 
 		QSizeF	sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF()) const;
 		void		paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-		const QString & text() const;
-		const QFont & font() const;
-		const QPen & pen() const;
-		bool isVisible() const;
-		bool isShadowed() const;
+		const		QString & text() const;
+		const		QFont & font() const;
+		const		QPen & pen() const;
+		bool		isVisible() const;
+		bool		isShadowed() const;
+		int		textFlags() const;
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -44,6 +45,7 @@ class AutoResizingTextItem : public QGraphicsObject, public QGraphicsLayoutItem 
 		void setFont(const QFont &font);
 		void setPen(const QPen &pen);
 		void setShadowed(bool value);
+		void setTextFlags(int flags);
 
 //------------------------------------------------------------------------------
 // Private functions
@@ -62,6 +64,7 @@ class AutoResizingTextItem : public QGraphicsObject, public QGraphicsLayoutItem 
 		QPen		m_pen;
 		bool		m_shadowed;
 		uint		m_shadowOffset;
+		int		m_textFlags;
 
 		const static int shadowOffsetFontHeightFactor = 20;
 //------------------------------------------------------------------------------

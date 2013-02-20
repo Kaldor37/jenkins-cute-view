@@ -30,10 +30,14 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	m_showEstEndTime(Prefs.getShowEstimatedEndTime()),
 	m_showPositionInQueue(Prefs.getShowPositionInQueue())
 {
+	Preferences *prefs = &Prefs;
+
 	m_nameItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_nameItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
 	m_nameItem->setPen(QPen(Qt::white));
 	m_nameItem->setShadowed(true);
+	m_nameItem->setTextFlags(prefs->getJobsNameDescAlignFlags());
+	QObject::connect(prefs, SIGNAL(sigJobsNameDescAlignFlagsChanged(int)), m_nameItem, SLOT(setTextFlags(int)));
 
 	m_estEndTimeItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_estEndTimeItem->setFont(QFont("Arial")); // TODO - Manage in prefs
@@ -44,6 +48,8 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	m_descriptionItem->setFont(QFont("Arial", -1, QFont::DemiBold)); // TODO - Manage in prefs
 	m_descriptionItem->setPen(QPen(Qt::white));
 	m_descriptionItem->setVisible(false);
+	m_descriptionItem->setTextFlags(prefs->getJobsNameDescAlignFlags());
+	QObject::connect(prefs, SIGNAL(sigJobsNameDescAlignFlagsChanged(int)), m_descriptionItem, SLOT(setTextFlags(int)));
 
 	m_weatherItem = new WeatherGraphicsItem(this);
 
@@ -52,7 +58,7 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	m_positionInQueueItem->setPen(QPen(Qt::white));
 	m_positionInQueueItem->setShadowed(true);
 
-	Preferences *prefs = &Prefs;
+	// Prefs changes
 	connect(prefs, SIGNAL(sigShowBuildNumberChanged(bool)), SLOT(setShowBuildNumber(bool)));
 	connect(prefs, SIGNAL(sigShowEstimatedEndTimeChanged(bool)), SLOT(setShowEstEndTime(bool)));
 	connect(prefs, SIGNAL(sigShowLastBuildDescriptionChanged(bool)), SLOT(setShowLastBuildDesc(bool)));
@@ -298,12 +304,12 @@ void JobGraphicsItem::updateLayout(){
 	// Estimated end time and weather on both sides
 	if(m_estEndTimeItem->isVisible() || m_weatherItem->isVisible()){
 		// Estimated end time 20% right
-		estEndRect = QRectF(jobX + jobW*0.8, jobY + jobH*0.2, jobW*0.2, jobH*0.6);
+		estEndRect = QRectF(jobX + jobW*0.85,	jobY + jobH*0.2,	jobW*0.14,	jobH*0.6);
 		// Weather 20% left
-		weatherRect = QRectF(jobX, jobY + jobH*0.1, jobW*0.2, jobH*0.8);
+		weatherRect = QRectF(jobX,					jobY + jobH*0.1,	jobW*0.15,	jobH*0.8);
 		// Name rect middle
-		nameRect.setX(jobX + jobW*0.2);
-		nameRect.setWidth(jobW*0.6);
+		nameRect.setX(jobX + jobW*0.15);
+		nameRect.setWidth(jobW*0.7);
 	}
 	else{
 		// Name rect full width

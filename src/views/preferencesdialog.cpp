@@ -29,6 +29,10 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
 	ui->m_jenkinsURLLineEdit->setPlaceholderText(tr("Enter url..."));
 #endif
+
+	ui->m_jobsNameDescAlignComboBox->addItem(tr("Left"),		(int)(Qt::AlignLeft|Qt::AlignVCenter));
+	ui->m_jobsNameDescAlignComboBox->addItem(tr("Center"),	(int)Qt::AlignCenter);
+	ui->m_jobsNameDescAlignComboBox->addItem(tr("Right"),		(int)(Qt::AlignRight|Qt::AlignVCenter));
 }
 //------------------------------------------------------------------------------
 PreferencesDialog::~PreferencesDialog(){
@@ -65,6 +69,13 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 
 	// Jobs margin PX
 	ui->m_jobsMarginLineEdit->setText(QString("%1").arg(prefs.getJobsMargin()));
+
+	int comboIndex = ui->m_jobsNameDescAlignComboBox->findData(prefs.getJobsNameDescAlignFlags());
+	Q_ASSERT(comboIndex >= 0);
+	if(comboIndex >= 0)
+		ui->m_jobsNameDescAlignComboBox->setCurrentIndex(comboIndex);
+	else
+		ui->m_jobsNameDescAlignComboBox->setCurrentIndex(0);
 	//----------------------------------------------------------
 
 	ui->m_jenkinsTabWidget->setCurrentIndex(0);
@@ -163,5 +174,8 @@ void PreferencesDialog::savePreferences(){
 	Prefs.setShowLastBuildDescription(ui->m_showLastBuildDescCheckBox->isChecked());
 	Prefs.setShowNodes(ui->m_showNodesCheckBox->isChecked());
 	Prefs.setShowPositionInQueue(ui->m_showPositionInQueue->isChecked());
+
+	const QComboBox *cb = ui->m_jobsNameDescAlignComboBox;
+	Prefs.setJobsNameDescAlignFlags(cb->itemData(cb->currentIndex()).toInt());
 }
 //------------------------------------------------------------------------------

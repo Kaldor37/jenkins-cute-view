@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 AutoResizingTextItem::AutoResizingTextItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent), QGraphicsLayoutItem(),
 	m_visible(true),
-	m_shadowed(false){
+	m_shadowed(false),
+	m_textFlags(Qt::AlignCenter){
 	setGraphicsItem(this);
 }
 //------------------------------------------------------------------------------
@@ -51,11 +52,11 @@ void AutoResizingTextItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 		shadowRect.setX(shadowRect.x()+m_shadowOffset);
 		shadowRect.setY(shadowRect.y()+m_shadowOffset);
 
-		painter->drawText(shadowRect, Qt::AlignCenter, m_text);
+		painter->drawText(shadowRect, m_textFlags, m_text);
 	}
 
 	painter->setPen(m_pen);
-	painter->drawText(rect, Qt::AlignCenter, m_text);
+	painter->drawText(rect, m_textFlags, m_text);
 
 	painter->restore();
 }
@@ -75,8 +76,13 @@ const QPen & AutoResizingTextItem::pen() const{
 bool AutoResizingTextItem::isVisible() const{
 	return m_visible;
 }
+//------------------------------------------------------------------------------
 bool AutoResizingTextItem::isShadowed() const{
 	return m_shadowed;
+}
+//------------------------------------------------------------------------------
+int AutoResizingTextItem::textFlags() const{
+	return m_textFlags;
 }
 //------------------------------------------------------------------------------
 // Public slots
@@ -118,6 +124,12 @@ void AutoResizingTextItem::setFont(const QFont &font){
 //------------------------------------------------------------------------------
 void AutoResizingTextItem::setPen(const QPen &pen){
 	m_pen = pen;
+	update();
+}
+//------------------------------------------------------------------------------
+void AutoResizingTextItem::setTextFlags(int flags){
+	m_textFlags = flags;
+	update();
 }
 //------------------------------------------------------------------------------
 // Private functions
@@ -157,5 +169,7 @@ void AutoResizingTextItem::adjustText(){
 
 	if(m_shadowed)
 		m_shadowOffset = QFontMetrics(m_font).height()/shadowOffsetFontHeightFactor;
+
+	update();
 }
 //------------------------------------------------------------------------------

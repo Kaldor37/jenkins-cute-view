@@ -18,6 +18,7 @@ Preferences * Preferences::m_instance = 0;
 		} \
 	}
 #define PREFS_IMPL_STRING_FIELD(FieldName, PrefFieldName, DefaultValue)		PREFS_IMPL_FIELD(QString, FieldName, String, PrefFieldName, DefaultValue)
+#define PREFS_IMPL_INT_FIELD(FieldName, PrefFieldName, DefaultValue)			PREFS_IMPL_FIELD(int, FieldName, Int, PrefFieldName, DefaultValue)
 #define PREFS_IMPL_UINT_FIELD(FieldName, PrefFieldName, DefaultValue)		PREFS_IMPL_FIELD(uint, FieldName, UInt, PrefFieldName, DefaultValue)
 #define PREFS_IMPL_BOOL_FIELD(FieldName, PrefFieldName, DefaultValue)		PREFS_IMPL_FIELD(bool, FieldName, Bool, PrefFieldName, DefaultValue)
 //------------------------------------------------------------------------------
@@ -32,6 +33,7 @@ PREFS_IMPL_UINT_FIELD(Columns,						"Display/Columns", 1)
 PREFS_IMPL_BOOL_FIELD(ShowNodes,						"Display/ShowNodes", true)
 PREFS_IMPL_BOOL_FIELD(ShowPositionInQueue,		"Display/ShowPositionInQueue", true)
 PREFS_IMPL_UINT_FIELD(JobsMargin,					"Display/JobsMargin", 2)
+PREFS_IMPL_INT_FIELD(JobsNameDescAlignFlags,		"Display/JobsNameDescAlignFlags", Qt::AlignCenter)
 //------------------------------------------------------------------------------
 #undef PREFS_IMPL_UINT_FIELD
 #undef PREFS_IMPL_STRING_FIELD
