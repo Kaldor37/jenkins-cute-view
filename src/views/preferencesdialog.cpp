@@ -45,9 +45,10 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	const Preferences &prefs = Prefs;
 
 	// Jenkins URL
-	QString jenkinsUrl = prefs.getJenkinsUrl();
-	if(!jenkinsUrl.isEmpty())
-		ui->m_jenkinsURLLineEdit->setText(jenkinsUrl);
+	ui->m_jenkinsURLLineEdit->setText(prefs.getJenkinsUrl());
+
+	// Jenkins API Token
+	ui->m_APITokenLineEdit->setText(prefs.getAPIToken());
 
 	// Update interval
 	ui->m_updateIntervalLineEdit->setText(QString("%1").arg(prefs.getAPIUpdateInterval()));
@@ -152,6 +153,7 @@ void PreferencesDialog::savePreferences(){
 
 	Prefs.setAPIUpdateInterval(ui->m_updateIntervalLineEdit->text().toUInt());
 	Prefs.setJenkinsUrl(ui->m_jenkinsURLLineEdit->text());
+	Prefs.setAPIToken(ui->m_APITokenLineEdit->text());
 	QVariant selectedViewData = ui->m_viewDisplayComboBox->itemData(ui->m_viewDisplayComboBox->currentIndex());
 	Prefs.setSelectedView((selectedViewData.isValid())?selectedViewData.toString():"");
 

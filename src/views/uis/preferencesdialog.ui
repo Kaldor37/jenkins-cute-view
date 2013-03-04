@@ -32,7 +32,7 @@
    <item>
     <widget class="QTabWidget" name="m_jenkinsTabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="m_jenkinsTabWidgetPage">
       <attribute name="title">
@@ -63,6 +63,23 @@
             <string/>
            </property>
           </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="m_APITokenLabel">
+           <property name="text">
+            <string>API Token :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="m_APITokenLineEdit"/>
          </item>
         </layout>
        </item>

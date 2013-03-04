@@ -2,6 +2,7 @@
 #include "viewmodel.h"
 #include "utils/httpgetter.h"
 #include "jobmodel.h"
+#include "preferences.h"
 
 #include <QDebug>
 #include <QDomDocument>
@@ -30,8 +31,8 @@ void ViewModel::loadJobs(){
 		return;
 
 	m_jobsListLoaded = false;
-	//qDebug()<<"ViewModel["<<m_name<<"]::loadJobs()";
-	httpGetter.get(m_url + "/api/xml", this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
+
+	httpGetter.get(m_url + "/api/xml" + Prefs.getAPITokenUrlSuffix(), this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
 }
 //------------------------------------------------------------------------------
 const QString & ViewModel::getName() const{

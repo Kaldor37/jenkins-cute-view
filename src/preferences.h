@@ -68,6 +68,7 @@ PREFS_DECLARE_FIELD(bool,		ShowNodes)
 PREFS_DECLARE_FIELD(bool,		ShowPositionInQueue)
 PREFS_DECLARE_FIELD(uint,		JobsMargin)
 PREFS_DECLARE_FIELD(int,		JobsNameDescAlignFlags)
+PREFS_DECLARE_FIELD(QString,	APIToken)
 //------------------------------------------------------------------------------
 #undef PREFS_DECLARE_FIELD
 
@@ -87,6 +88,13 @@ PREFS_DECLARE_FIELD(int,		JobsNameDescAlignFlags)
 		void sigShowPositionInQueueChanged(bool);
 		void sigJobsMarginChanged(uint);
 		void sigJobsNameDescAlignFlagsChanged(int);
+		void sigAPITokenChanged(QString);
+
+//------------------------------------------------------------------------------
+// Specific public getters
+//------------------------------------------------------------------------------
+	public:
+		QString getAPITokenUrlSuffix() const;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

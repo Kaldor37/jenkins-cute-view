@@ -24,6 +24,7 @@ Preferences * Preferences::m_instance = 0;
 //------------------------------------------------------------------------------
 PREFS_IMPL_STRING_FIELD(JenkinsUrl,					"Jenkins/url", "")
 PREFS_IMPL_UINT_FIELD(APIUpdateInterval,			"Jenkins/APIUpdateInterval", 15)
+PREFS_IMPL_STRING_FIELD(APIToken,					"Jenkins/APIToken", "")
 PREFS_IMPL_STRING_FIELD(SelectedView,				"Display/SelectedView", "")
 PREFS_IMPL_BOOL_FIELD(ShowBuildNumber,				"Display/ShowBuildNumber", true)
 PREFS_IMPL_BOOL_FIELD(ShowWeatherIcon,				"Display/ShowWeatherIcon", true)
@@ -64,5 +65,12 @@ void Preferences::destroy(){
 Preferences & Preferences::instance(){
 	Q_ASSERT(m_instance != 0);
 	return *m_instance;
+}
+//------------------------------------------------------------------------------
+// Specific public getters
+//------------------------------------------------------------------------------
+QString Preferences::getAPITokenUrlSuffix() const {
+	QString APIToken = getAPIToken();
+	return (APIToken.isEmpty())?"":("?token="+APIToken);
 }
 //------------------------------------------------------------------------------

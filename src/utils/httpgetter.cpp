@@ -42,6 +42,7 @@ NetworkReplyManager::~NetworkReplyManager(){}
 // Public slots
 //------------------------------------------------------------------------------
 void HttpGetter::get(const QUrl &url, QObject *listener, const char *finishedSlot){
+	//qDebug()<<"HttpGetter::get("<<url<<")";
 	QNetworkReply *netRep = m_networkAccessManager->get(QNetworkRequest(url));
 	netRep->ignoreSslErrors();
 
