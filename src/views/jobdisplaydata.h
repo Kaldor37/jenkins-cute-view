@@ -7,10 +7,11 @@
 class JobDisplayData{
 	public:
 		enum eJobStatus{
-			StatusInactiveOrNeverBuilt = 0,
+			StatusNeverBuilt = 0,
 			StatusLastBuildSuccessful,
 			StatusLastBuildSuccessfulButUnstable,
-			StatusLastBuildFailed
+			StatusLastBuildFailed,
+			StatusInactiveOrAborted
 		};
 
 //------------------------------------------------------------------------------

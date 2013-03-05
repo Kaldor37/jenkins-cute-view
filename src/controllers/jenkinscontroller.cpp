@@ -110,17 +110,18 @@ void JenkinsController::selectedViewDataUpdated(){
 				jobData.setStatus(JobDisplayData::StatusLastBuildFailed);
 			// Aborted
 			else if(jobLastCompBuild->getResult() == "ABORTED")
-				jobData.setStatus(JobDisplayData::StatusInactiveOrNeverBuilt);
+				jobData.setStatus(JobDisplayData::StatusInactiveOrAborted);
 			// Success but unstable
 			else
 				jobData.setStatus(JobDisplayData::StatusLastBuildSuccessfulButUnstable);
 		}
 		// Job never built yet
 		else
-			jobData.setStatus(JobDisplayData::StatusInactiveOrNeverBuilt);
+			jobData.setStatus(JobDisplayData::StatusNeverBuilt);
 
-		if(!job->getBuildable())
-			jobData.setStatus(JobDisplayData::StatusInactiveOrNeverBuilt);
+		if(!job->getBuildable()){
+			jobData.setStatus((jobLastCompBuild)?JobDisplayData::StatusInactiveOrAborted:JobDisplayData::StatusInactiveOrAborted);
+		}
 
 		// Position in queue
 		uint queuePos = 0;

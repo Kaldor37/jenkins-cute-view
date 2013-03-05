@@ -5,7 +5,7 @@
 //------------------------------------------------------------------------------
 JobDisplayData::JobDisplayData():
 	m_name(),
-	m_status(StatusInactiveOrNeverBuilt),
+	m_status(StatusNeverBuilt),
 	m_stability(0),
 	m_lastBuildNum(0),
 	m_lastBuildDesc(),

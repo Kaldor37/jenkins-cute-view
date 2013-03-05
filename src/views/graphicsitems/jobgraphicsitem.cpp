@@ -131,7 +131,8 @@ bool JobGraphicsItem::isRunning() const{
 //------------------------------------------------------------------------------
 void JobGraphicsItem::update(const JobDisplayData& data){
 	switch(data.getStatus()){
-		case JobDisplayData::StatusInactiveOrNeverBuilt:
+		case JobDisplayData::StatusNeverBuilt:
+		case JobDisplayData::StatusInactiveOrAborted:
 			m_rectColor = Qt::darkGray;
 		break;
 
@@ -176,7 +177,7 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 	m_descriptionItem->setVisible(!m_descriptionItem->text().isEmpty() && m_showLastBuildDesc);
 
 	// Weather
-	if(data.getStatus() != JobDisplayData::StatusInactiveOrNeverBuilt){
+	if(data.getStatus() != JobDisplayData::StatusNeverBuilt){
 		uint stability = data.getStability();
 		if(stability > 80)
 			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::Sunny);
