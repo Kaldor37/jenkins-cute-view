@@ -69,6 +69,7 @@ PREFS_DECLARE_FIELD(bool,		ShowPositionInQueue)
 PREFS_DECLARE_FIELD(uint,		JobsMargin)
 PREFS_DECLARE_FIELD(int,		JobsNameDescAlignFlags)
 PREFS_DECLARE_FIELD(QString,	APIToken)
+PREFS_DECLARE_FIELD(bool,		StartFullscreen)
 //------------------------------------------------------------------------------
 #undef PREFS_DECLARE_FIELD
 
@@ -89,6 +90,7 @@ PREFS_DECLARE_FIELD(QString,	APIToken)
 		void sigJobsMarginChanged(uint);
 		void sigJobsNameDescAlignFlagsChanged(int);
 		void sigAPITokenChanged(QString);
+		void sigStartFullscreenChanged(bool);
 
 //------------------------------------------------------------------------------
 // Specific public getters

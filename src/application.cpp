@@ -5,7 +5,7 @@
 // Constants initialization
 //------------------------------------------------------------------------------
 const QString Application::appName("JenkinsCuteView");
-const QString Application::appVersion("0.9.5a");
+const QString Application::appVersion("0.9.5b");
 const QString Application::orgName("JenkinsCuteView");
 //------------------------------------------------------------------------------
 // Static members initialization

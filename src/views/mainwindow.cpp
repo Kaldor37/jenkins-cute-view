@@ -4,6 +4,7 @@
 #include "preferencesdialog.h"
 #include "aboutdialog.h"
 #include "application.h"
+#include "preferences.h"
 
 #include <QDebug>
 #include <QKeyEvent>
@@ -46,6 +47,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	// Display window
 	show();
+
+	// Start in fullscreen mode
+	if(Prefs.getStartFullscreen())
+		ui->m_actionFullscreen->trigger();
 }
 //------------------------------------------------------------------------------
 MainWindow::~MainWindow(){
@@ -102,16 +107,12 @@ void MainWindow::on_m_actionFullscreen_triggered(){
 	if(!isFullScreen()){
 		showFullScreen();
 		ui->m_menuBar->setVisible(false);
-
-
 		setCursor(*m_emptyCursor);
-
 		emit fullscreenModeChanged(true);
 	}
 	// Set to normal
 	else{
 		setCursor(Qt::ArrowCursor);
-
 		showNormal();
 		ui->m_menuBar->setVisible(true);
 		emit fullscreenModeChanged(false);

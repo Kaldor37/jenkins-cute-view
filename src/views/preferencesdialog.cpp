@@ -64,6 +64,7 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	ui->m_showLastBuildDescCheckBox->setChecked(prefs.getShowLastBuildDescription());
 	ui->m_showNodesCheckBox->setChecked(prefs.getShowNodes());
 	ui->m_showPositionInQueue->setChecked(prefs.getShowPositionInQueue());
+	ui->m_startFullscreenCheckBox->setChecked(prefs.getStartFullscreen());
 
 	// Number of columns
 	ui->m_columnsLineEdit->setText(QString("%1").arg(prefs.getColumns()));
@@ -143,6 +144,9 @@ void PreferencesDialog::on_m_buttonBox_clicked(QAbstractButton *btn){
 void PreferencesDialog::savePreferences(){
 	int pos=0;
 	QString text;
+
+	// General tab --------------------------------------------------------------
+	Prefs.setStartFullscreen(ui->m_startFullscreenCheckBox->isChecked());
 
 	// Jenkins tab --------------------------------------------------------------
 	text = ui->m_updateIntervalLineEdit->text();
