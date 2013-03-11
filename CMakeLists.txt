@@ -9,6 +9,11 @@ IF(NOT CMAKE_BUILD_TYPE)
 	SET(CMAKE_BUILD_TYPE Release)
 ENDIF()
 
+# Default Intall directory : /usr/local/bin
+IF(NOT INSTALL_DIRECTORY)
+	SET(INSTALL_DIRECTORY /usr/local/bin)
+ENDIF()
+
 # Warnings
 add_definitions(-Wall -Wextra)
 
@@ -82,7 +87,7 @@ SET(FORMS
 
 # Resources
 SET(RESOURCES
-	res/weather-icons.qrc
+					res/weather-icons.qrc
 )
 
 qt4_wrap_cpp(MOC_SRCS ${MOC_HDRS})
@@ -103,6 +108,5 @@ target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 # Install
 INSTALL(
 	PROGRAMS ${PROJECT_BINARY_DIR}/${PROJECT_NAME}
-	DESTINATION /usr/local/bin
+	DESTINATION ${INSTALL_DIRECTORY}
 )
-
