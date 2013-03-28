@@ -324,7 +324,7 @@ void JenkinsXMLAPIModel::parseJobsQueue(const QDomDocument &doc){
 		if(!taskElm.isNull()){
 			QDomElement nameElm = taskElm.firstChildElement("name");
 			if(!nameElm.isNull()){
-				m_jobsQueue.push_back(nameElm.text());
+				m_jobsQueue.push_front(nameElm.text());
 			}
 		}
 	}
