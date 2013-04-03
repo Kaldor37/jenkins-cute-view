@@ -337,8 +337,9 @@ void JenkinsGraphicsView::progressTimer_timeout(){
 		}
 	}
 
-	if(repaint)
+	if(repaint){
 		this->update();
+	}
 }
 //------------------------------------------------------------------------------
 // JenkinsGraphicsScene

@@ -100,7 +100,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 // Constants
 //------------------------------------------------------------------------------
 	private:
-		const static int jobsProgressUpdateTimer = 100;
+		const static int jobsProgressUpdateTimer = 200;
 
 //------------------------------------------------------------------------------
 };

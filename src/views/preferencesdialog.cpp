@@ -15,7 +15,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 	ui->setupUi(this);
 
 	m_updateIntervalValidator = new QIntValidator(ui->m_updateIntervalLineEdit);
-	m_updateIntervalValidator->setRange(1, UINT_MAX);
+	m_updateIntervalValidator->setRange(1, 999);
 	ui->m_updateIntervalLineEdit->setValidator(m_updateIntervalValidator);
 
 	m_columnsValidator = new QIntValidator(ui->m_columnsLineEdit);
@@ -150,10 +150,12 @@ void PreferencesDialog::savePreferences(){
 
 	// Jenkins tab --------------------------------------------------------------
 	text = ui->m_updateIntervalLineEdit->text();
+
 	if(m_updateIntervalValidator->validate(text, pos) == QValidator::Acceptable)
 		Prefs.setAPIUpdateInterval(ui->m_updateIntervalLineEdit->text().toUInt());
-	else
+	else{
 		ui->m_updateIntervalLineEdit->setText(QString("%1").arg(Prefs.getAPIUpdateInterval()));
+	}
 
 	Prefs.setAPIUpdateInterval(ui->m_updateIntervalLineEdit->text().toUInt());
 	Prefs.setJenkinsUrl(ui->m_jenkinsURLLineEdit->text());
