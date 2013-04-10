@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>150</height>
+    <height>200</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,13 +22,13 @@
   <property name="minimumSize">
    <size>
     <width>300</width>
-    <height>150</height>
+    <height>200</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>300</width>
-    <height>150</height>
+    <height>200</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -89,13 +89,32 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="m_meteoConsLabel">
-     <property name="text">
-      <string>&lt;a href=&quot;http://www.alessioatzeni.com/meteocons/&quot;&gt;Meteocons&lt;/a&gt; (weather icons pack)</string>
+    <widget class="QGroupBox" name="m_weatherIconsThemesGroupBox">
+     <property name="title">
+      <string>Weather icons themes</string>
      </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="m_meteoconsLabel">
+        <property name="text">
+         <string>&lt;a href=&quot;http://www.alessioatzeni.com/meteocons/&quot;&gt;Meteocons&lt;/a&gt;</string>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="m_garmahisLabel">
+        <property name="text">
+         <string>&lt;a href=&quot;http://garmahis.com/freebies/weather-icons-free-vector-weather-icon-pack/&quot;&gt;Garmahis&lt;/a&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>

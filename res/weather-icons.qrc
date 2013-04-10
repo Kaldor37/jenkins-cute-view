@@ -1,9 +1,17 @@
 <RCC>
-    <qresource prefix="/weathericons">
-        <file alias="Sunny">weather-icons/0.png</file>
-        <file alias="PartlyCloudy">weather-icons/1.png</file>
-        <file alias="Cloudy">weather-icons/2.png</file>
-        <file alias="Rain">weather-icons/3.png</file>
-        <file alias="Thunder">weather-icons/4.png</file>
-    </qresource>
+	<qresource prefix="/weather-icons-theme0">
+		<file alias="Sunny">weather-icons/theme0/0.png</file>
+		<file alias="PartlyCloudy">weather-icons/theme0/1.png</file>
+		<file alias="Cloudy">weather-icons/theme0/2.png</file>
+		<file alias="Rain">weather-icons/theme0/3.png</file>
+		<file alias="Thunder">weather-icons/theme0/4.png</file>
+	</qresource>
+	<qresource prefix="/weather-icons-theme1">
+		<file alias="Sunny">weather-icons/theme1/0.png</file>
+		<file alias="PartlyCloudy">weather-icons/theme1/1.png</file>
+		<file alias="Cloudy">weather-icons/theme1/2.png</file>
+		<file alias="Rain">weather-icons/theme1/3.png</file>
+		<file alias="Thunder">weather-icons/theme1/4.png</file>
+	</qresource>
 </RCC>
+

@@ -42,11 +42,13 @@ class WeatherGraphicsItem : public QGraphicsObject {
 		void setSize(const QSizeF & size);
 		void setRect(const QRectF &rect);
 		void setWeatherIcon(eWeatherIcon);
+		void setWeatherTheme(const QString &theme);
 
 //------------------------------------------------------------------------------
 // Private functions
 //------------------------------------------------------------------------------
 	private:
+		void loadPixmap();
 		void updateIcon();
 
 //------------------------------------------------------------------------------
@@ -57,6 +59,7 @@ class WeatherGraphicsItem : public QGraphicsObject {
 		QSizeF					m_size;
 		QPixmap					m_weatherPixmap;
 		QGraphicsPixmapItem	*m_weatherItem;
+		QString					m_weatherIconsTheme;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

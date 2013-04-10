@@ -33,6 +33,9 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 	ui->m_jobsNameDescAlignComboBox->addItem(tr("Left"),		(int)(Qt::AlignLeft|Qt::AlignVCenter));
 	ui->m_jobsNameDescAlignComboBox->addItem(tr("Center"),	(int)Qt::AlignCenter);
 	ui->m_jobsNameDescAlignComboBox->addItem(tr("Right"),		(int)(Qt::AlignRight|Qt::AlignVCenter));
+
+	ui->m_weatherIconsThemeComboBox->addItem(tr("Meteocons"),	"weather-icons-theme0");
+	ui->m_weatherIconsThemeComboBox->addItem(tr("Garmahis"),		"weather-icons-theme1");
 }
 //------------------------------------------------------------------------------
 PreferencesDialog::~PreferencesDialog(){
@@ -43,6 +46,7 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 
 	// Load prefs ----------------------------------------------
 	const Preferences &prefs = Prefs;
+	int comboIndex = 0;
 
 	// Jenkins URL
 	ui->m_jenkinsURLLineEdit->setText(prefs.getJenkinsUrl());
@@ -72,12 +76,19 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	// Jobs margin PX
 	ui->m_jobsMarginLineEdit->setText(QString("%1").arg(prefs.getJobsMargin()));
 
-	int comboIndex = ui->m_jobsNameDescAlignComboBox->findData(prefs.getJobsNameDescAlignFlags());
+	comboIndex = ui->m_jobsNameDescAlignComboBox->findData(prefs.getJobsNameDescAlignFlags());
 	Q_ASSERT(comboIndex >= 0);
 	if(comboIndex >= 0)
 		ui->m_jobsNameDescAlignComboBox->setCurrentIndex(comboIndex);
 	else
 		ui->m_jobsNameDescAlignComboBox->setCurrentIndex(0);
+
+	comboIndex = ui->m_weatherIconsThemeComboBox->findData(prefs.getWeatherIconsTheme());
+	Q_ASSERT(comboIndex >= 0);
+	if(comboIndex >= 0)
+		ui->m_weatherIconsThemeComboBox->setCurrentIndex(comboIndex);
+	else
+		ui->m_weatherIconsThemeComboBox->setCurrentIndex(0);
 	//----------------------------------------------------------
 
 	ui->m_jenkinsTabWidget->setCurrentIndex(0);
@@ -110,7 +121,7 @@ void PreferencesDialog::viewsList_updated(const QStringList &viewsList, const QS
 			ui->m_viewDisplayComboBox->addItem(view, viewData);
 	}
 
-	// Premier update, on récupère la view dans les prefs
+	// Premier update, on rÃ©cupÃ¨re la view dans les prefs
 	if(firstUpdate){
 		int index = ui->m_viewDisplayComboBox->findData(Prefs.getSelectedView());
 		if(index >= 0)
@@ -183,7 +194,10 @@ void PreferencesDialog::savePreferences(){
 	Prefs.setShowNodes(ui->m_showNodesCheckBox->isChecked());
 	Prefs.setShowPositionInQueue(ui->m_showPositionInQueue->isChecked());
 
-	const QComboBox *cb = ui->m_jobsNameDescAlignComboBox;
-	Prefs.setJobsNameDescAlignFlags(cb->itemData(cb->currentIndex()).toInt());
+	const QComboBox *JNDACB = ui->m_jobsNameDescAlignComboBox;
+	Prefs.setJobsNameDescAlignFlags(JNDACB->itemData(JNDACB->currentIndex()).toInt());
+
+	const QComboBox *WTCB = ui->m_weatherIconsThemeComboBox;
+	Prefs.setWeatherIconsTheme(WTCB->itemData(WTCB->currentIndex()).toString());
 }
 //------------------------------------------------------------------------------

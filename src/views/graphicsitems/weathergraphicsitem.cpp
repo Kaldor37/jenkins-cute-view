@@ -1,17 +1,15 @@
 //------------------------------------------------------------------------------
 #include "weathergraphicsitem.h"
-
+#include "preferences.h"
 #include <QGraphicsPixmapItem>
 #include <QPainter>
-
-//#define DEBUG_RECT 1
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 WeatherGraphicsItem::WeatherGraphicsItem(QGraphicsItem *parent):QGraphicsObject(parent),
 	m_weatherIcon(NoIcon),
-	m_size(),
-	m_weatherPixmap(){
+	m_weatherIconsTheme("weather-icons-theme0") // Default weather icons theme
+{
 	m_weatherItem = new QGraphicsPixmapItem(this); // Deleted with parent (this)
 }
 //------------------------------------------------------------------------------
@@ -58,28 +56,28 @@ void WeatherGraphicsItem::setRect(const QRectF &rect){
 //------------------------------------------------------------------------------
 void WeatherGraphicsItem::setWeatherIcon(WeatherGraphicsItem::eWeatherIcon icon){
 	m_weatherIcon = icon;
+	loadPixmap();
+	updateIcon();
+}
+//------------------------------------------------------------------------------
+void WeatherGraphicsItem::setWeatherTheme(const QString &theme){
+	// Theme doesn't change
+	if(theme == m_weatherIconsTheme)
+		return;
 
-	switch(icon){
-		case NoIcon:			m_weatherPixmap =  QPixmap(); break;
-		case Sunny:				m_weatherPixmap.load(":/weathericons/Sunny"); break;
-		case PartlyCloudy:	m_weatherPixmap.load(":/weathericons/PartlyCloudy"); break;
-		case Cloudy:			m_weatherPixmap.load(":/weathericons/Cloudy"); break;
-		case Rain:				m_weatherPixmap.load(":/weathericons/Rain"); break;
-		case Thunder:			m_weatherPixmap.load(":/weathericons/Thunder"); break;
-	}
-
+	m_weatherIconsTheme = theme;
+	loadPixmap();
 	updateIcon();
 }
 //------------------------------------------------------------------------------
 // Private functions
 //------------------------------------------------------------------------------
 void WeatherGraphicsItem::updateIcon(){
-	if(m_weatherPixmap.isNull()){
-		m_weatherItem->setPixmap(QPixmap());
-		m_weatherItem->setVisible(false);
-		return;
-	}
-	if(m_size.isEmpty() || m_size.isNull()){
+	if(
+		m_weatherPixmap.isNull() ||
+		m_size.isEmpty() || m_size.isNull() ||
+		m_weatherIcon == NoIcon
+	){
 		m_weatherItem->setPixmap(QPixmap());
 		m_weatherItem->setVisible(false);
 		return;
@@ -101,5 +99,18 @@ void WeatherGraphicsItem::updateIcon(){
 
 	if(!m_weatherItem->isVisible())
 		m_weatherItem->setVisible(true);
+}
+//------------------------------------------------------------------------------
+void WeatherGraphicsItem::loadPixmap(){
+	Q_ASSERT(!m_weatherIconsTheme.isEmpty());
+
+	switch(m_weatherIcon){
+		case NoIcon:			m_weatherPixmap =  QPixmap(); break;
+		case Sunny:				m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Sunny"); break;
+		case PartlyCloudy:	m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/PartlyCloudy"); break;
+		case Cloudy:			m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Cloudy"); break;
+		case Rain:				m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Rain"); break;
+		case Thunder:			m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Thunder"); break;
+	}
 }
 //------------------------------------------------------------------------------

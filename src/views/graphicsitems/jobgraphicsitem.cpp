@@ -52,6 +52,8 @@ JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(
 	QObject::connect(prefs, SIGNAL(sigJobsNameDescAlignFlagsChanged(int)), m_descriptionItem, SLOT(setTextFlags(int)));
 
 	m_weatherItem = new WeatherGraphicsItem(this);
+	m_weatherItem->setWeatherTheme(prefs->getWeatherIconsTheme());
+	QObject::connect(prefs, SIGNAL(sigWeatherIconsThemeChanged(QString)), m_weatherItem, SLOT(setWeatherTheme(QString)));
 
 	m_positionInQueueItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_positionInQueueItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs

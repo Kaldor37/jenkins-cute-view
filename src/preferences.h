@@ -61,6 +61,7 @@ PREFS_DECLARE_FIELD(uint,		APIUpdateInterval)
 PREFS_DECLARE_FIELD(QString,	SelectedView)
 PREFS_DECLARE_FIELD(bool,		ShowBuildNumber)
 PREFS_DECLARE_FIELD(bool,		ShowWeatherIcon)
+PREFS_DECLARE_FIELD(QString,	WeatherIconsTheme)
 PREFS_DECLARE_FIELD(bool,		ShowEstimatedEndTime)
 PREFS_DECLARE_FIELD(bool,		ShowLastBuildDescription)
 PREFS_DECLARE_FIELD(uint,		Columns)
@@ -82,6 +83,7 @@ PREFS_DECLARE_FIELD(bool,		StartFullscreen)
 		void sigSelectedViewChanged(QString);
 		void sigShowBuildNumberChanged(bool);
 		void sigShowWeatherIconChanged(bool);
+		void sigWeatherIconsThemeChanged(QString);
 		void sigShowEstimatedEndTimeChanged(bool);
 		void sigShowLastBuildDescriptionChanged(bool);
 		void sigColumnsChanged(uint);
