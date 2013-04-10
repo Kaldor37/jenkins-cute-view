@@ -36,6 +36,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 
 	ui->m_weatherIconsThemeComboBox->addItem(tr("Meteocons"),	"weather-icons-theme0");
 	ui->m_weatherIconsThemeComboBox->addItem(tr("Garmahis"),		"weather-icons-theme1");
+	ui->m_weatherIconsThemeComboBox->addItem(tr("Dark"),			"weather-icons-theme2");
 }
 //------------------------------------------------------------------------------
 PreferencesDialog::~PreferencesDialog(){

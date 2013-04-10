@@ -13,5 +13,12 @@
 		<file alias="Rain">weather-icons/theme1/3.png</file>
 		<file alias="Thunder">weather-icons/theme1/4.png</file>
 	</qresource>
+	<qresource prefix="/weather-icons-theme2">
+		<file alias="Sunny">weather-icons/theme2/0.png</file>
+		<file alias="PartlyCloudy">weather-icons/theme2/1.png</file>
+		<file alias="Cloudy">weather-icons/theme2/2.png</file>
+		<file alias="Rain">weather-icons/theme2/3.png</file>
+		<file alias="Thunder">weather-icons/theme2/4.png</file>
+	</qresource>
 </RCC>
 
