@@ -293,14 +293,17 @@ void JenkinsXMLAPIModel::parseNodes(const QDomDocument &doc){
 		QDomElement offlineElm = nodeNode.firstChildElement("offline");
 		QDomElement offlineCauseReasonElm = nodeNode.firstChildElement("offlineCauseReason");
 		QDomElement temporarilyOfflineElm = nodeNode.firstChildElement("temporarilyOffline");
-
 		if(!displayNameElm.isNull() && !idleElm.isNull() && !numExecutorsElm.isNull() &&
 			!offlineElm.isNull() && !offlineCauseReasonElm.isNull() && !temporarilyOfflineElm.isNull()){
+			// Do not load nodes with no executors
+			uint numExecutors = numExecutorsElm.text().toUInt();
+			if(numExecutors == 0)
+				continue;
 
 			NodeModel *nm = new NodeModel(this);
 			nm->setDisplayName(displayNameElm.text());
 			nm->setIdle(idleElm.text() == "true");
-			nm->setNumExecutors(numExecutorsElm.text().toUInt());
+			nm->setNumExecutors(numExecutors);
 			nm->setOffline(offlineElm.text() == "true");
 			nm->setOfflineCauseReason(offlineCauseReasonElm.text());
 			nm->setTemporarilyOffline(temporarilyOfflineElm.text() == "true");
