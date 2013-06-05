@@ -5,7 +5,7 @@
 // Constants initialization
 //------------------------------------------------------------------------------
 const QString Application::appName("JenkinsCuteView");
-const QString Application::appVersion("0.9.52a");
+const QString Application::appVersion("0.9.53a");
 const QString Application::orgName("JenkinsCuteView");
 //------------------------------------------------------------------------------
 // Static members initialization
@@ -42,6 +42,6 @@ Application & Application::instance(){
 }
 //------------------------------------------------------------------------------
 void Application::qObjectDestroyed(){
-	qDebug()<<QObject::sender()<<" destroyed";
+	//qDebug()<<QObject::sender()<<" destroyed";
 }
 //------------------------------------------------------------------------------
