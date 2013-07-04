@@ -1,5 +1,6 @@
 //------------------------------------------------------------------------------
 #include "utils/httpgetter.h"
+#include "application.h"
 
 #include <QDebug>
 #include <QNetworkRequest>
@@ -42,7 +43,9 @@ NetworkReplyManager::~NetworkReplyManager(){}
 // Public slots
 //------------------------------------------------------------------------------
 void HttpGetter::get(const QUrl &url, QObject *listener, const char *finishedSlot){
-	//qDebug()<<"HttpGetter::get("<<url<<")";
+	if(App.verbose())
+		qDebug()<<"HttpGetter::get("<<url<<")";
+
 	QNetworkReply *netRep = m_networkAccessManager->get(QNetworkRequest(url));
 	netRep->ignoreSslErrors();
 
@@ -87,6 +90,9 @@ void NetworkReplyManager::networkReply_finished(){
 
 	if(err == QNetworkReply::NoError)
 		content = m_networkReply->readAll();
+
+	if(App.verbose())
+		qDebug()<<"NetworkReplyManager::networkReply_finished("<<m_networkReply->url()<<") - Error : "<<m_networkReply->error();
 
 	emit finished(content, m_networkReply->error(), m_networkReply->errorString());
 }

@@ -18,6 +18,15 @@ Application::Application(int& argc, char* argv[]) : QApplication(argc, argv){
 	setApplicationName(appName);
 	setApplicationVersion(appVersion);
 	setOrganizationName(orgName);
+
+	m_verbose = false;
+	for(int i=0 ; i < argc ; ++i){
+		QString arg(argv[i]);
+		if(arg == "-v" || arg == "--verbose"){
+			qDebug()<<"Verbose mode enabled";
+			m_verbose = true;
+		}
+	}
 }
 //------------------------------------------------------------------------------
 Application::~Application(){
@@ -41,7 +50,7 @@ Application & Application::instance(){
 	return *m_instance;
 }
 //------------------------------------------------------------------------------
-void Application::qObjectDestroyed(){
-	//qDebug()<<QObject::sender()<<" destroyed";
+bool Application::verbose() const{
+	return m_verbose;
 }
 //------------------------------------------------------------------------------

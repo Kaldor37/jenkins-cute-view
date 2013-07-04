@@ -17,10 +17,6 @@ class Application : public QApplication{
 		static void destroy();
 		static Application & instance();
 
-		// Debug
-	public slots:
-		void qObjectDestroyed();
-
 //------------------------------------------------------------------------------
 // Destructor
 //------------------------------------------------------------------------------
@@ -36,10 +32,17 @@ class Application : public QApplication{
 		Application& operator=(const Application&);
 
 //------------------------------------------------------------------------------
+// Public functions
+//------------------------------------------------------------------------------
+	public:
+		bool verbose() const;
+
+//------------------------------------------------------------------------------
 // Members
 //------------------------------------------------------------------------------
 	private:
-		static Application * m_instance;
+		static Application *	m_instance;
+		bool						m_verbose;
 
 //------------------------------------------------------------------------------
 // Constants

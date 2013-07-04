@@ -3,6 +3,7 @@
 #include "autoresizingtextitem.h"
 #include "weathergraphicsitem.h"
 #include "preferences.h"
+#include "application.h"
 
 #include <QDebug>
 #include <QBrush>
@@ -244,7 +245,9 @@ void JobGraphicsItem::updateProgress(){
 			qreal done = now-m_buildStartTime;
 			m_progressFactor = (done/range);
 		}
-		//qDebug()<<"JobGraphicsItem::update("<<m_nameItem->text()<<") - Started : "<<m_buildStartTime<<" - Should end : "<<m_buildEstEndTime<<" - Now : "<<now<<" - Progression : "<<m_progressFactor;
+
+		if(App.verbose())
+			qDebug()<<"JobGraphicsItem::update("<<m_nameItem->text()<<") - Started : "<<m_buildStartTime<<" - Should end : "<<m_buildEstEndTime<<" - Now : "<<now<<" - Progression : "<<m_progressFactor;
 	}
 }
 //------------------------------------------------------------------------------

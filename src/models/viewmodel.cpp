@@ -3,6 +3,7 @@
 #include "utils/httpgetter.h"
 #include "jobmodel.h"
 #include "preferences.h"
+#include "application.h"
 
 #include <QDebug>
 #include <QDomDocument>
@@ -74,7 +75,8 @@ void ViewModel::http_finished(const QString &content, QNetworkReply::NetworkErro
 void ViewModel::parseJobs(const QDomDocument &doc){
 	clearJobs();
 
-	//qDebug()<<"ViewModel["<<m_name<<"]::parseJobs()";
+	if(App.verbose())
+		qDebug()<<"ViewModel["<<m_name<<"]::parseJobs()";
 
 	QDomNodeList nodesList = doc.elementsByTagName("job");
 	int numJobs = nodesList.size();

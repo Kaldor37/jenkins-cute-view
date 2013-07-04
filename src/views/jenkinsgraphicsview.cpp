@@ -72,6 +72,9 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 	QVector<QString> jobsList;
 	QVector<QString> jobsDeleteList;
 
+	if(App.verbose())
+		qDebug()<<"JenkinsGraphicsView::updateJobs("<<jobs.size()<<")";
+
 	// Add new jobs - Update existing jobs
 	foreach(const JobDisplayData &job, jobs){
 		const QString &name = job.getName();
@@ -87,7 +90,6 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 
 		// Job found, update
 		if(foundJob){
-			//qDebug()<<"Update job : "<<foundJob;
 			foundJob->setName(name);
 			foundJob->update(job);
 		}
@@ -98,8 +100,6 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 			newJob->update(job);
 			m_jobItems[name] = newJob;
 			m_scene->addItem(newJob);
-			//qDebug()<<"Job created : "<<newJob;
-			//QObject::connect(newJob, SIGNAL(destroyed()), &App, SLOT(qObjectDestroyed()));
 		}
 	}
 
@@ -150,7 +150,6 @@ void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const Q
 		// Update node
 		if(foundNode){
 			foundNode->setColor(color);
-			//qDebug()<<"Updated node "<<name;
 		}
 		// Create node
 		else{
@@ -159,7 +158,6 @@ void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const Q
 			nodeItem->setColor(color);
 			m_nodeItems[name] = nodeItem;
 			m_scene->addItem(nodeItem);
-			//qDebug()<<"Added node "<<name;
 		}
 	}
 
@@ -170,7 +168,6 @@ void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const Q
 			NodeGraphicsItem *node = m_nodeItems.take(nodeName);
 			m_scene->removeItem(node);
 			node->deleteLater();
-			//qDebug()<<"Deleted node "<<nodeName;
 		}
 	}
 

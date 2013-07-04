@@ -4,6 +4,7 @@
 #include "models/nodemodel.h"
 #include "models/viewmodel.h"
 #include "preferences.h"
+#include "application.h"
 
 #include <QDebug>
 #include <QDomDocument>
@@ -269,7 +270,8 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 	if(!m_selectedView && m_primaryView)
 		m_selectedView = m_primaryView;
 
-	//qDebug()<<"JenkinsXMLAPIModel::parseViews - Parsed "<<m_views.size()<<" views - Primary : "<<m_primaryView->getName()<<" - Selected : "<<m_selectedView->getName();
+	if(App.verbose())
+		qDebug()<<"JenkinsXMLAPIModel::parseViews - Parsed "<<m_views.size()<<" views - Primary : "<<m_primaryView->getName()<<" - Selected : "<<m_selectedView->getName();
 
 	loadSelectedView();
 
