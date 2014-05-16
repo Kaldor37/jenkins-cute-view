@@ -10,7 +10,6 @@
 //------------------------------------------------------------------------------
 class AutoResizingTextItem : public QGraphicsObject, public QGraphicsLayoutItem {
 	Q_OBJECT
-	Q_INTERFACES(QGraphicsLayoutItem)
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------

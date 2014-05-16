@@ -17,15 +17,24 @@ ENDIF()
 # Warnings
 add_definitions(-Wall -Wextra)
 
-# Search for Qt
-find_package(Qt4 4.6 COMPONENTS QtCore QtGui QtXml QtNetwork REQUIRED)
-include(${QT_USE_FILE})
+find_package(Qt5Core)
+IF(Qt5Core_FOUND)
+	message(STATUS "Building with Qt5 (${Qt5Core_VERSION_STRING})")
+	find_package(Qt5Gui)
+	find_package(Qt5Widgets)
+	find_package(Qt5Xml)
+	find_package(Qt5Network)
+ELSE()
+	message(STATUS "Qt5 not found, trying Qt4...")
+	find_package(Qt4 4.6 COMPONENTS QtCore QtGui QtXml QtNetwork REQUIRED)
+	include(${QT_USE_FILE})
+ENDIF()
 
 # SVN Revision informations
 find_package(Subversion)
 IF(Subversion_FOUND)
 	Subversion_WC_INFO(${PROJECT_SOURCE_DIR} SVN)
-	message("Project revision : ${SVN_WC_REVISION}")
+	message(STATUS "Project revision : ${SVN_WC_REVISION}")
 ENDIF()
 
 # Configure file with SVN revision informations
@@ -38,6 +47,7 @@ configure_file(
 include_directories(
 	${PROJECT_SOURCE_DIR}/src
 	${PROJECT_BINARY_DIR}
+	${Qt5Core_INCLUDE_DIRS}
 )
 
 # Headers
@@ -104,9 +114,15 @@ SET(RESOURCES
 	res/weather-icons.qrc
 )
 
-qt4_wrap_cpp(MOC_SRCS ${MOC_HDRS})
-qt4_wrap_ui(FORMS_SRCS ${FORMS})
-qt4_add_resources(RESOURCES_SRCS ${RESOURCES})
+IF(Qt5Core_FOUND)
+	qt5_wrap_cpp(MOC_SRCS ${MOC_HDRS})
+	qt5_wrap_ui(FORMS_SRCS ${FORMS})
+	qt5_add_resources(RESOURCES_SRCS ${RESOURCES})
+ELSE()
+	qt4_wrap_cpp(MOC_SRCS ${MOC_HDRS})
+	qt4_wrap_ui(FORMS_SRCS ${FORMS})
+	qt4_add_resources(RESOURCES_SRCS ${RESOURCES})
+ENDIF()
 
 add_executable(
 	${PROJECT_NAME}
@@ -117,7 +133,17 @@ add_executable(
 		${RESOURCES_SRCS}
 )
 
-target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
+IF(Qt5Core_FOUND)
+	target_link_libraries(${PROJECT_NAME}
+		Qt5::Core
+		Qt5::Gui
+		Qt5::Widgets
+		Qt5::Xml
+		Qt5::Network
+	)
+ELSE()
+	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
+ENDIF()
 
 # Install
 INSTALL(
