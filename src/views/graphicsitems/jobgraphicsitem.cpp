@@ -4,6 +4,7 @@
 #include "weathergraphicsitem.h"
 #include "preferences.h"
 #include "application.h"
+#include "views/jenkinsgraphicsview.h"
 
 #include <QDebug>
 #include <QBrush>
@@ -14,7 +15,8 @@
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
-JobGraphicsItem::JobGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
+JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
+	m_view(view),
 	m_lastBuildNum(0),
 	m_nameItem(0),
 	m_estEndTimeItem(0),
@@ -136,19 +138,19 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 	switch(data.getStatus()){
 		case JobDisplayData::StatusNeverBuilt:
 		case JobDisplayData::StatusInactiveOrAborted:
-			m_rectColor = Qt::darkGray;
+			m_rectColor = m_view->property("InactiveOrNeverBuilt").value<QColor>();
 		break;
 
 		case JobDisplayData::StatusLastBuildSuccessful:
-			m_rectColor = Qt::darkGreen;
+			m_rectColor = m_view->property("LastBuildSuccess").value<QColor>();
 		break;
 
 		case JobDisplayData::StatusLastBuildSuccessfulButUnstable:
-			m_rectColor = Qt::darkYellow;
+			m_rectColor = m_view->property("LastBuildUnstable").value<QColor>();
 		break;
 
 		case JobDisplayData::StatusLastBuildFailed:
-			m_rectColor = Qt::darkRed;
+			m_rectColor = m_view->property("LastBuildFailed").value<QColor>();
 		break;
 	}
 

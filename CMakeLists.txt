@@ -59,6 +59,7 @@ SET(HEADERS
 # Moc headers (QObjects .h)
 SET(MOC_HDRS
 	src/application.h
+	src/jenkinsnamespace.h
 	src/preferences.h
 	src/controllers/jenkinscontroller.h
 	src/models/buildmodel.h

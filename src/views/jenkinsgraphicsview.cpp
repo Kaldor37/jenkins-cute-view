@@ -95,7 +95,7 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 		}
 		// Job not found, add
 		else{
-			JobGraphicsItem *newJob = new JobGraphicsItem(); // Deleted with scene
+			JobGraphicsItem *newJob = new JobGraphicsItem(this); // Deleted with scene
 			newJob->setName(name);
 			newJob->update(job);
 			m_jobItems[name] = newJob;
@@ -111,7 +111,7 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 			jobsDeleteList.push_back(name);
 	}
 
-	foreach(QString name, jobsDeleteList){
+	foreach(const QString &name, jobsDeleteList){
 		Q_ASSERT(m_jobItems.contains(name));
 		JobGraphicsItem *jobItem = m_jobItems.take(name);
 		m_scene->removeItem(jobItem);
@@ -131,13 +131,21 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 	update();
 }
 //------------------------------------------------------------------------------
-void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const QVector<QColor> &nodeColors){
-	Q_ASSERT(nodeNames.size() == nodeColors.size());
+void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const QVector<jenkins::NodeStatus> &nodeStatuses){
+	Q_ASSERT(nodeNames.size() == nodeStatuses.size());
 	int nbNodes = nodeNames.size();
 
 	for(int i=0 ; i < nbNodes ; ++i){
-		const QString &name = nodeNames[i];
-		const QColor &color = nodeColors[i];
+		const QString &name = nodeNames.at(i);
+
+		const jenkins::NodeStatus &nodeStatus = nodeStatuses.at(i);
+		QColor color;
+		switch(nodeStatus){
+			case jenkins::Idle:						color = property("NodeIdle").value<QColor>(); break;
+			case jenkins::Working:					color = property("NodeIdle").value<QColor>().lighter(); break;
+			case jenkins::Offline:					color = property("NodeOffline").value<QColor>(); break;
+			case jenkins::TemporarilyOffline:	color = property("NodeTemporarilyOffline").value<QColor>(); break;
+		}
 
 		// Find node
 		NodeGraphicsItem *foundNode = NULL;

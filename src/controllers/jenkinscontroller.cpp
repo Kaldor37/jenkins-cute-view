@@ -37,13 +37,14 @@ void JenkinsController::control(MainWindow *wnd){
 	qRegisterMetaType< QVector<QColor> >("QVector<QColor>");
 	qRegisterMetaType< QList<JobDisplayData> >("QList<JobDisplayData>");
 	qRegisterMetaType<QStringList>("QStringList");
+	qRegisterMetaType<QVector<jenkins::NodeStatus> >("QVector<jenkins::NodeStatus>");
 
 	// To UI
 	QObject::connect(m_XMLAPIModel, SIGNAL(viewsNamesUpdated(QStringList,QString)), wnd, SIGNAL(viewsNamesUpdated(QStringList,QString)));
 
 	// To graphics view
 	QObject::connect(this, SIGNAL(jobs_updated(QList<JobDisplayData>)), wnd->getGraphicsView(), SLOT(updateJobs(QList<JobDisplayData>)), Qt::QueuedConnection);
-	QObject::connect(this, SIGNAL(nodes_updated(QVector<QString>,QVector<QColor>)), wnd->getGraphicsView(), SLOT(updateNodes(QVector<QString>,QVector<QColor>)), Qt::QueuedConnection);
+	QObject::connect(this, SIGNAL(nodes_updated(QVector<QString>,QVector<jenkins::NodeStatus>)), wnd->getGraphicsView(), SLOT(updateNodes(QVector<QString>,QVector<jenkins::NodeStatus>)), Qt::QueuedConnection);
 
 	QObject::connect(m_XMLAPIModel, SIGNAL(message(QString)), wnd->getGraphicsView(), SLOT(displayMessage(QString)));
 	QObject::connect(m_XMLAPIModel, SIGNAL(warning(QString)), wnd->getGraphicsView(), SLOT(displayWarning(QString)));
@@ -146,22 +147,24 @@ void JenkinsController::nodesListUpdated(){
 	const JenkinsXMLAPIModel::NodesList &nodesList = m_XMLAPIModel->nodes();
 
 	QVector<QString> nodesNames;
-	QVector<QColor> nodesColors;
+	QVector<jenkins::NodeStatus> nodesStatuses;
 
 	foreach(const NodeModel * node, nodesList){
 		nodesNames.push_back(node->getDisplayName());
 
-		QColor nodeColor = Qt::darkGreen;
+		jenkins::NodeStatus status;
 		if(node->getTemporarilyOffline())
-			nodeColor = Qt::darkGray;
+			status = jenkins::TemporarilyOffline;
 		else if(node->getOffline())
-			nodeColor = Qt::darkRed;
+			status = jenkins::Offline;
 		else if(!node->getIdle())
-			nodeColor = QColor(Qt::darkGreen).lighter();
+			status = jenkins::Working;
+		else
+			status = jenkins::Idle;
 
-		nodesColors.push_back(nodeColor);
+		nodesStatuses.push_back(status);
 	}
 
-	emit nodes_updated(nodesNames, nodesColors);
+	emit nodes_updated(nodesNames, nodesStatuses);
 }
 //------------------------------------------------------------------------------

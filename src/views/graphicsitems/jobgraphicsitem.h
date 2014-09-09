@@ -10,6 +10,7 @@ class QSizeF;
 class QGraphicsPixmapItem;
 class WeatherGraphicsItem;
 class AutoResizingTextItem;
+class JenkinsGraphicsView;
 //------------------------------------------------------------------------------
 class JobGraphicsItem : public QGraphicsObject {
 	Q_OBJECT
@@ -17,7 +18,7 @@ class JobGraphicsItem : public QGraphicsObject {
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit JobGraphicsItem(QGraphicsItem *parent = 0);
+		explicit JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *parent = 0);
 		~JobGraphicsItem();
 
 //------------------------------------------------------------------------------
@@ -64,6 +65,8 @@ class JobGraphicsItem : public QGraphicsObject {
 // Members
 //------------------------------------------------------------------------------
 	private:
+		JenkinsGraphicsView *m_view;
+
 		QString	m_name;
 		uint		m_lastBuildNum;
 		QSizeF	m_size;

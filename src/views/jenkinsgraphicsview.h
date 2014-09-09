@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "jobdisplaydata.h"
 #include "graphicsitems/messagegraphicsitem.h"
+#include "jenkinsnamespace.h"
 
 #include <QGraphicsView>
 #include <QMap>
@@ -43,7 +44,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 //------------------------------------------------------------------------------
 	public slots:
 		void updateJobs(const QList<JobDisplayData> &);
-		void updateNodes(const QVector<QString> &nodeNames, const QVector<QColor> &nodeColors);
+		void updateNodes(const QVector<QString> &nodeNames, const QVector<jenkins::NodeStatus> &nodeColors);
 
 		void displayMessage(const QString & msg, MessageGraphicsItem::eMessageType type=MessageGraphicsItem::Normal);
 		void displayWarning(const QString & msg);

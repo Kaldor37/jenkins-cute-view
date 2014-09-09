@@ -3,6 +3,7 @@
 #define JENKINSCONTROLLER_H
 //------------------------------------------------------------------------------
 #include "views/jobdisplaydata.h"
+#include "jenkinsnamespace.h"
 
 #include <QObject>
 #include <QList>
@@ -22,7 +23,7 @@ class JenkinsController : public QObject {
 //------------------------------------------------------------------------------
 	signals:
 		void jobs_updated(QList<JobDisplayData> jobs);
-		void nodes_updated(QVector<QString> nodesNames, QVector<QColor> nodesColors);
+		void nodes_updated(QVector<QString> nodesNames, QVector<jenkins::NodeStatus> nodesColors);
 
 //------------------------------------------------------------------------------
 	public slots:
