@@ -69,6 +69,7 @@ PREFS_DECLARE_FIELD(bool,		ShowNodes)
 PREFS_DECLARE_FIELD(bool,		ShowPositionInQueue)
 PREFS_DECLARE_FIELD(uint,		JobsMargin)
 PREFS_DECLARE_FIELD(int,		JobsNameDescAlignFlags)
+PREFS_DECLARE_FIELD(QString,	APIUserID)
 PREFS_DECLARE_FIELD(QString,	APIToken)
 PREFS_DECLARE_FIELD(bool,		StartFullscreen)
 //------------------------------------------------------------------------------
@@ -91,14 +92,10 @@ PREFS_DECLARE_FIELD(bool,		StartFullscreen)
 		void sigShowPositionInQueueChanged(bool);
 		void sigJobsMarginChanged(uint);
 		void sigJobsNameDescAlignFlagsChanged(int);
+		void sigAPIUserIDChanged(QString);
 		void sigAPITokenChanged(QString);
 		void sigStartFullscreenChanged(bool);
 
-//------------------------------------------------------------------------------
-// Specific public getters
-//------------------------------------------------------------------------------
-	public:
-		QString getAPITokenUrlSuffix() const;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

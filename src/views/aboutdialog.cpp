@@ -1,7 +1,6 @@
 #include "views/aboutdialog.h"
 #include "ui_aboutdialog.h"
 #include "application.h"
-#include "svninfos.h"
 
 AboutDialog::AboutDialog(QWidget *parent) :
 	QDialog(parent),
@@ -9,11 +8,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 	ui->setupUi(this);
 
 	// Version label
-	ui->m_versionLabel->setText(
-		ui->m_versionLabel->text()
-				.arg(App.applicationVersion())
-				.arg(SVN_WC_REVISION)
-	);
+	ui->m_versionLabel->setText(ui->m_versionLabel->text().arg(App.applicationVersion()));
 
 	// Qt version label
 	ui->m_qtVersionLabel->setText(ui->m_qtVersionLabel->text().arg(QT_VERSION_STR));

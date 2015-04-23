@@ -37,6 +37,7 @@ class HttpGetter : public QObject{
 //------------------------------------------------------------------------------
 	public slots:
 		void get(const QUrl &url, QObject *listener, const char *finishedSlot);
+		void setBasicAuthorization(const QString &user, const QString &pass);
 
 	private slots:
 		void networkReply_finished();
@@ -49,6 +50,7 @@ class HttpGetter : public QObject{
 
 		QNetworkAccessManager *	m_networkAccessManager;
 		QMap<QNetworkReply*,NetworkReplyManager*> m_replyManagers;
+		QByteArray m_authorizationHeader;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

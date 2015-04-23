@@ -59,7 +59,7 @@
       <string notr="true">margin-bottom: 10px;</string>
      </property>
      <property name="text">
-      <string>Version : %1 (r%2)</string>
+      <string>Version: %1</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

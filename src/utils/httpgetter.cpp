@@ -46,7 +46,12 @@ void HttpGetter::get(const QUrl &url, QObject *listener, const char *finishedSlo
 	if(App.verbose())
 		qDebug()<<"HttpGetter::get("<<url<<")";
 
-	QNetworkReply *netRep = m_networkAccessManager->get(QNetworkRequest(url));
+	QNetworkRequest netReq(url);
+	if(!m_authorizationHeader.isEmpty()){
+		netReq.setRawHeader("Authorization", m_authorizationHeader);
+	}
+
+	QNetworkReply *netRep = m_networkAccessManager->get(netReq);
 	netRep->ignoreSslErrors();
 
 	NetworkReplyManager *manager = new NetworkReplyManager(netRep, this);
@@ -56,6 +61,15 @@ void HttpGetter::get(const QUrl &url, QObject *listener, const char *finishedSlo
 	connect(netRep, SIGNAL(finished()), SLOT(networkReply_finished()), Qt::QueuedConnection);
 
 	m_replyManagers[netRep] = manager;
+}
+//------------------------------------------------------------------------------
+void HttpGetter::setBasicAuthorization(const QString &user, const QString &pass){
+	if(user.isEmpty() || pass.isEmpty()){
+		m_authorizationHeader.clear();
+		return;
+	}
+
+	m_authorizationHeader = "Basic " + QString("%1:%2").arg(user).arg(pass).toLocal8Bit().toBase64();
 }
 //------------------------------------------------------------------------------
 // Private slots

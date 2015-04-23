@@ -60,7 +60,7 @@ void BuildModel::load(){
 
 	m_loaded = false;
 
-	httpGetter.get(m_Url + "api/xml" + Prefs.getAPITokenUrlSuffix(), this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
+	httpGetter.get(m_Url + "api/xml", this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
 }
 //------------------------------------------------------------------------------
 void BuildModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){

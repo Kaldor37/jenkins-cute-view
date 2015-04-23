@@ -33,7 +33,7 @@ void ViewModel::loadJobs(){
 
 	m_jobsListLoaded = false;
 
-	httpGetter.get(m_url + "/api/xml" + Prefs.getAPITokenUrlSuffix(), this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
+	httpGetter.get(m_url + "/api/xml", this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
 }
 //------------------------------------------------------------------------------
 const QString & ViewModel::getName() const{

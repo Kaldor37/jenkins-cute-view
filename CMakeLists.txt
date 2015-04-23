@@ -30,19 +30,6 @@ ELSE()
 	include(${QT_USE_FILE})
 ENDIF()
 
-# SVN Revision informations
-find_package(Subversion)
-IF(Subversion_FOUND)
-	Subversion_WC_INFO(${PROJECT_SOURCE_DIR} SVN)
-	message(STATUS "Project revision : ${SVN_WC_REVISION}")
-ENDIF()
-
-# Configure file with SVN revision informations
-configure_file(
-	${PROJECT_SOURCE_DIR}/src/svninfos.cmake.h
-	${CMAKE_SOURCE_DIR}/src/svninfos.h
-)
-
 # Include directories (sources and bin for generated moc headers)
 include_directories(
 	${PROJECT_SOURCE_DIR}/src
@@ -53,7 +40,6 @@ include_directories(
 # Headers
 SET(HEADERS
 	src/views/jobdisplaydata.h
-	src/svninfos.h
 )
 
 # Moc headers (QObjects .h)

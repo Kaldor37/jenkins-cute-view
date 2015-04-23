@@ -14,6 +14,7 @@ int main(int argc, char *argv[]){
 	Application::create(argc, argv);
 	Preferences::create();
 	HttpGetter::create();
+	HttpGetter::instance().setBasicAuthorization(Prefs.getAPIUserID(), Prefs.getAPIToken());
 
 	/* For now, weather icons are embeded
 	bool weatherIconsLoaded = QResource::registerResource("weather-icons.rcc");

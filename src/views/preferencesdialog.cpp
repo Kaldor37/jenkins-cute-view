@@ -2,6 +2,7 @@
 #include "views/preferencesdialog.h"
 #include "ui_preferencesdialog.h"
 #include "preferences.h"
+#include "utils/httpgetter.h"
 
 #include <limits.h>
 #include <QIntValidator>
@@ -51,6 +52,9 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 
 	// Jenkins URL
 	ui->m_jenkinsURLLineEdit->setText(prefs.getJenkinsUrl());
+
+	// Jenkins API UserID
+	ui->m_APIUserIdLineEdit->setText(prefs.getAPIUserID());
 
 	// Jenkins API Token
 	ui->m_APITokenLineEdit->setText(prefs.getAPIToken());
@@ -171,7 +175,11 @@ void PreferencesDialog::savePreferences(){
 
 	Prefs.setAPIUpdateInterval(ui->m_updateIntervalLineEdit->text().toUInt());
 	Prefs.setJenkinsUrl(ui->m_jenkinsURLLineEdit->text());
+
+	Prefs.setAPIUserID(ui->m_APIUserIdLineEdit->text());
 	Prefs.setAPIToken(ui->m_APITokenLineEdit->text());
+	HttpGetter::instance().setBasicAuthorization(Prefs.getAPIUserID(), Prefs.getAPIToken());
+
 	QVariant selectedViewData = ui->m_viewDisplayComboBox->itemData(ui->m_viewDisplayComboBox->currentIndex());
 	Prefs.setSelectedView((selectedViewData.isValid())?selectedViewData.toString():"");
 
