@@ -132,6 +132,22 @@ ELSE()
 	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 ENDIF()
 
+find_package(Git)
+IF(GIT_FOUND)
+	exec_program(
+		${GIT_EXECUTABLE}
+		${CMAKE_CURRENT_SOURCE_DIR}
+		ARGS "rev-parse" "HEAD"
+		OUTPUT_VARIABLE GIT_REVISION
+	)
+	IF(GIT_REVISION)
+		message(STATUS "Git revision: ${GIT_REVISION}")
+		set_target_properties(${PROJECT_NAME} PROPERTIES
+			COMPILE_DEFINITIONS "GIT_REVISION=\"${GIT_REVISION}\""
+		)
+	ENDIF()
+ENDIF()
+
 # Install
 INSTALL(
 	PROGRAMS ${PROJECT_BINARY_DIR}/${PROJECT_NAME}

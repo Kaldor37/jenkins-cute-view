@@ -55,6 +55,9 @@
        <bold>true</bold>
       </font>
      </property>
+     <property name="toolTip">
+      <string>Revision: %1</string>
+     </property>
      <property name="styleSheet">
       <string notr="true">margin-bottom: 10px;</string>
      </property>
