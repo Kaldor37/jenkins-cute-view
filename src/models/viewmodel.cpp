@@ -97,14 +97,14 @@ void ViewModel::parseJobs(const QDomDocument &doc){
 			continue;
 
 		JobModel * job = new JobModel(name, url, this);
-		connect(job, SIGNAL(loaded()), SLOT(job_loaded()));
+		QObject::connect(job, &JobModel::loaded, this, &ViewModel::job_loaded);
 		m_jobs.push_back(job);
 		job->load();
 	}
 }
 //------------------------------------------------------------------------------
 void ViewModel::clearJobs(){
-	foreach(JobModel *job, m_jobs)
+	for(JobModel *job : m_jobs)
 		job->deleteLater();
 
 	m_jobs.clear();
@@ -113,7 +113,7 @@ void ViewModel::clearJobs(){
 void ViewModel::job_loaded(){
 	bool jobsLoaded = true;
 
-	foreach(JobModel *job, m_jobs){
+	for(JobModel *job : m_jobs){
 		if(!job->isLoaded()){
 			jobsLoaded = false;
 			break;

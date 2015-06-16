@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
-NodeGraphicsItem::NodeGraphicsItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
+NodeGraphicsItem::NodeGraphicsItem(QGraphicsItem *parent/* = nullptr*/):QGraphicsObject(parent),
 	m_nameItem(0)
 {
 	m_nameItem = new AutoResizingTextItem(this); // Delete with this

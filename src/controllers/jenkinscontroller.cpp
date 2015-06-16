@@ -18,14 +18,14 @@ JenkinsController::JenkinsController(QObject *parent/*=0*/):QObject(parent){
 	m_updateTimer = new QTimer(this);
 
 	m_XMLAPIModel = new JenkinsXMLAPIModel(this);
-	QObject::connect(&Prefs, SIGNAL(sigJenkinsUrlChanged(QString)), m_XMLAPIModel, SLOT(setJenkinsUrl(QString)));
-	QObject::connect(&Prefs, SIGNAL(sigSelectedViewChanged(QString)), m_XMLAPIModel, SLOT(setSelectedView(QString)));
-	connect(m_XMLAPIModel, SIGNAL(selectedViewLoaded()), SLOT(selectedViewDataUpdated()));
-	connect(m_XMLAPIModel, SIGNAL(nodesListLoaded()), SLOT(nodesListUpdated()));
+	QObject::connect(&Prefs, &Preferences::sigJenkinsUrlChanged, m_XMLAPIModel, &JenkinsXMLAPIModel::setJenkinsUrl);
+	QObject::connect(&Prefs, &Preferences::sigSelectedViewChanged, m_XMLAPIModel, &JenkinsXMLAPIModel::setSelectedView);
+	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::selectedViewLoaded, this, &JenkinsController::selectedViewDataUpdated);
+	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::nodesListLoaded, this, &JenkinsController::nodesListUpdated);
 
-	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadViews()));
-	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadNodes()));
-	QObject::connect(m_updateTimer, SIGNAL(timeout()), m_XMLAPIModel, SLOT(loadJobsQueue()));
+	QObject::connect(m_updateTimer, &QTimer::timeout, m_XMLAPIModel, &JenkinsXMLAPIModel::loadViews);
+	QObject::connect(m_updateTimer, &QTimer::timeout, m_XMLAPIModel, &JenkinsXMLAPIModel::loadNodes);
+	QObject::connect(m_updateTimer, &QTimer::timeout, m_XMLAPIModel, &JenkinsXMLAPIModel::loadJobsQueue);
 }
 //------------------------------------------------------------------------------
 JenkinsController::~JenkinsController(){}
@@ -40,15 +40,17 @@ void JenkinsController::control(MainWindow *wnd){
 	qRegisterMetaType<QVector<jenkins::NodeStatus> >("QVector<jenkins::NodeStatus>");
 
 	// To UI
-	QObject::connect(m_XMLAPIModel, SIGNAL(viewsNamesUpdated(QStringList,QString)), wnd, SIGNAL(viewsNamesUpdated(QStringList,QString)));
+	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::viewsNamesUpdated, wnd, &MainWindow::viewsNamesUpdated);
 
 	// To graphics view
+	// TODO: change these to Qt5 connections
 	QObject::connect(this, SIGNAL(jobs_updated(QList<JobDisplayData>)), wnd->getGraphicsView(), SLOT(updateJobs(QList<JobDisplayData>)), Qt::QueuedConnection);
 	QObject::connect(this, SIGNAL(nodes_updated(QVector<QString>,QVector<jenkins::NodeStatus>)), wnd->getGraphicsView(), SLOT(updateNodes(QVector<QString>,QVector<jenkins::NodeStatus>)), Qt::QueuedConnection);
 
-	QObject::connect(m_XMLAPIModel, SIGNAL(message(QString)), wnd->getGraphicsView(), SLOT(displayMessage(QString)));
-	QObject::connect(m_XMLAPIModel, SIGNAL(warning(QString)), wnd->getGraphicsView(), SLOT(displayWarning(QString)));
-	QObject::connect(m_XMLAPIModel, SIGNAL(error(QString)), wnd->getGraphicsView(), SLOT(displayError(QString)));
+	void (JenkinsGraphicsView::*slotMessage)(const QString &) = &JenkinsGraphicsView::displayMessage;
+	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::message, wnd->getGraphicsView(), slotMessage);
+	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::warning, wnd->getGraphicsView(), &JenkinsGraphicsView::displayWarning);
+	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::error, wnd->getGraphicsView(), &JenkinsGraphicsView::displayError);
 }
 //------------------------------------------------------------------------------
 void JenkinsController::prefs_APIUpdateIntervalChanged(uint value){
@@ -62,7 +64,7 @@ void JenkinsController::start(){
 	m_XMLAPIModel->setSelectedView(Prefs.getSelectedView());
 
 	m_updateTimer->setInterval(Prefs.getAPIUpdateInterval()*1000);
-	connect(&Prefs, SIGNAL(sigAPIUpdateIntervalChanged(uint)), SLOT(prefs_APIUpdateIntervalChanged(uint)));
+	QObject::connect(&Prefs, &Preferences::sigAPIUpdateIntervalChanged, this, &JenkinsController::prefs_APIUpdateIntervalChanged);
 
 	m_updateTimer->start();
 }
@@ -82,7 +84,7 @@ void JenkinsController::selectedViewDataUpdated(){
 	if(App.verbose())
 		qDebug()<<"JenkinsController::selectedViewDataUpdated - Jobs to display : "<<jobs.size();
 
-	foreach(const JobModel *job, jobs){
+	for(const JobModel *job : jobs){
 		const BuildModel *jobLastBuild = job->getLastBuild();
 		const BuildModel *jobLastCompBuild = job->getLastCompletedBuild();
 
@@ -149,7 +151,7 @@ void JenkinsController::nodesListUpdated(){
 	QVector<QString> nodesNames;
 	QVector<jenkins::NodeStatus> nodesStatuses;
 
-	foreach(const NodeModel * node, nodesList){
+	for(const NodeModel * node : nodesList){
 		nodesNames.push_back(node->getDisplayName());
 
 		jenkins::NodeStatus status;

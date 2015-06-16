@@ -18,7 +18,7 @@ class JobGraphicsItem : public QGraphicsObject {
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *parent = 0);
+		explicit JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *parent = nullptr);
 		~JobGraphicsItem();
 
 //------------------------------------------------------------------------------

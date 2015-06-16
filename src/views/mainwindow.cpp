@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	m_fullscreenShortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
 	m_fullscreenShortcut->setContext(Qt::WindowShortcut);
-	connect(m_fullscreenShortcut, SIGNAL(activated()), SLOT(fullScreenShortcut_activated()));
+	QObject::connect(m_fullscreenShortcut, &QShortcut::activated, this, &MainWindow::fullScreenShortcut_activated);
 
 	QPixmap emptyCursorPixmap(QSize(1,1));
 	emptyCursorPixmap.fill(Qt::transparent);
@@ -40,10 +40,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	createPrefsDialog();
 
-	connect(ui->m_graphicsView, SIGNAL(fullScreenTriggered()), SLOT(fullScreenShortcut_activated()));
-	connect(ui->m_graphicsView, SIGNAL(preferencesTriggered()), SLOT(on_m_actionPreferences_triggered()));
-	connect(ui->m_graphicsView, SIGNAL(quitTriggered()), SLOT(on_m_actionQuit_triggered()));
-	connect(this, SIGNAL(fullscreenModeChanged(bool)), ui->m_graphicsView, SLOT(fullscreenModeChanged(bool)));
+	QObject::connect(ui->m_graphicsView, &JenkinsGraphicsView::fullScreenTriggered, this, &MainWindow::fullScreenShortcut_activated);
+	QObject::connect(ui->m_graphicsView, &JenkinsGraphicsView::preferencesTriggered, this, &MainWindow::on_m_actionPreferences_triggered);
+	QObject::connect(ui->m_graphicsView, &JenkinsGraphicsView::quitTriggered, this, &MainWindow::on_m_actionQuit_triggered);
+	QObject::connect(this, &MainWindow::fullscreenModeChanged, ui->m_graphicsView, &JenkinsGraphicsView::fullscreenModeChanged);
 
 	// Display window
 	show();
@@ -65,7 +65,7 @@ MainWindow::~MainWindow(){
 void MainWindow::createPrefsDialog(){
 	if(!m_prefsDialog){
 		m_prefsDialog = new PreferencesDialog(this);
-		QObject::connect(this, SIGNAL(viewsNamesUpdated(QStringList,QString)), m_prefsDialog, SLOT(viewsList_updated(QStringList,QString)));
+		QObject::connect(this, &MainWindow::viewsNamesUpdated, m_prefsDialog, &PreferencesDialog::viewsList_updated);
 	}
 }
 //------------------------------------------------------------------------------

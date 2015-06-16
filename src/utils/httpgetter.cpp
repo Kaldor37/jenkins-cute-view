@@ -33,9 +33,10 @@ HttpGetter::~HttpGetter(){}
 NetworkReplyManager::NetworkReplyManager(QNetworkReply *networkReply, QObject *parent) : QObject(parent),
 	m_networkReply(networkReply)
 {
-	connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),	SLOT(networkReply_error(QNetworkReply::NetworkError)));
-	connect(networkReply, SIGNAL(sslErrors(QList<QSslError>)),			SLOT(networkReply_sslErrors(QList<QSslError>)));
-	connect(networkReply, SIGNAL(finished()),									SLOT(networkReply_finished()));
+	void (QNetworkReply::*sigError)(QNetworkReply::NetworkError) = &QNetworkReply::error;
+	QObject::connect(networkReply, sigError, this,	&NetworkReplyManager::networkReply_error);
+	QObject::connect(networkReply, &QNetworkReply::sslErrors, this, &NetworkReplyManager::networkReply_sslErrors);
+	QObject::connect(networkReply, &QNetworkReply::finished, this, &NetworkReplyManager::networkReply_finished);
 }
 //------------------------------------------------------------------------------
 NetworkReplyManager::~NetworkReplyManager(){}
@@ -57,10 +58,10 @@ void HttpGetter::get(const QUrl &url, QObject *listener, const char *finishedSlo
 	NetworkReplyManager *manager = new NetworkReplyManager(netRep, this);
 	QObject::connect(manager, SIGNAL(finished(QString,QNetworkReply::NetworkError,QString)), listener, finishedSlot);
 
-	// Connect on finished for deletion
-	connect(netRep, SIGNAL(finished()), SLOT(networkReply_finished()), Qt::QueuedConnection);
-
 	m_replyManagers[netRep] = manager;
+
+	// Connect on finished for deletion
+	connect(netRep, &QNetworkReply::finished, this, &HttpGetter::networkReply_finished);
 }
 //------------------------------------------------------------------------------
 void HttpGetter::setBasicAuthorization(const QString &user, const QString &pass){
@@ -92,7 +93,7 @@ void NetworkReplyManager::networkReply_error(QNetworkReply::NetworkError error){
 //------------------------------------------------------------------------------
 void NetworkReplyManager::networkReply_sslErrors(QList<QSslError> errors){
 	uint i=1;
-	foreach(const QSslError &error, errors){
+	for(const QSslError &error : errors){
 		qWarning()<<"NetworkReplyManager::networkReply_sslErrors("<<m_networkReply->url().toString()<<") : Err "<<i<<" : "<<error.errorString();
 		++i;
 	}

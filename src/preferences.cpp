@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 // Static members initialization
 //------------------------------------------------------------------------------
-Preferences * Preferences::m_instance = 0;
+Preferences * Preferences::m_instance = nullptr;
 //------------------------------------------------------------------------------
 #define PREFS_IMPL_FIELD(Type, FieldName, VariantConvert, PrefFieldName, DefaultValue) \
 	const char * Preferences::FIELD_NAME_##FieldName = PrefFieldName; \
@@ -55,18 +55,18 @@ Preferences::~Preferences(){
 // Singleton static functions
 //------------------------------------------------------------------------------
 void Preferences::create(QObject *parent/*=0*/){
-	Q_ASSERT(m_instance == 0);
+	Q_ASSERT(!m_instance);
 	m_instance = new Preferences(parent);
 }
 //------------------------------------------------------------------------------
 void Preferences::destroy(){
-	Q_ASSERT(m_instance != 0);
+	Q_ASSERT(m_instance);
 	delete m_instance;
-	m_instance = 0;
+	m_instance = nullptr;
 }
 //------------------------------------------------------------------------------
 Preferences & Preferences::instance(){
-	Q_ASSERT(m_instance != 0);
+	Q_ASSERT(m_instance);
 	return *m_instance;
 }
 //------------------------------------------------------------------------------

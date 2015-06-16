@@ -10,14 +10,11 @@
 //------------------------------------------------------------------------------
 class AutoResizingTextItem : public QGraphicsObject, public QGraphicsLayoutItem {
 	Q_OBJECT
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	Q_INTERFACES(QGraphicsLayoutItem)
-#endif
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit AutoResizingTextItem(QGraphicsItem *parent = 0);
+		explicit AutoResizingTextItem(QGraphicsItem *parent = nullptr);
 		~AutoResizingTextItem();
 
 //------------------------------------------------------------------------------

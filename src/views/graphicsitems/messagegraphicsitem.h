@@ -23,7 +23,7 @@ class MessageGraphicsItem : public QGraphicsObject {
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit MessageGraphicsItem(QGraphicsItem *parent = 0);
+		explicit MessageGraphicsItem(QGraphicsItem *parent = nullptr);
 		~MessageGraphicsItem();
 
 //------------------------------------------------------------------------------

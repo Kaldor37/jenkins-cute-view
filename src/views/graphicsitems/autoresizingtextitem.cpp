@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
-AutoResizingTextItem::AutoResizingTextItem(QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent), QGraphicsLayoutItem(),
+AutoResizingTextItem::AutoResizingTextItem(QGraphicsItem *parent/* = nullptr*/):QGraphicsObject(parent), QGraphicsLayoutItem(),
 	m_visible(true),
 	m_shadowed(false),
 	m_textFlags(Qt::AlignCenter){

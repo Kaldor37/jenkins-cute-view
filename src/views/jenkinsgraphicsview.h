@@ -26,7 +26,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit JenkinsGraphicsView(QWidget *parent = 0);
+		explicit JenkinsGraphicsView(QWidget *parent = nullptr);
 		~JenkinsGraphicsView();
 
 //------------------------------------------------------------------------------
@@ -46,7 +46,8 @@ class JenkinsGraphicsView : public QGraphicsView {
 		void updateJobs(const QList<JobDisplayData> &);
 		void updateNodes(const QVector<QString> &nodeNames, const QVector<jenkins::NodeStatus> &nodeColors);
 
-		void displayMessage(const QString & msg, MessageGraphicsItem::eMessageType type=MessageGraphicsItem::Normal);
+		void displayMessage(const QString & msg, MessageGraphicsItem::eMessageType type);
+		void displayMessage(const QString & msg);
 		void displayWarning(const QString & msg);
 		void displayError(const QString & msg);
 
@@ -112,7 +113,7 @@ class JenkinsGraphicsScene : public QGraphicsScene {
 		Q_OBJECT
 
 	public:
-		explicit JenkinsGraphicsScene(QWidget *parent = 0);
+		explicit JenkinsGraphicsScene(QWidget *parent = nullptr);
 		~JenkinsGraphicsScene();
 };
 //------------------------------------------------------------------------------

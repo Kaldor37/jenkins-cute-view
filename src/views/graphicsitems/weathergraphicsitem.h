@@ -22,7 +22,7 @@ class WeatherGraphicsItem : public QGraphicsObject {
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit WeatherGraphicsItem(QGraphicsItem *parent = 0);
+		explicit WeatherGraphicsItem(QGraphicsItem *parent = nullptr);
 		~WeatherGraphicsItem();
 
 //------------------------------------------------------------------------------

@@ -118,7 +118,7 @@ void JenkinsXMLAPIModel::loadSelectedView(){
 	if(!m_selectedView)
 		return;
 
-	connect(m_selectedView, SIGNAL(jobsListLoaded()), SLOT(selectedView_jobsListLoaded()));
+	QObject::connect(m_selectedView, &ViewModel::jobsListLoaded, this, &JenkinsXMLAPIModel::selectedView_jobsListLoaded);
 	m_selectedView->loadJobs();
 }
 //------------------------------------------------------------------------------
@@ -211,10 +211,8 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 	if(m_selectedView)
 		m_selectedView->disconnect(this);
 
-	m_selectedView = 0;
-	m_primaryView = 0;
-
-	clearViews();
+	m_selectedView = nullptr;
+	m_primaryView = nullptr;
 
 	QString primaryViewName;
 	QDomNodeList primaryViewsList = doc.elementsByTagName("primaryView");
@@ -238,7 +236,8 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 	}
 
 	QStringList viewsNamesList;
-	m_views.reserve(nbViews);
+	ViewsList views;
+	views.reserve(nbViews);
 
 	for(int i=0 ; i < nbViews ; ++i){
 		QDomNode viewNode = viewsList.at(i);
@@ -250,7 +249,7 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 
 			if(!viewName.isEmpty()){
 				ViewModel *vm = new ViewModel(viewName, urlElm.text(), this);
-				m_views.push_back(vm);
+				views.push_back(vm);
 
 				// Pointer on selected view
 				if(m_selectedViewName == viewName)
@@ -263,6 +262,11 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 			}
 		}
 	}
+
+	m_views.swap(views);
+
+	for(ViewModel *view:views)
+		view->deleteLater();
 
 	Q_ASSERT(m_primaryView);
 
@@ -280,11 +284,10 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::parseNodes(const QDomDocument &doc){
-	clearNodes();
-
 	QDomNodeList nodesList = doc.elementsByTagName("computer");
 	int nbNodes = nodesList.size();
-	m_nodes.reserve(nbNodes);
+	NodesList nodes;
+	nodes.reserve(nbNodes);
 
 	for(int i=0 ; i < nbNodes ; ++i){
 		QDomNode nodeNode = nodesList.at(i);
@@ -309,19 +312,22 @@ void JenkinsXMLAPIModel::parseNodes(const QDomDocument &doc){
 			nm->setOffline(offlineElm.text() == "true");
 			nm->setOfflineCauseReason(offlineCauseReasonElm.text());
 			nm->setTemporarilyOffline(temporarilyOfflineElm.text() == "true");
-			m_nodes.push_back(nm);
+			nodes.push_back(nm);
 		}
 	}
 
+	m_nodes.swap(nodes);
 	emit nodesListLoaded();
+
+	for(NodeModel *model : nodes)
+		model->deleteLater();
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::parseJobsQueue(const QDomDocument &doc){
-	m_jobsQueue.clear();
-
 	QDomNodeList nodesList = doc.elementsByTagName("item");
 	int nbJobs = nodesList.size();
-	m_jobsQueue.reserve(nbJobs);
+	QVector<QString> jobsQueue;
+	jobsQueue.reserve(nbJobs);
 
 	for(int i=0 ; i < nbJobs ; ++i){
 		QDomNode itemNode = nodesList.at(i);
@@ -329,23 +335,23 @@ void JenkinsXMLAPIModel::parseJobsQueue(const QDomDocument &doc){
 		if(!taskElm.isNull()){
 			QDomElement nameElm = taskElm.firstChildElement("name");
 			if(!nameElm.isNull()){
-				m_jobsQueue.push_front(nameElm.text());
+				jobsQueue.push_front(nameElm.text());
 			}
 		}
 	}
-
+	m_jobsQueue.swap(jobsQueue);
 	emit jobsQueueLoaded();
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::clearViews(){
-	foreach(ViewModel *view, m_views)
+	for(ViewModel *view : m_views)
 		view->deleteLater();
 
 	m_views.clear();
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::clearNodes(){
-	foreach(NodeModel *node, m_nodes)
+	for(NodeModel *node : m_nodes)
 		node->deleteLater();
 
 	m_nodes.clear();

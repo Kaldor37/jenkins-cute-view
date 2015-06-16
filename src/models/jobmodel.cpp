@@ -21,8 +21,6 @@
 JobModel::JobModel(const QString &name, const QString &url, QObject *parent/*=0*/):QObject(parent),
 	m_lastBuildLoaded(false),
 	m_lastCompletedBuildLoaded(false),
-	m_lastBuild(0),
-	m_lastCompletedBuild(0),
 	m_Name(name),
 	m_Url(url),
 	JOB_INIT_STR_MEMBER(Description),
@@ -144,12 +142,12 @@ void JobModel::parseJob(const QDomDocument &doc){
 
 	if(m_lastBuild){
 		m_lastBuild->deleteLater();
-		m_lastBuild = 0;
+		m_lastBuild = nullptr;
 	}
 
 	if(m_lastCompletedBuild){
 		m_lastCompletedBuild->deleteLater();
-		m_lastCompletedBuild = 0;
+		m_lastCompletedBuild = nullptr;
 	}
 
 	// Load last build
@@ -163,7 +161,7 @@ void JobModel::parseJob(const QDomDocument &doc){
 			lastBuildUrl = elm.text();
 
 		m_lastBuild = new BuildModel(lastBuildNumber, lastBuildUrl, this);
-		connect(m_lastBuild, SIGNAL(loaded()), SLOT(lastBuild_loaded()));
+		QObject::connect(m_lastBuild, &BuildModel::loaded, this, &JobModel::lastBuild_loaded);
 		m_lastBuild->load();
 	}
 	// No last build, consider it loaded
@@ -181,7 +179,7 @@ void JobModel::parseJob(const QDomDocument &doc){
 			lastBuildUrl = elm.text();
 
 		m_lastCompletedBuild = new BuildModel(lastBuildNumber, lastBuildUrl, this);
-		connect(m_lastCompletedBuild, SIGNAL(loaded()), SLOT(lastCompletedBuild_loaded()));
+		QObject::connect(m_lastCompletedBuild, &BuildModel::loaded, this, &JobModel::lastCompletedBuild_loaded);
 		m_lastCompletedBuild->load();
 	}
 	// No last completed build, consider it loaded

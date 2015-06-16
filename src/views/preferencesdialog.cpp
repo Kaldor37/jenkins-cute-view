@@ -27,9 +27,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 	m_jobsMarginValidator->setRange(0, 100);
 	ui->m_jobsMarginLineEdit->setValidator(m_jobsMarginValidator);
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
 	ui->m_jenkinsURLLineEdit->setPlaceholderText(tr("Enter url..."));
-#endif
 
 	ui->m_jobsNameDescAlignComboBox->addItem(tr("Left"),		(int)(Qt::AlignLeft|Qt::AlignVCenter));
 	ui->m_jobsNameDescAlignComboBox->addItem(tr("Center"),	(int)Qt::AlignCenter);
@@ -113,7 +111,7 @@ void PreferencesDialog::viewsList_updated(const QStringList &viewsList, const QS
 		ui->m_viewDisplayComboBox->addItem(primaryText, QVariant());
 
 	// Update other texts
-	foreach(const QString &view, viewsList){
+	for(const QString &view : viewsList){
 		// Skip primary view
 		if(view == primaryView)
 			continue;

@@ -9,19 +9,12 @@
 #include <QResource>
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[]){
-	int retCode = 0;
+	int retCode = EXIT_SUCCESS;
 
 	Application::create(argc, argv);
 	Preferences::create();
 	HttpGetter::create();
 	HttpGetter::instance().setBasicAuthorization(Prefs.getAPIUserID(), Prefs.getAPIToken());
-
-	/* For now, weather icons are embeded
-	bool weatherIconsLoaded = QResource::registerResource("weather-icons.rcc");
-	Q_ASSERT(weatherIconsLoaded);
-	if(!weatherIconsLoaded)
-		qWarning()<<"Cannot load weather icons (weather-icons.rcc)";
-	*/
 
 	// Application scope
 	{

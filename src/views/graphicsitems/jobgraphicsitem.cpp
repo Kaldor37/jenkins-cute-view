@@ -15,7 +15,7 @@
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
-JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *parent/* = 0*/):QGraphicsObject(parent),
+JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *parent/* = nullptr*/):QGraphicsObject(parent),
 	m_view(view),
 	m_lastBuildNum(0),
 	m_nameItem(0),
@@ -40,7 +40,7 @@ JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *paren
 	m_nameItem->setPen(QPen(Qt::white));
 	m_nameItem->setShadowed(true);
 	m_nameItem->setTextFlags(prefs->getJobsNameDescAlignFlags());
-	QObject::connect(prefs, SIGNAL(sigJobsNameDescAlignFlagsChanged(int)), m_nameItem, SLOT(setTextFlags(int)));
+	QObject::connect(prefs, &Preferences::sigJobsNameDescAlignFlagsChanged, m_nameItem, &AutoResizingTextItem::setTextFlags);
 
 	m_estEndTimeItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_estEndTimeItem->setFont(QFont("Arial")); // TODO - Manage in prefs
@@ -52,11 +52,11 @@ JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *paren
 	m_descriptionItem->setPen(QPen(Qt::white));
 	m_descriptionItem->setVisible(false);
 	m_descriptionItem->setTextFlags(prefs->getJobsNameDescAlignFlags());
-	QObject::connect(prefs, SIGNAL(sigJobsNameDescAlignFlagsChanged(int)), m_descriptionItem, SLOT(setTextFlags(int)));
+	QObject::connect(prefs, &Preferences::sigJobsNameDescAlignFlagsChanged, m_descriptionItem, &AutoResizingTextItem::setTextFlags);
 
 	m_weatherItem = new WeatherGraphicsItem(this);
 	m_weatherItem->setWeatherTheme(prefs->getWeatherIconsTheme());
-	QObject::connect(prefs, SIGNAL(sigWeatherIconsThemeChanged(QString)), m_weatherItem, SLOT(setWeatherTheme(QString)));
+	QObject::connect(prefs, &Preferences::sigWeatherIconsThemeChanged, m_weatherItem, &WeatherGraphicsItem::setWeatherTheme);
 
 	m_positionInQueueItem = new AutoResizingTextItem(this); // Deleted with parent
 	m_positionInQueueItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
@@ -64,11 +64,11 @@ JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *paren
 	m_positionInQueueItem->setShadowed(true);
 
 	// Prefs changes
-	connect(prefs, SIGNAL(sigShowBuildNumberChanged(bool)), SLOT(setShowBuildNumber(bool)));
-	connect(prefs, SIGNAL(sigShowEstimatedEndTimeChanged(bool)), SLOT(setShowEstEndTime(bool)));
-	connect(prefs, SIGNAL(sigShowLastBuildDescriptionChanged(bool)), SLOT(setShowLastBuildDesc(bool)));
-	connect(prefs, SIGNAL(sigShowWeatherIconChanged(bool)), SLOT(setShowWeather(bool)));
-	connect(prefs, SIGNAL(sigShowPositionInQueueChanged(bool)), SLOT(setShowPositionInQueue(bool)));
+	QObject::connect(prefs, &Preferences::sigShowBuildNumberChanged, this, &JobGraphicsItem::setShowBuildNumber);
+	QObject::connect(prefs, &Preferences::sigShowEstimatedEndTimeChanged, this, &JobGraphicsItem::setShowEstEndTime);
+	QObject::connect(prefs, &Preferences::sigShowLastBuildDescriptionChanged, this, &JobGraphicsItem::setShowLastBuildDesc);
+	QObject::connect(prefs, &Preferences::sigShowWeatherIconChanged, this, &JobGraphicsItem::setShowWeather);
+	QObject::connect(prefs, &Preferences::sigShowPositionInQueueChanged, this, &JobGraphicsItem::setShowPositionInQueue);
 }
 //------------------------------------------------------------------------------
 JobGraphicsItem::~JobGraphicsItem(){ }
@@ -163,16 +163,7 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 	if(m_running){
 		m_buildStartTime = data.getStartTime();
 		m_buildEstEndTime	= m_buildStartTime + data.getEstimatedDuration();
-
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
 		m_estEndTimeItem->setText(QDateTime::fromMSecsSinceEpoch(m_buildEstEndTime).time().toString(QLocale().timeFormat(QLocale::ShortFormat)));
-#else
-		{
-		qint64 estEndTime = (m_buildEstEndTime/1000);
-		m_estEndTimeItem->setText(QDateTime::fromTime_t((uint)estEndTime).time().toString(QLocale().timeFormat(QLocale::ShortFormat)));
-		}
-#endif
-
 	}
 	else
 		m_progressFactor = 0;
@@ -224,19 +215,8 @@ void JobGraphicsItem::updateName(){
 //------------------------------------------------------------------------------
 void JobGraphicsItem::updateProgress(){
 	if(m_running){
-		qint64 now = 0;
-
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
-		now = QDateTime::currentDateTime().toMSecsSinceEpoch();
-#else
-		{
-			QDateTime dt = QDateTime::currentDateTime();
-			now = (((qint64)dt.toTime_t())*1000) + dt.time().msec();
-		}
-#endif
-
+		qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
 		if(now < m_buildStartTime){
-			//qWarning()<<"JobGraphicsItem::update("<<data.getName()<<") - Current time is smaller than start time, maybe computers are out of sync (Now : "<<now<<" - Start time : "<<m_buildStartTime<<")";
 			m_progressFactor = 0;
 		}
 		else if(now > m_buildEstEndTime || (m_buildStartTime >= m_buildEstEndTime)){

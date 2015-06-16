@@ -13,7 +13,7 @@ class NodeGraphicsItem : public QGraphicsObject {
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit NodeGraphicsItem(QGraphicsItem *parent = 0);
+		explicit NodeGraphicsItem(QGraphicsItem *parent = nullptr);
 		~NodeGraphicsItem();
 
 //------------------------------------------------------------------------------

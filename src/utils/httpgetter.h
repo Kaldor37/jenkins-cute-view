@@ -28,7 +28,7 @@ class HttpGetter : public QObject{
 		~HttpGetter();
 
 	private:
-		HttpGetter(QObject *parent = 0);
+		HttpGetter(QObject *parent = nullptr);
 		HttpGetter(const HttpGetter &);
 		HttpGetter & operator=(const HttpGetter &);
 

@@ -63,8 +63,8 @@ class JobModel : public QObject {
 	private:
 		bool m_lastBuildLoaded;
 		bool m_lastCompletedBuildLoaded;
-		BuildModel * m_lastBuild;
-		BuildModel * m_lastCompletedBuild;
+		BuildModel * m_lastBuild = nullptr;
+		BuildModel * m_lastCompletedBuild = nullptr;
 
 //------------------------------------------------------------------------------
 // Members declaration

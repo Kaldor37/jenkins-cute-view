@@ -10,7 +10,7 @@ const QString Application::orgName("JenkinsCuteView");
 //------------------------------------------------------------------------------
 // Static members initialization
 //------------------------------------------------------------------------------
-Application * Application::m_instance = 0;
+Application * Application::m_instance = nullptr;
 //------------------------------------------------------------------------------
 // Constructor/Destructor
 //------------------------------------------------------------------------------
@@ -35,18 +35,18 @@ Application::~Application(){
 // Singleton static functions
 //------------------------------------------------------------------------------
 void Application::create(int& argc, char* argv[]){
-	Q_ASSERT(m_instance == 0);
+	Q_ASSERT(!m_instance);
 	m_instance = new Application(argc, argv);
 }
 //------------------------------------------------------------------------------
 void Application::destroy(){
-	Q_ASSERT(m_instance != 0);
+	Q_ASSERT(m_instance);
 	delete m_instance;
-	m_instance = 0;
+	m_instance = nullptr;
 }
 //------------------------------------------------------------------------------
 Application & Application::instance(){
-	Q_ASSERT(m_instance != 0);
+	Q_ASSERT(m_instance);
 	return *m_instance;
 }
 //------------------------------------------------------------------------------

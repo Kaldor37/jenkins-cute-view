@@ -15,20 +15,13 @@ IF(NOT INSTALL_DIRECTORY)
 ENDIF()
 
 # Warnings
-add_definitions(-Wall -Wextra)
+add_definitions(-Wall -Wextra -std=c++11)
 
-find_package(Qt5Core)
-IF(Qt5Core_FOUND)
-	message(STATUS "Building with Qt5 (${Qt5Core_VERSION_STRING})")
-	find_package(Qt5Gui)
-	find_package(Qt5Widgets)
-	find_package(Qt5Xml)
-	find_package(Qt5Network)
-ELSE()
-	message(STATUS "Qt5 not found, trying Qt4...")
-	find_package(Qt4 4.6 COMPONENTS QtCore QtGui QtXml QtNetwork REQUIRED)
-	include(${QT_USE_FILE})
-ENDIF()
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Xml REQUIRED)
+find_package(Qt5Network REQUIRED)
 
 # Include directories (sources and bin for generated moc headers)
 include_directories(
@@ -39,13 +32,13 @@ include_directories(
 
 # Headers
 SET(HEADERS
+	src/jenkinsnamespace.h
 	src/views/jobdisplaydata.h
 )
 
 # Moc headers (QObjects .h)
 SET(MOC_HDRS
 	src/application.h
-	src/jenkinsnamespace.h
 	src/preferences.h
 	src/controllers/jenkinscontroller.h
 	src/models/buildmodel.h
@@ -101,36 +94,25 @@ SET(RESOURCES
 	res/weather-icons.qrc
 )
 
-IF(Qt5Core_FOUND)
-	qt5_wrap_cpp(MOC_SRCS ${MOC_HDRS})
-	qt5_wrap_ui(FORMS_SRCS ${FORMS})
-	qt5_add_resources(RESOURCES_SRCS ${RESOURCES})
-ELSE()
-	qt4_wrap_cpp(MOC_SRCS ${MOC_HDRS})
-	qt4_wrap_ui(FORMS_SRCS ${FORMS})
-	qt4_add_resources(RESOURCES_SRCS ${RESOURCES})
-ENDIF()
+qt5_wrap_cpp(MOC_SRCS ${MOC_HDRS})
+qt5_wrap_ui(FORMS_SRCS ${FORMS})
+qt5_add_resources(RESOURCES_SRCS ${RESOURCES})
 
-add_executable(
-	${PROJECT_NAME}
-		${SOURCES}
-		${HEADERS}
-		${MOC_SRCS}
-		${FORMS_SRCS}
-		${RESOURCES_SRCS}
+add_executable(${PROJECT_NAME}
+	${SOURCES}
+	${HEADERS}
+	${MOC_SRCS}
+	${FORMS_SRCS}
+	${RESOURCES_SRCS}
 )
 
-IF(Qt5Core_FOUND)
-	target_link_libraries(${PROJECT_NAME}
-		Qt5::Core
-		Qt5::Gui
-		Qt5::Widgets
-		Qt5::Xml
-		Qt5::Network
-	)
-ELSE()
-	target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
-ENDIF()
+target_link_libraries(${PROJECT_NAME}
+	Qt5::Core
+	Qt5::Gui
+	Qt5::Widgets
+	Qt5::Xml
+	Qt5::Network
+)
 
 find_package(Git)
 IF(GIT_FOUND)

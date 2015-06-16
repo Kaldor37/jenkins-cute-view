@@ -24,7 +24,7 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	setScene(m_scene);
 
 	m_progressUpdateTimer = new QTimer(this);
-	connect(m_progressUpdateTimer, SIGNAL(timeout()), SLOT(progressTimer_timeout()));
+	QObject::connect(m_progressUpdateTimer, &QTimer::timeout, this, &JenkinsGraphicsView::progressTimer_timeout);
 	m_progressUpdateTimer->start(jobsProgressUpdateTimer);
 
 	m_messageItem = new MessageGraphicsItem(); // Destroyed by the scene
@@ -32,13 +32,13 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 	m_scene->addItem(m_messageItem);
 
 	m_columns = Prefs.getColumns();
-	connect(&Prefs, SIGNAL(sigColumnsChanged(uint)), SLOT(setColumns(uint)));
+	QObject::connect(&Prefs, &Preferences::sigColumnsChanged, this, &JenkinsGraphicsView::setColumns);
 
 	m_showNodes = Prefs.getShowNodes();
-	connect(&Prefs, SIGNAL(sigShowNodesChanged(bool)), SLOT(setShowNodes(bool)));
+	QObject::connect(&Prefs, &Preferences::sigShowNodesChanged, this, &JenkinsGraphicsView::setShowNodes);
 
 	m_jobsMargin = Prefs.getJobsMargin();
-	connect(&Prefs, SIGNAL(sigJobsMarginChanged(uint)), SLOT(setJobsMargin(uint)));
+	QObject::connect(&Prefs, &Preferences::sigJobsMarginChanged, this, &JenkinsGraphicsView::setJobsMargin);
 
 	initContextMenu();
 }
@@ -76,7 +76,7 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 		qDebug()<<"JenkinsGraphicsView::updateJobs("<<jobs.size()<<")";
 
 	// Add new jobs - Update existing jobs
-	foreach(const JobDisplayData &job, jobs){
+	for(const JobDisplayData &job : jobs){
 		const QString &name = job.getName();
 		jobsList.push_back(name);
 
@@ -111,7 +111,7 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 			jobsDeleteList.push_back(name);
 	}
 
-	foreach(const QString &name, jobsDeleteList){
+	for(const QString &name : jobsDeleteList){
 		Q_ASSERT(m_jobItems.contains(name));
 		JobGraphicsItem *jobItem = m_jobItems.take(name);
 		m_scene->removeItem(jobItem);
@@ -171,7 +171,7 @@ void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const Q
 
 	// Delete old nodes
 	QList<QString> nodesList = m_nodeItems.keys();
-	foreach(const QString &nodeName, nodesList){
+	for(const QString &nodeName : nodesList){
 		if(!nodeNames.contains(nodeName)){
 			NodeGraphicsItem *node = m_nodeItems.take(nodeName);
 			m_scene->removeItem(node);
@@ -189,6 +189,10 @@ void JenkinsGraphicsView::displayMessage(const QString & msg, MessageGraphicsIte
 	m_messageItem->setVisible(true);
 	updateDisplay();
 	update();
+}
+//------------------------------------------------------------------------------
+void JenkinsGraphicsView::displayMessage(const QString & msg){
+	displayMessage(msg, MessageGraphicsItem::Normal);
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::displayWarning(const QString & msg){
@@ -318,15 +322,15 @@ void JenkinsGraphicsView::initContextMenu(){
 
 	m_fullscreenAction = m_contextMenu->addAction(tr("Fullscreen"));
 	m_fullscreenAction->setCheckable(true);
-	connect(m_fullscreenAction, SIGNAL(triggered()), SIGNAL(fullScreenTriggered()));
+	QObject::connect(m_fullscreenAction, &QAction::triggered, this, &JenkinsGraphicsView::fullScreenTriggered);
 
 	m_preferencesAction = m_contextMenu->addAction(tr("Preferences"));
-	connect(m_preferencesAction, SIGNAL(triggered()), SIGNAL(preferencesTriggered()));
+	QObject::connect(m_preferencesAction, &QAction::triggered, this, &JenkinsGraphicsView::preferencesTriggered);
 
 	m_contextMenu->addSeparator();
 
 	m_quitAction = m_contextMenu->addAction(tr("Quit"));
-	connect(m_quitAction, SIGNAL(triggered()), SIGNAL(quitTriggered()));
+	QObject::connect(m_quitAction, &QAction::triggered, this, &JenkinsGraphicsView::quitTriggered);
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::progressTimer_timeout(){
