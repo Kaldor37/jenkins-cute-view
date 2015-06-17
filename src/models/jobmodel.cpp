@@ -18,7 +18,7 @@
 		m_##Member = value; \
 	}
 //------------------------------------------------------------------------------
-JobModel::JobModel(const QString &name, const QString &url, QObject *parent/*=0*/):QObject(parent),
+JobModel::JobModel(const QString &name, const QString &url, QObject *parent):QObject(parent),
 	m_lastBuildLoaded(false),
 	m_lastCompletedBuildLoaded(false),
 	m_Name(name),

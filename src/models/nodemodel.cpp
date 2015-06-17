@@ -11,7 +11,7 @@
 		m_##Member = value; \
 	}
 //------------------------------------------------------------------------------
-NodeModel::NodeModel(QObject *parent/*=0*/):QObject(parent),
+NodeModel::NodeModel(QObject *parent):QObject(parent),
 	NODE_INIT_INT_MEMBER(Idle),
 	NODE_INIT_INT_MEMBER(Offline),
 	NODE_INIT_INT_MEMBER(TemporarilyOffline)

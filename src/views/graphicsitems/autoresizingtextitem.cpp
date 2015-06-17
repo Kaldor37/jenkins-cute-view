@@ -122,6 +122,11 @@ void AutoResizingTextItem::setFont(const QFont &font){
 	adjustText();
 }
 //------------------------------------------------------------------------------
+void AutoResizingTextItem::setFontFamily(const QString &fontFamily){
+	m_font.setFamily(fontFamily);
+	adjustText();
+}
+//------------------------------------------------------------------------------
 void AutoResizingTextItem::setPen(const QPen &pen){
 	m_pen = pen;
 	update();
@@ -159,11 +164,13 @@ void AutoResizingTextItem::adjustText(){
 	// Fits or too small, try to expand
 	else{
 		QFont lastFont;
+		int previousHeight;
 		do{
+			previousHeight = fm.height();
 			lastFont = resizedFont;
 			resizedFont.setPointSize(resizedFont.pointSize()+1);
 			fm = QFontMetrics(resizedFont);
-		}while(fm.width(m_text) <= maxWidth && fm.height() <= maxHeight);
+		}while(fm.width(m_text) <= maxWidth && fm.height() <= maxHeight && previousHeight != fm.height());
 		m_font = lastFont;
 	}
 

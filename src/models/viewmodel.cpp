@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QDomDocument>
 //------------------------------------------------------------------------------
-ViewModel::ViewModel(const QString &name, const QString &url, QObject *parent/*=0*/):QObject(parent),
+ViewModel::ViewModel(const QString &name, const QString &url, QObject *parent):QObject(parent),
 	m_name(name),
 	m_url(url),
 	m_jobsListLoaded(false),

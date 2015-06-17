@@ -42,6 +42,7 @@ class AutoResizingTextItem : public QGraphicsObject, public QGraphicsLayoutItem 
 		void setVisible(bool visible);
 		void setText(const QString &text);
 		void setFont(const QFont &font);
+		void setFontFamily(const QString &fontFamily);
 		void setPen(const QPen &pen);
 		void setShadowed(bool value);
 		void setTextFlags(int flags);

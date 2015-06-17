@@ -16,7 +16,7 @@ class NodeModel : public QObject {
 		NodeModel & operator=(const NodeModel &src);
 
 	public:
-		explicit NodeModel(QObject *parent=0);
+		explicit NodeModel(QObject *parent=nullptr);
 		~NodeModel();
 
 //------------------------------------------------------------------------------

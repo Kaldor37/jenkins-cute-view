@@ -58,7 +58,7 @@ class NetworkReplyManager : public QObject {
 	Q_OBJECT
 
 	public:
-		explicit NetworkReplyManager(QNetworkReply *networkReply, QObject *parent=0);
+		explicit NetworkReplyManager(QNetworkReply *networkReply, QObject *parent=nullptr);
 		~NetworkReplyManager();
 
 	signals:

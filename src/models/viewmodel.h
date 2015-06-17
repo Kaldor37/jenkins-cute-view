@@ -16,12 +16,12 @@ class ViewModel : public QObject {
 // Constructors/Destructor
 //------------------------------------------------------------------------------
 	private:
-		explicit ViewModel(QObject *parent=0);
+		explicit ViewModel(QObject *parent=nullptr);
 		ViewModel(const ViewModel &);
 		ViewModel & operator=(const ViewModel &);
 
 	public:
-		explicit ViewModel(const QString &name, const QString &url, QObject *parent=0);
+		explicit ViewModel(const QString &name, const QString &url, QObject *parent=nullptr);
 		~ViewModel();
 
 //------------------------------------------------------------------------------

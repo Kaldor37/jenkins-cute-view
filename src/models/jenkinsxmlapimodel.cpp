@@ -13,7 +13,7 @@
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
-JenkinsXMLAPIModel::JenkinsXMLAPIModel(QObject *parent/*=0*/): QObject(parent),
+JenkinsXMLAPIModel::JenkinsXMLAPIModel(QObject *parent): QObject(parent),
 	m_viewsListLoaded(false),
 	m_primaryView(0),
 	m_selectedView(0),

@@ -18,7 +18,7 @@ class JenkinsController : public QObject {
 	Q_OBJECT
 //------------------------------------------------------------------------------
 	public:
-		explicit JenkinsController(QObject *parent=0);
+		explicit JenkinsController(QObject *parent=nullptr);
 		~JenkinsController();
 //------------------------------------------------------------------------------
 	signals:

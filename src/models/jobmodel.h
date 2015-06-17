@@ -20,7 +20,7 @@ class JobModel : public QObject {
 		JobModel & operator=(const JobModel &src);
 
 	public:
-		explicit JobModel(const QString &name, const QString &url, QObject *parent=0);
+		explicit JobModel(const QString &name, const QString &url, QObject *parent=nullptr);
 		~JobModel();
 
 //------------------------------------------------------------------------------

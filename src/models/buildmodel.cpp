@@ -17,7 +17,7 @@
 		m_##Member = value; \
 	}
 //------------------------------------------------------------------------------
-BuildModel::BuildModel(uint number, const QString &url, QObject *parent/*=0*/):QObject(parent),
+BuildModel::BuildModel(uint number, const QString &url, QObject *parent):QObject(parent),
 	m_loaded(false),
 	m_Number(number),
 	m_Url(url),

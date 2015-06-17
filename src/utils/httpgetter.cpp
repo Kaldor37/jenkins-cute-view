@@ -56,6 +56,7 @@ void HttpGetter::get(const QUrl &url, QObject *listener, const char *finishedSlo
 	netRep->ignoreSslErrors();
 
 	NetworkReplyManager *manager = new NetworkReplyManager(netRep, this);
+	// TODO - change this to Qt5 connect
 	QObject::connect(manager, SIGNAL(finished(QString,QNetworkReply::NetworkError,QString)), listener, finishedSlot);
 
 	m_replyManagers[netRep] = manager;

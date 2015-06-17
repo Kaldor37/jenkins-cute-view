@@ -14,7 +14,7 @@ class BuildModel : public QObject {
 // Constructors/Destructor
 //------------------------------------------------------------------------------
 	public:
-		BuildModel(uint number, const QString &url, QObject *parent=0);
+		BuildModel(uint number, const QString &url, QObject *parent=nullptr);
 		~BuildModel();
 
 	private:

@@ -18,11 +18,11 @@
 JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *parent/* = nullptr*/):QGraphicsObject(parent),
 	m_view(view),
 	m_lastBuildNum(0),
-	m_nameItem(0),
-	m_estEndTimeItem(0),
-	m_descriptionItem(0),
-	m_weatherItem(0),
-	m_positionInQueueItem(0),
+	m_nameItem(new AutoResizingTextItem(this)),
+	m_estEndTimeItem(new AutoResizingTextItem(this)),
+	m_descriptionItem(new AutoResizingTextItem(this)),
+	m_weatherItem(new WeatherGraphicsItem(this)),
+	m_positionInQueueItem(new AutoResizingTextItem(this)),
 	m_running(false),
 	m_progressFactor(0),
 	m_buildStartTime(0),
@@ -35,31 +35,23 @@ JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *paren
 {
 	Preferences *prefs = &Prefs;
 
-	m_nameItem = new AutoResizingTextItem(this); // Deleted with parent
-	m_nameItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
+	m_nameItem->setFont(QFont(prefs->getFont(), -1, QFont::Bold));
 	m_nameItem->setPen(QPen(Qt::white));
 	m_nameItem->setShadowed(true);
 	m_nameItem->setTextFlags(prefs->getJobsNameDescAlignFlags());
-	QObject::connect(prefs, &Preferences::sigJobsNameDescAlignFlagsChanged, m_nameItem, &AutoResizingTextItem::setTextFlags);
 
-	m_estEndTimeItem = new AutoResizingTextItem(this); // Deleted with parent
-	m_estEndTimeItem->setFont(QFont("Arial")); // TODO - Manage in prefs
+	m_estEndTimeItem->setFont(QFont(prefs->getFont()));
 	m_estEndTimeItem->setPen(QPen(Qt::white));
 	m_estEndTimeItem->setShadowed(true);
 
-	m_descriptionItem = new AutoResizingTextItem(this); // Deleted with parent
-	m_descriptionItem->setFont(QFont("Arial", -1, QFont::DemiBold)); // TODO - Manage in prefs
+	m_descriptionItem->setFont(QFont(prefs->getFont(), -1, QFont::DemiBold));
 	m_descriptionItem->setPen(QPen(Qt::white));
 	m_descriptionItem->setVisible(false);
 	m_descriptionItem->setTextFlags(prefs->getJobsNameDescAlignFlags());
-	QObject::connect(prefs, &Preferences::sigJobsNameDescAlignFlagsChanged, m_descriptionItem, &AutoResizingTextItem::setTextFlags);
 
-	m_weatherItem = new WeatherGraphicsItem(this);
 	m_weatherItem->setWeatherTheme(prefs->getWeatherIconsTheme());
-	QObject::connect(prefs, &Preferences::sigWeatherIconsThemeChanged, m_weatherItem, &WeatherGraphicsItem::setWeatherTheme);
 
-	m_positionInQueueItem = new AutoResizingTextItem(this); // Deleted with parent
-	m_positionInQueueItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
+	m_positionInQueueItem->setFont(QFont(prefs->getFont(), -1, QFont::Bold));
 	m_positionInQueueItem->setPen(QPen(Qt::white));
 	m_positionInQueueItem->setShadowed(true);
 
@@ -69,6 +61,13 @@ JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *paren
 	QObject::connect(prefs, &Preferences::sigShowLastBuildDescriptionChanged, this, &JobGraphicsItem::setShowLastBuildDesc);
 	QObject::connect(prefs, &Preferences::sigShowWeatherIconChanged, this, &JobGraphicsItem::setShowWeather);
 	QObject::connect(prefs, &Preferences::sigShowPositionInQueueChanged, this, &JobGraphicsItem::setShowPositionInQueue);
+	QObject::connect(prefs, &Preferences::sigJobsNameDescAlignFlagsChanged, m_nameItem, &AutoResizingTextItem::setTextFlags);
+	QObject::connect(prefs, &Preferences::sigFontChanged, m_nameItem, &AutoResizingTextItem::setFontFamily);
+	QObject::connect(prefs, &Preferences::sigFontChanged, m_estEndTimeItem, &AutoResizingTextItem::setFontFamily);
+	QObject::connect(prefs, &Preferences::sigJobsNameDescAlignFlagsChanged, m_descriptionItem, &AutoResizingTextItem::setTextFlags);
+	QObject::connect(prefs, &Preferences::sigFontChanged, m_descriptionItem, &AutoResizingTextItem::setFontFamily);
+	QObject::connect(prefs, &Preferences::sigWeatherIconsThemeChanged, m_weatherItem, &WeatherGraphicsItem::setWeatherTheme);
+	QObject::connect(prefs, &Preferences::sigFontChanged, m_positionInQueueItem, &AutoResizingTextItem::setFontFamily);
 }
 //------------------------------------------------------------------------------
 JobGraphicsItem::~JobGraphicsItem(){ }

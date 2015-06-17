@@ -1,17 +1,17 @@
 //------------------------------------------------------------------------------
 #include "messagegraphicsitem.h"
 #include "autoresizingtextitem.h"
+#include "preferences.h"
 
 #include <QPainter>
-
-//#define DEBUG_RECT 1
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
-MessageGraphicsItem::MessageGraphicsItem(QGraphicsItem *parent):QGraphicsObject(parent){
-	m_messageItem = new AutoResizingTextItem(this); // Deleted with parent
+MessageGraphicsItem::MessageGraphicsItem(QGraphicsItem *parent):QGraphicsObject(parent),
+	m_messageItem(new AutoResizingTextItem(this)){
 	m_messageItem->setPen(QPen(Qt::white));
-	m_messageItem->setFont(QFont("Arial"));
+	m_messageItem->setFont(QFont(Prefs.getFont()));
+	QObject::connect(&Prefs, &Preferences::sigFontChanged, m_messageItem, &AutoResizingTextItem::setFontFamily);
 }
 //------------------------------------------------------------------------------
 MessageGraphicsItem::~MessageGraphicsItem(){}

@@ -1,9 +1,14 @@
 //------------------------------------------------------------------------------
 #include "preferences.h"
+#include <QFontDatabase>
 //------------------------------------------------------------------------------
 // Static members initialization
 //------------------------------------------------------------------------------
 Preferences * Preferences::m_instance = nullptr;
+//------------------------------------------------------------------------------
+bool validateFontFamily(const QString &familyName){
+	return QFontDatabase().families(QFontDatabase::Latin).contains(familyName);
+}
 //------------------------------------------------------------------------------
 #define PREFS_IMPL_FIELD(Type, FieldName, VariantConvert, PrefFieldName, DefaultValue) \
 	const char * Preferences::FIELD_NAME_##FieldName = PrefFieldName; \
@@ -37,6 +42,7 @@ PREFS_IMPL_BOOL_FIELD(ShowNodes,						"Display/ShowNodes", true)
 PREFS_IMPL_BOOL_FIELD(ShowPositionInQueue,		"Display/ShowPositionInQueue", true)
 PREFS_IMPL_UINT_FIELD(JobsMargin,					"Display/JobsMargin", 2)
 PREFS_IMPL_INT_FIELD(JobsNameDescAlignFlags,		"Display/JobsNameDescAlignFlags", Qt::AlignCenter)
+PREFS_IMPL_STRING_FIELD(Font,							"Display/Font", "Arial")
 PREFS_IMPL_BOOL_FIELD(StartFullscreen,				"General/StartFullscreen", false)
 //------------------------------------------------------------------------------
 #undef PREFS_IMPL_UINT_FIELD
@@ -45,7 +51,10 @@ PREFS_IMPL_BOOL_FIELD(StartFullscreen,				"General/StartFullscreen", false)
 //------------------------------------------------------------------------------
 // Constructor/Destructor
 //------------------------------------------------------------------------------
-Preferences::Preferences(QObject *parent/*=0*/) : QSettings(parent){
+Preferences::Preferences(QObject *parent) : QSettings(parent){
+	if(!validateFontFamily(getFont())){
+		setFont(DEFAULT_Font);
+	}
 }
 //------------------------------------------------------------------------------
 Preferences::~Preferences(){
@@ -54,7 +63,7 @@ Preferences::~Preferences(){
 //------------------------------------------------------------------------------
 // Singleton static functions
 //------------------------------------------------------------------------------
-void Preferences::create(QObject *parent/*=0*/){
+void Preferences::create(QObject *parent){
 	Q_ASSERT(!m_instance);
 	m_instance = new Preferences(parent);
 }

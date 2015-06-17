@@ -14,7 +14,7 @@
 //------------------------------------------------------------------------------
 // Constructor/Destructor
 //------------------------------------------------------------------------------
-JenkinsController::JenkinsController(QObject *parent/*=0*/):QObject(parent){
+JenkinsController::JenkinsController(QObject *parent):QObject(parent){
 	m_updateTimer = new QTimer(this);
 
 	m_XMLAPIModel = new JenkinsXMLAPIModel(this);

@@ -9,6 +9,7 @@
 #include <QAbstractButton>
 #include <QDialogButtonBox>
 #include <QDebug>
+#include <QFontDatabase>
 //------------------------------------------------------------------------------
 PreferencesDialog::PreferencesDialog(QWidget *parent) :
 	QDialog(parent),
@@ -36,6 +37,11 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 	ui->m_weatherIconsThemeComboBox->addItem(tr("Meteocons"),	"weather-icons-theme0");
 	ui->m_weatherIconsThemeComboBox->addItem(tr("Garmahis"),		"weather-icons-theme1");
 	ui->m_weatherIconsThemeComboBox->addItem(tr("Dark"),			"weather-icons-theme2");
+
+	const QStringList fontFamilies = QFontDatabase().families(QFontDatabase::Latin);
+	for(const QString &font : fontFamilies){
+		ui->m_fontComboBox->addItem(font, font);
+	}
 }
 //------------------------------------------------------------------------------
 PreferencesDialog::~PreferencesDialog(){
@@ -80,18 +86,13 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	ui->m_jobsMarginLineEdit->setText(QString("%1").arg(prefs.getJobsMargin()));
 
 	comboIndex = ui->m_jobsNameDescAlignComboBox->findData(prefs.getJobsNameDescAlignFlags());
-	Q_ASSERT(comboIndex >= 0);
-	if(comboIndex >= 0)
-		ui->m_jobsNameDescAlignComboBox->setCurrentIndex(comboIndex);
-	else
-		ui->m_jobsNameDescAlignComboBox->setCurrentIndex(0);
+	ui->m_jobsNameDescAlignComboBox->setCurrentIndex((comboIndex >= 0)?comboIndex:0);
 
 	comboIndex = ui->m_weatherIconsThemeComboBox->findData(prefs.getWeatherIconsTheme());
-	Q_ASSERT(comboIndex >= 0);
-	if(comboIndex >= 0)
-		ui->m_weatherIconsThemeComboBox->setCurrentIndex(comboIndex);
-	else
-		ui->m_weatherIconsThemeComboBox->setCurrentIndex(0);
+	ui->m_weatherIconsThemeComboBox->setCurrentIndex((comboIndex >= 0)?comboIndex:0);
+
+	comboIndex = ui->m_fontComboBox->findData(prefs.getFont());
+	ui->m_fontComboBox->setCurrentIndex((comboIndex >= 0)?comboIndex:0);
 	//----------------------------------------------------------
 
 	ui->m_jenkinsTabWidget->setCurrentIndex(0);
@@ -201,10 +202,13 @@ void PreferencesDialog::savePreferences(){
 	Prefs.setShowNodes(ui->m_showNodesCheckBox->isChecked());
 	Prefs.setShowPositionInQueue(ui->m_showPositionInQueue->isChecked());
 
-	const QComboBox *JNDACB = ui->m_jobsNameDescAlignComboBox;
-	Prefs.setJobsNameDescAlignFlags(JNDACB->itemData(JNDACB->currentIndex()).toInt());
+	const QComboBox *jndacb = ui->m_jobsNameDescAlignComboBox;
+	Prefs.setJobsNameDescAlignFlags(jndacb->itemData(jndacb->currentIndex()).toInt());
 
-	const QComboBox *WTCB = ui->m_weatherIconsThemeComboBox;
-	Prefs.setWeatherIconsTheme(WTCB->itemData(WTCB->currentIndex()).toString());
+	const QComboBox *witcb = ui->m_weatherIconsThemeComboBox;
+	Prefs.setWeatherIconsTheme(witcb->itemData(witcb->currentIndex()).toString());
+
+	const QComboBox *fcb = ui->m_fontComboBox;
+	Prefs.setFont(fcb->itemData(fcb->currentIndex()).toString());
 }
 //------------------------------------------------------------------------------

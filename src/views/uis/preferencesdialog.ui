@@ -32,7 +32,7 @@
    <item>
     <widget class="QTabWidget" name="m_jenkinsTabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="m_generalTabWidgetPage">
       <attribute name="title">
@@ -226,7 +226,7 @@
          <item>
           <widget class="QLabel" name="m_columnsLabel">
            <property name="text">
-            <string>Columns :</string>
+            <string>Columns:</string>
            </property>
           </widget>
          </item>
@@ -260,7 +260,7 @@
          <item>
           <widget class="QLabel" name="m_jobsMarginLabel">
            <property name="text">
-            <string>Jobs margin :</string>
+            <string>Jobs margin:</string>
            </property>
           </widget>
          </item>
@@ -301,7 +301,7 @@
          <item>
           <widget class="QLabel" name="m_jobsNameDescAlignLabel">
            <property name="text">
-            <string>Jobs names alignment :</string>
+            <string>Jobs names alignment:</string>
            </property>
           </widget>
          </item>
@@ -310,6 +310,33 @@
          </item>
          <item>
           <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="m_fontLabel">
+           <property name="text">
+            <string>Font: </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="m_fontComboBox"/>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_8">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>

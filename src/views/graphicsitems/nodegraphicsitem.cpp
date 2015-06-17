@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 #include "nodegraphicsitem.h"
 #include "autoresizingtextitem.h"
+#include "preferences.h"
 
 #include <QDebug>
 #include <QBrush>
@@ -10,12 +11,11 @@
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 NodeGraphicsItem::NodeGraphicsItem(QGraphicsItem *parent/* = nullptr*/):QGraphicsObject(parent),
-	m_nameItem(0)
-{
-	m_nameItem = new AutoResizingTextItem(this); // Delete with this
-	m_nameItem->setFont(QFont("Arial", -1, QFont::Bold)); // TODO - Manage in prefs
+	m_nameItem(new AutoResizingTextItem(this)){
+	m_nameItem->setFont(QFont(Prefs.getFont(), -1, QFont::Bold));
 	m_nameItem->setPen(QPen(Qt::white));
 	m_nameItem->setShadowed(true);
+	QObject::connect(&Prefs, &Preferences::sigFontChanged, m_nameItem, &AutoResizingTextItem::setFontFamily);
 }
 //------------------------------------------------------------------------------
 NodeGraphicsItem::~NodeGraphicsItem(){ }

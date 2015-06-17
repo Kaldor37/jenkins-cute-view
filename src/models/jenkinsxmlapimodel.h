@@ -22,7 +22,7 @@ class JenkinsXMLAPIModel : public QObject {
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit JenkinsXMLAPIModel(QObject *parent=0);
+		explicit JenkinsXMLAPIModel(QObject *parent=nullptr);
 		~JenkinsXMLAPIModel();
 
 //------------------------------------------------------------------------------

@@ -13,7 +13,7 @@ class Preferences : public QSettings {
 // Singleton public static functions
 //------------------------------------------------------------------------------
 	public:
-		static void create(QObject *parent=0);
+		static void create(QObject *parent=nullptr);
 		static void destroy();
 		static Preferences & instance();
 
@@ -27,9 +27,10 @@ class Preferences : public QSettings {
 // Constructor/Copy constructor/operator=
 //------------------------------------------------------------------------------
 	private:
-		explicit Preferences(QObject *parent=0);
-		Preferences(const Preferences&);
-		Preferences& operator=(const Preferences&);
+		explicit Preferences(QObject *parent=nullptr);
+
+		Preferences(const Preferences&) = delete;
+		Preferences& operator=(const Preferences&) = delete;
 
 //------------------------------------------------------------------------------
 // Members
@@ -72,6 +73,7 @@ PREFS_DECLARE_FIELD(int,		JobsNameDescAlignFlags)
 PREFS_DECLARE_FIELD(QString,	APIUserID)
 PREFS_DECLARE_FIELD(QString,	APIToken)
 PREFS_DECLARE_FIELD(bool,		StartFullscreen)
+PREFS_DECLARE_FIELD(QString,	Font)
 //------------------------------------------------------------------------------
 #undef PREFS_DECLARE_FIELD
 
@@ -95,6 +97,7 @@ PREFS_DECLARE_FIELD(bool,		StartFullscreen)
 		void sigAPIUserIDChanged(QString);
 		void sigAPITokenChanged(QString);
 		void sigStartFullscreenChanged(bool);
+		void sigFontChanged(QString);
 
 //------------------------------------------------------------------------------
 };
