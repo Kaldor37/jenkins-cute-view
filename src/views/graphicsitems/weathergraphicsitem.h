@@ -10,13 +10,13 @@ class WeatherGraphicsItem : public QGraphicsObject {
 // Enum(s)
 //------------------------------------------------------------------------------
 	public:
-		enum eWeatherIcon {
-			NoIcon			= -1,
-			Sunny				= 0,
-			PartlyCloudy	= 1,
-			Cloudy			= 2,
-			Rain				= 3,
-			Thunder			= 4
+		enum class WeatherIcon {
+			NoIcon,
+			Sunny,
+			PartlyCloudy,
+			Cloudy,
+			Rain,
+			Thunder
 		};
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
@@ -32,7 +32,7 @@ class WeatherGraphicsItem : public QGraphicsObject {
 		QRectF boundingRect() const;
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-		eWeatherIcon weatherIcon() const;
+		WeatherIcon weatherIcon() const;
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -41,7 +41,7 @@ class WeatherGraphicsItem : public QGraphicsObject {
 		void setSize(qreal w, qreal h);
 		void setSize(const QSizeF & size);
 		void setRect(const QRectF &rect);
-		void setWeatherIcon(eWeatherIcon);
+		void setWeatherIcon(WeatherIcon);
 		void setWeatherTheme(const QString &theme);
 
 //------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ class WeatherGraphicsItem : public QGraphicsObject {
 // Members
 //------------------------------------------------------------------------------
 	private:
-		eWeatherIcon			m_weatherIcon;
+		WeatherIcon				m_weatherIcon;
 		QSizeF					m_size;
 		QPixmap					m_weatherPixmap;
 		QGraphicsPixmapItem	*m_weatherItem;

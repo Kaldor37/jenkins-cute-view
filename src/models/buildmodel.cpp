@@ -3,7 +3,6 @@
 #include "utils/httpgetter.h"
 #include "preferences.h"
 
-#include <QDebug>
 #include <QDomDocument>
 //------------------------------------------------------------------------------
 #define BUILD_INIT_INT_MEMBER(Member) m_##Member(0)
@@ -60,7 +59,7 @@ void BuildModel::load(){
 
 	m_loaded = false;
 
-	httpGetter.get(m_Url + "api/xml", this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
+	httpGetter.get(m_Url + "api/xml", HttpGetter::bindGetCallback(this, &BuildModel::http_finished));
 }
 //------------------------------------------------------------------------------
 void BuildModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){

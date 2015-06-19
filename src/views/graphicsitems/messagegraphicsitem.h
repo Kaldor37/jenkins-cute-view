@@ -13,8 +13,8 @@ class MessageGraphicsItem : public QGraphicsObject {
 // Enum(s)
 //------------------------------------------------------------------------------
 	public:
-		enum eMessageType {
-			NoType = 0,
+		enum class MessageType {
+			NoType,
 			Normal,
 			Warning,
 			Error
@@ -41,7 +41,7 @@ class MessageGraphicsItem : public QGraphicsObject {
 		void setSize(const QSizeF & size);
 		void setRect(const QRectF &rect);
 
-		void setMessage(eMessageType, const QString &);
+		void setMessage(MessageType, const QString &);
 
 //------------------------------------------------------------------------------
 // Private function

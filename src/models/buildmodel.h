@@ -18,14 +18,15 @@ class BuildModel : public QObject {
 		~BuildModel();
 
 	private:
-		BuildModel(const BuildModel &);
-		BuildModel & operator=(const BuildModel &);
+		BuildModel(const BuildModel &) = delete;
+		BuildModel & operator=(const BuildModel &) = delete;
 
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------
-	public slots:
+	public:
 		bool isLoaded() const;
+		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -38,12 +39,6 @@ class BuildModel : public QObject {
 //------------------------------------------------------------------------------
 	signals:
 		void loaded();
-
-//------------------------------------------------------------------------------
-// Private slots
-//------------------------------------------------------------------------------
-	private slots:
-		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 
 //------------------------------------------------------------------------------
 // Private functions

@@ -5,7 +5,6 @@
 #include "preferences.h"
 
 #include <QDomDocument>
-#include <QDebug>
 //------------------------------------------------------------------------------
 #define JOB_INIT_INT_MEMBER(Member) m_##Member(0)
 #define JOB_INIT_STR_MEMBER(Member) m_##Member()
@@ -78,7 +77,7 @@ void JobModel::load(){
 
 	m_lastBuildLoaded = m_lastCompletedBuildLoaded = false;
 
-	httpGetter.get(m_Url + "api/xml", this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
+	httpGetter.get(m_Url + "api/xml", HttpGetter::bindGetCallback(this, &JobModel::http_finished));
 }
 //------------------------------------------------------------------------------
 void JobModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){

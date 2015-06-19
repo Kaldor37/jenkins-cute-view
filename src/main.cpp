@@ -5,7 +5,6 @@
 #include "views/mainwindow.h"
 #include "controllers/jenkinscontroller.h"
 
-#include <QDebug>
 #include <QResource>
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[]){

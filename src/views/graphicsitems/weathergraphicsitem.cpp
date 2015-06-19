@@ -7,7 +7,7 @@
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 WeatherGraphicsItem::WeatherGraphicsItem(QGraphicsItem *parent):QGraphicsObject(parent),
-	m_weatherIcon(NoIcon),
+	m_weatherIcon(WeatherIcon::NoIcon),
 	m_weatherIconsTheme("weather-icons-theme0") // Default weather icons theme
 {
 	m_weatherItem = new QGraphicsPixmapItem(this); // Deleted with parent (this)
@@ -33,7 +33,7 @@ void WeatherGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 #endif
 }
 //------------------------------------------------------------------------------
-WeatherGraphicsItem::eWeatherIcon WeatherGraphicsItem::weatherIcon() const{
+WeatherGraphicsItem::WeatherIcon WeatherGraphicsItem::weatherIcon() const{
 	return m_weatherIcon;
 }
 //------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ void WeatherGraphicsItem::setRect(const QRectF &rect){
 	setSize(rect.width(), rect.height());
 }
 //------------------------------------------------------------------------------
-void WeatherGraphicsItem::setWeatherIcon(WeatherGraphicsItem::eWeatherIcon icon){
+void WeatherGraphicsItem::setWeatherIcon(WeatherGraphicsItem::WeatherIcon icon){
 	m_weatherIcon = icon;
 	loadPixmap();
 	updateIcon();
@@ -76,7 +76,7 @@ void WeatherGraphicsItem::updateIcon(){
 	if(
 		m_weatherPixmap.isNull() ||
 		m_size.isEmpty() || m_size.isNull() ||
-		m_weatherIcon == NoIcon
+		m_weatherIcon == WeatherIcon::NoIcon
 	){
 		m_weatherItem->setPixmap(QPixmap());
 		m_weatherItem->setVisible(false);
@@ -105,12 +105,12 @@ void WeatherGraphicsItem::loadPixmap(){
 	Q_ASSERT(!m_weatherIconsTheme.isEmpty());
 
 	switch(m_weatherIcon){
-		case NoIcon:			m_weatherPixmap =  QPixmap(); break;
-		case Sunny:				m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Sunny"); break;
-		case PartlyCloudy:	m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/PartlyCloudy"); break;
-		case Cloudy:			m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Cloudy"); break;
-		case Rain:				m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Rain"); break;
-		case Thunder:			m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Thunder"); break;
+		case WeatherIcon::NoIcon:			m_weatherPixmap =  QPixmap(); break;
+		case WeatherIcon::Sunny:			m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Sunny"); break;
+		case WeatherIcon::PartlyCloudy:	m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/PartlyCloudy"); break;
+		case WeatherIcon::Cloudy:			m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Cloudy"); break;
+		case WeatherIcon::Rain:				m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Rain"); break;
+		case WeatherIcon::Thunder:			m_weatherPixmap.load(":/"+m_weatherIconsTheme+"/Thunder"); break;
 	}
 }
 //------------------------------------------------------------------------------

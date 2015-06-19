@@ -135,20 +135,20 @@ bool JobGraphicsItem::isRunning() const{
 //------------------------------------------------------------------------------
 void JobGraphicsItem::update(const JobDisplayData& data){
 	switch(data.getStatus()){
-		case JobDisplayData::StatusNeverBuilt:
-		case JobDisplayData::StatusInactiveOrAborted:
+		case JobDisplayData::JobStatus::NeverBuilt:
+		case JobDisplayData::JobStatus::InactiveOrAborted:
 			m_rectColor = m_view->property("InactiveOrNeverBuilt").value<QColor>();
 		break;
 
-		case JobDisplayData::StatusLastBuildSuccessful:
+		case JobDisplayData::JobStatus::LastBuildSuccessful:
 			m_rectColor = m_view->property("LastBuildSuccess").value<QColor>();
 		break;
 
-		case JobDisplayData::StatusLastBuildSuccessfulButUnstable:
+		case JobDisplayData::JobStatus::LastBuildSuccessfulButUnstable:
 			m_rectColor = m_view->property("LastBuildUnstable").value<QColor>();
 		break;
 
-		case JobDisplayData::StatusLastBuildFailed:
+		case JobDisplayData::JobStatus::LastBuildFailed:
 			m_rectColor = m_view->property("LastBuildFailed").value<QColor>();
 		break;
 	}
@@ -172,18 +172,18 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 	m_descriptionItem->setVisible(!m_descriptionItem->text().isEmpty() && m_showLastBuildDesc);
 
 	// Weather
-	if(data.getStatus() != JobDisplayData::StatusNeverBuilt){
+	if(data.getStatus() != JobDisplayData::JobStatus::NeverBuilt){
 		uint stability = data.getStability();
 		if(stability > 80)
-			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::Sunny);
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::WeatherIcon::Sunny);
 		else if(stability <= 80  && stability > 60)
-			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::PartlyCloudy);
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::WeatherIcon::PartlyCloudy);
 		else if(stability <= 60  && stability > 40)
-			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::Cloudy);
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::WeatherIcon::Cloudy);
 		else if(stability <= 40  && stability > 20)
-			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::Rain);
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::WeatherIcon::Rain);
 		else if(stability <= 20)
-			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::Thunder);
+			m_weatherItem->setWeatherIcon(WeatherGraphicsItem::WeatherIcon::Thunder);
 
 		m_weatherItem->setVisible(m_showWeather);
 	}

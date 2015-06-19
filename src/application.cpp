@@ -5,7 +5,11 @@
 // Constants initialization
 //------------------------------------------------------------------------------
 const QString Application::appName("JenkinsCuteView");
-const QString Application::appVersion("0.9.55");
+#ifdef GIT_REVISION
+const QString Application::appVersion(GIT_REVISION);
+#else
+const QString Application::appVersion("1");
+#endif
 const QString Application::orgName("JenkinsCuteView");
 //------------------------------------------------------------------------------
 // Static members initialization
@@ -19,7 +23,6 @@ Application::Application(int& argc, char* argv[]) : QApplication(argc, argv){
 	setApplicationVersion(appVersion);
 	setOrganizationName(orgName);
 
-	m_verbose = false;
 	for(int i=0 ; i < argc ; ++i){
 		QString arg(argv[i]);
 		if(arg == "-v" || arg == "--verbose"){

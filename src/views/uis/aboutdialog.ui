@@ -51,18 +51,15 @@
      <property name="font">
       <font>
        <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
+       <weight>50</weight>
+       <bold>false</bold>
       </font>
-     </property>
-     <property name="toolTip">
-      <string>Revision: %1</string>
      </property>
      <property name="styleSheet">
       <string notr="true">margin-bottom: 10px;</string>
      </property>
      <property name="text">
-      <string>Version: %1</string>
+      <string>Rev.: %1</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

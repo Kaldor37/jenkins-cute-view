@@ -16,9 +16,9 @@ class ViewModel : public QObject {
 // Constructors/Destructor
 //------------------------------------------------------------------------------
 	private:
-		explicit ViewModel(QObject *parent=nullptr);
-		ViewModel(const ViewModel &);
-		ViewModel & operator=(const ViewModel &);
+		ViewModel() = delete;
+		ViewModel(const ViewModel &) = delete;
+		ViewModel & operator=(const ViewModel &) = delete;
 
 	public:
 		explicit ViewModel(const QString &name, const QString &url, QObject *parent=nullptr);
@@ -53,11 +53,12 @@ class ViewModel : public QObject {
 		bool isJobsListLoaded() const;
 		const JobsList & getJobs() const;
 
+		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
+
 //------------------------------------------------------------------------------
 // Private slots
 //------------------------------------------------------------------------------
 	private slots:
-		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 		void job_loaded();
 //------------------------------------------------------------------------------
 // Private functions

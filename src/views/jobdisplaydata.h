@@ -6,29 +6,29 @@
 //------------------------------------------------------------------------------
 class JobDisplayData{
 	public:
-		enum eJobStatus{
-			StatusNeverBuilt = 0,
-			StatusLastBuildSuccessful,
-			StatusLastBuildSuccessfulButUnstable,
-			StatusLastBuildFailed,
-			StatusInactiveOrAborted
+		enum class JobStatus {
+			NeverBuilt,
+			LastBuildSuccessful,
+			LastBuildSuccessfulButUnstable,
+			LastBuildFailed,
+			InactiveOrAborted
 		};
 
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		JobDisplayData();
-		JobDisplayData(const JobDisplayData &);
-		JobDisplayData & operator=(const JobDisplayData &);
-		~JobDisplayData();
+		JobDisplayData() = default;
+		JobDisplayData(const JobDisplayData &) = default;
+		JobDisplayData & operator=(const JobDisplayData &) = default;
+		~JobDisplayData(){}
 
 //------------------------------------------------------------------------------
 // Getters
 //------------------------------------------------------------------------------
 	public:
 		const QString &	getName() const;
-		eJobStatus			getStatus() const;
+		JobStatus			getStatus() const;
 		uint					getStability() const;
 		uint					getLastBuildNum() const;
 		const QString &	getLastBuildDesc() const;
@@ -42,7 +42,7 @@ class JobDisplayData{
 //------------------------------------------------------------------------------
 	public:
 		void setName(const QString &value);
-		void setStatus(eJobStatus value);
+		void setStatus(JobStatus value);
 		void setStability(uint value);
 		void setLastBuildNum(uint value);
 		void setLastBuildDesc(const QString &value);
@@ -55,14 +55,14 @@ class JobDisplayData{
 //------------------------------------------------------------------------------
 	private:
 		QString		m_name;
-		eJobStatus	m_status;
-		uint			m_stability;
-		uint			m_lastBuildNum;
+		JobStatus	m_status = JobStatus::NeverBuilt;
+		uint			m_stability = 0;
+		uint			m_lastBuildNum = 0;
 		QString		m_lastBuildDesc;
-		bool			m_running;
-		qint64		m_startTime;
-		qint64		m_estimatedDuration;
-		uint			m_positionInQueue;
+		bool			m_running = false;
+		qint64		m_startTime = 0;
+		qint64		m_estimatedDuration = 0;
+		uint			m_positionInQueue = 0;
 
 //------------------------------------------------------------------------------
 };

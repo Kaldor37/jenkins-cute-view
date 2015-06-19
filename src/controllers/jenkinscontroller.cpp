@@ -14,10 +14,10 @@
 //------------------------------------------------------------------------------
 // Constructor/Destructor
 //------------------------------------------------------------------------------
-JenkinsController::JenkinsController(QObject *parent):QObject(parent){
-	m_updateTimer = new QTimer(this);
+JenkinsController::JenkinsController(QObject *parent):QObject(parent),
+	m_updateTimer(new QTimer(this)),
+	m_XMLAPIModel(new JenkinsXMLAPIModel(this)){
 
-	m_XMLAPIModel = new JenkinsXMLAPIModel(this);
 	QObject::connect(&Prefs, &Preferences::sigJenkinsUrlChanged, m_XMLAPIModel, &JenkinsXMLAPIModel::setJenkinsUrl);
 	QObject::connect(&Prefs, &Preferences::sigSelectedViewChanged, m_XMLAPIModel, &JenkinsXMLAPIModel::setSelectedView);
 	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::selectedViewLoaded, this, &JenkinsController::selectedViewDataUpdated);
@@ -33,19 +33,12 @@ JenkinsController::~JenkinsController(){}
 // Public slots
 //------------------------------------------------------------------------------
 void JenkinsController::control(MainWindow *wnd){
-	qRegisterMetaType< QVector<QString> >("QVector<QString>");
-	qRegisterMetaType< QVector<QColor> >("QVector<QColor>");
-	qRegisterMetaType< QList<JobDisplayData> >("QList<JobDisplayData>");
-	qRegisterMetaType<QStringList>("QStringList");
-	qRegisterMetaType<QVector<jenkins::NodeStatus> >("QVector<jenkins::NodeStatus>");
-
 	// To UI
 	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::viewsNamesUpdated, wnd, &MainWindow::viewsNamesUpdated);
 
 	// To graphics view
-	// TODO: change these to Qt5 connections
-	QObject::connect(this, SIGNAL(jobs_updated(QList<JobDisplayData>)), wnd->getGraphicsView(), SLOT(updateJobs(QList<JobDisplayData>)), Qt::QueuedConnection);
-	QObject::connect(this, SIGNAL(nodes_updated(QVector<QString>,QVector<jenkins::NodeStatus>)), wnd->getGraphicsView(), SLOT(updateNodes(QVector<QString>,QVector<jenkins::NodeStatus>)), Qt::QueuedConnection);
+	QObject::connect(this, &JenkinsController::jobs_updated, wnd->getGraphicsView(), &JenkinsGraphicsView::updateJobs);
+	QObject::connect(this, &JenkinsController::nodes_updated, wnd->getGraphicsView(), &JenkinsGraphicsView::updateNodes);
 
 	void (JenkinsGraphicsView::*slotMessage)(const QString &) = &JenkinsGraphicsView::displayMessage;
 	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::message, wnd->getGraphicsView(), slotMessage);
@@ -110,23 +103,23 @@ void JenkinsController::selectedViewDataUpdated(){
 		if(jobLastCompBuild){
 			// Success
 			if(jobLastCompBuild->getResult() == "SUCCESS")
-				jobData.setStatus(JobDisplayData::StatusLastBuildSuccessful);
+				jobData.setStatus(JobDisplayData::JobStatus::LastBuildSuccessful);
 			// Failure
 			else if(jobLastCompBuild->getResult() == "FAILURE")
-				jobData.setStatus(JobDisplayData::StatusLastBuildFailed);
+				jobData.setStatus(JobDisplayData::JobStatus::LastBuildFailed);
 			// Aborted
 			else if(jobLastCompBuild->getResult() == "ABORTED")
-				jobData.setStatus(JobDisplayData::StatusInactiveOrAborted);
+				jobData.setStatus(JobDisplayData::JobStatus::InactiveOrAborted);
 			// Success but unstable
 			else
-				jobData.setStatus(JobDisplayData::StatusLastBuildSuccessfulButUnstable);
+				jobData.setStatus(JobDisplayData::JobStatus::LastBuildSuccessfulButUnstable);
 		}
 		// Job never built yet
 		else
-			jobData.setStatus(JobDisplayData::StatusNeverBuilt);
+			jobData.setStatus(JobDisplayData::JobStatus::NeverBuilt);
 
 		if(!job->getBuildable()){
-			jobData.setStatus((jobLastCompBuild)?JobDisplayData::StatusInactiveOrAborted:JobDisplayData::StatusInactiveOrAborted);
+			jobData.setStatus((jobLastCompBuild)?JobDisplayData::JobStatus::InactiveOrAborted:JobDisplayData::JobStatus::InactiveOrAborted);
 		}
 
 		// Position in queue

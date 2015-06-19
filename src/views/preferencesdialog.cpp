@@ -8,7 +8,6 @@
 #include <QIntValidator>
 #include <QAbstractButton>
 #include <QDialogButtonBox>
-#include <QDebug>
 #include <QFontDatabase>
 //------------------------------------------------------------------------------
 PreferencesDialog::PreferencesDialog(QWidget *parent) :

@@ -15,9 +15,9 @@ class JobModel : public QObject {
 // Constructors/Destructor
 //------------------------------------------------------------------------------
 	private:
-		JobModel();
-		JobModel(const JobModel &src);
-		JobModel & operator=(const JobModel &src);
+		JobModel() = delete;
+		JobModel(const JobModel &src) = delete;
+		JobModel & operator=(const JobModel &src) = delete;
 
 	public:
 		explicit JobModel(const QString &name, const QString &url, QObject *parent=nullptr);
@@ -30,6 +30,8 @@ class JobModel : public QObject {
 		bool isLoaded() const;
 		const BuildModel * getLastBuild() const;
 		const BuildModel * getLastCompletedBuild() const;
+
+		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 
 //------------------------------------------------------------------------------
 // Public slots
@@ -47,7 +49,6 @@ class JobModel : public QObject {
 // Private slots
 //------------------------------------------------------------------------------
 	private slots:
-		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 		void lastBuild_loaded();
 		void lastCompletedBuild_loaded();
 

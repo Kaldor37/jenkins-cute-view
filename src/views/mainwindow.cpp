@@ -6,7 +6,6 @@
 #include "application.h"
 #include "preferences.h"
 
-#include <QDebug>
 #include <QKeyEvent>
 #include <QDesktopWidget>
 #include <QRect>
@@ -16,11 +15,7 @@
 //------------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::MainWindow),
-	m_prefsDialog(0),
-	m_aboutDialog(0),
-	m_fullscreenShortcut(0),
-	m_emptyCursor(0)
+	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 

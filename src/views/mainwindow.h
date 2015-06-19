@@ -74,14 +74,14 @@ class MainWindow : public QMainWindow{
 		Ui::MainWindow *ui;
 
 		// Dialogs
-		PreferencesDialog	*m_prefsDialog;
-		AboutDialog			*m_aboutDialog;
+		PreferencesDialog	*m_prefsDialog = nullptr;
+		AboutDialog			*m_aboutDialog = nullptr;
 
 		// Shortcuts
-		QShortcut			*m_fullscreenShortcut;
+		QShortcut			*m_fullscreenShortcut = nullptr;
 
 		// Empty cursor
-		QCursor				*m_emptyCursor;
+		QCursor				*m_emptyCursor = nullptr;
 };
 //------------------------------------------------------------------------------
 #endif // MAINWINDOW_H

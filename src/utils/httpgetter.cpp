@@ -24,9 +24,8 @@ HttpGetter&  HttpGetter::instance(){
 	return *m_instance;
 }
 //------------------------------------------------------------------------------
-HttpGetter::HttpGetter(QObject *parent) : QObject(parent){
-	m_networkAccessManager = new QNetworkAccessManager(this);
-}
+HttpGetter::HttpGetter(QObject *parent) : QObject(parent),
+	m_networkAccessManager(new QNetworkAccessManager(this)){}
 //------------------------------------------------------------------------------
 HttpGetter::~HttpGetter(){}
 //------------------------------------------------------------------------------
@@ -43,7 +42,7 @@ NetworkReplyManager::~NetworkReplyManager(){}
 //------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
-void HttpGetter::get(const QUrl &url, QObject *listener, const char *finishedSlot){
+void HttpGetter::get(const QUrl &url, getCallback function){
 	if(App.verbose())
 		qDebug()<<"HttpGetter::get("<<url<<")";
 
@@ -56,13 +55,11 @@ void HttpGetter::get(const QUrl &url, QObject *listener, const char *finishedSlo
 	netRep->ignoreSslErrors();
 
 	NetworkReplyManager *manager = new NetworkReplyManager(netRep, this);
-	// TODO - change this to Qt5 connect
-	QObject::connect(manager, SIGNAL(finished(QString,QNetworkReply::NetworkError,QString)), listener, finishedSlot);
-
+	QObject::connect(manager, &NetworkReplyManager::finished, function);
 	m_replyManagers[netRep] = manager;
 
 	// Connect on finished for deletion
-	connect(netRep, &QNetworkReply::finished, this, &HttpGetter::networkReply_finished);
+	QObject::connect(netRep, &QNetworkReply::finished, this, &HttpGetter::networkReply_finished);
 }
 //------------------------------------------------------------------------------
 void HttpGetter::setBasicAuthorization(const QString &user, const QString &pass){

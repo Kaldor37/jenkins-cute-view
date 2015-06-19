@@ -11,8 +11,7 @@
 ViewModel::ViewModel(const QString &name, const QString &url, QObject *parent):QObject(parent),
 	m_name(name),
 	m_url(url),
-	m_jobsListLoaded(false),
-	m_jobs()
+	m_jobsListLoaded(false)
 {}
 //------------------------------------------------------------------------------
 ViewModel::~ViewModel(){
@@ -33,7 +32,7 @@ void ViewModel::loadJobs(){
 
 	m_jobsListLoaded = false;
 
-	httpGetter.get(m_url + "/api/xml", this, SLOT(http_finished(QString,QNetworkReply::NetworkError,QString)));
+	httpGetter.get(m_url + "/api/xml", HttpGetter::bindGetCallback(this, &ViewModel::http_finished));
 }
 //------------------------------------------------------------------------------
 const QString & ViewModel::getName() const{
@@ -51,8 +50,6 @@ bool ViewModel::isJobsListLoaded() const{
 const ViewModel::JobsList & ViewModel::getJobs() const{
 	return m_jobs;
 }
-//------------------------------------------------------------------------------
-// Private slots
 //------------------------------------------------------------------------------
 void ViewModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
 	if(errCode != QNetworkReply::NoError){

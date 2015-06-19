@@ -28,8 +28,9 @@ class Application : public QApplication{
 //------------------------------------------------------------------------------
 	private:
 		explicit Application(int& argc, char* argv[]);
-		Application(const Application&);
-		Application& operator=(const Application&);
+
+		Application(const Application&) = delete;
+		Application& operator=(const Application&) = delete;
 
 //------------------------------------------------------------------------------
 // Public functions
@@ -42,7 +43,7 @@ class Application : public QApplication{
 //------------------------------------------------------------------------------
 	private:
 		static Application *	m_instance;
-		bool						m_verbose;
+		bool						m_verbose = false;
 
 //------------------------------------------------------------------------------
 // Constants

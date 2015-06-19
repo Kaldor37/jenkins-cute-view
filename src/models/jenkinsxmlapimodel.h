@@ -113,14 +113,14 @@ class JenkinsXMLAPIModel : public QObject {
 		 */
 		void loadJobsQueue();
 
-//------------------------------------------------------------------------------
-// Private slots
-//------------------------------------------------------------------------------
-	private slots:
 		void viewsList_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 		void nodesList_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 		void jobsQueue_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 
+//------------------------------------------------------------------------------
+// Private slots
+//------------------------------------------------------------------------------
+	private slots:
 		void selectedView_jobsListLoaded();
 
 //------------------------------------------------------------------------------

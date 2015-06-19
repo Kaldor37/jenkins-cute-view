@@ -15,10 +15,10 @@
 // JenkinsGraphicsScene
 //------------------------------------------------------------------------------
 JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent),
-	m_contextMenu(0),
-	m_fullscreenAction(0),
-	m_preferencesAction(0),
-	m_quitAction(0)
+	m_contextMenu(nullptr),
+	m_fullscreenAction(nullptr),
+	m_preferencesAction(nullptr),
+	m_quitAction(nullptr)
 {
 	m_scene = new JenkinsGraphicsScene(this);
 	setScene(m_scene);
@@ -183,7 +183,7 @@ void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const Q
 	update();
 }
 //------------------------------------------------------------------------------
-void JenkinsGraphicsView::displayMessage(const QString & msg, MessageGraphicsItem::eMessageType type){
+void JenkinsGraphicsView::displayMessage(const QString & msg, MessageGraphicsItem::MessageType type){
 	Q_ASSERT(!msg.isEmpty());
 	m_messageItem->setMessage(type, msg);
 	m_messageItem->setVisible(true);
@@ -192,15 +192,15 @@ void JenkinsGraphicsView::displayMessage(const QString & msg, MessageGraphicsIte
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::displayMessage(const QString & msg){
-	displayMessage(msg, MessageGraphicsItem::Normal);
+	displayMessage(msg, MessageGraphicsItem::MessageType::Normal);
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::displayWarning(const QString & msg){
-	displayMessage(msg, MessageGraphicsItem::Warning);
+	displayMessage(msg, MessageGraphicsItem::MessageType::Warning);
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::displayError(const QString &msg){
-	displayMessage(msg, MessageGraphicsItem::Error);
+	displayMessage(msg, MessageGraphicsItem::MessageType::Error);
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::fullscreenModeChanged(bool enabled){

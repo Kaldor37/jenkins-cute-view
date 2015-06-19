@@ -3,7 +3,6 @@
 #include "autoresizingtextitem.h"
 #include "preferences.h"
 
-#include <QDebug>
 #include <QBrush>
 #include <QPen>
 #include <QPainter>

@@ -46,7 +46,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 		void updateJobs(const QList<JobDisplayData> &);
 		void updateNodes(const QVector<QString> &nodeNames, const QVector<jenkins::NodeStatus> &nodeColors);
 
-		void displayMessage(const QString & msg, MessageGraphicsItem::eMessageType type);
+		void displayMessage(const QString & msg, MessageGraphicsItem::MessageType type);
 		void displayMessage(const QString & msg);
 		void displayWarning(const QString & msg);
 		void displayError(const QString & msg);

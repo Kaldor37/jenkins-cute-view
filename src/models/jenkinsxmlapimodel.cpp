@@ -15,8 +15,8 @@
 //------------------------------------------------------------------------------
 JenkinsXMLAPIModel::JenkinsXMLAPIModel(QObject *parent): QObject(parent),
 	m_viewsListLoaded(false),
-	m_primaryView(0),
-	m_selectedView(0),
+	m_primaryView(nullptr),
+	m_selectedView(nullptr),
 	m_nodesListLoaded(false),
 	m_jobsQueueLoaded(false)
 {
@@ -111,7 +111,7 @@ void JenkinsXMLAPIModel::loadViews(){
 
 	m_viewsListLoaded = false;
 
-	httpGetter.get(m_jenkinsUrl + "/api/xml", this, SLOT(viewsList_httpFinished(QString,QNetworkReply::NetworkError,QString)));
+	httpGetter.get(m_jenkinsUrl + "/api/xml", HttpGetter::bindGetCallback(this, &JenkinsXMLAPIModel::viewsList_httpFinished));
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::loadSelectedView(){
@@ -128,7 +128,7 @@ void JenkinsXMLAPIModel::loadNodes(){
 
 	m_nodesListLoaded = false;
 
-	httpGetter.get(m_jenkinsUrl + "/computer/api/xml", this, SLOT(nodesList_httpFinished(QString,QNetworkReply::NetworkError,QString)));
+	httpGetter.get(m_jenkinsUrl + "/computer/api/xml", HttpGetter::bindGetCallback(this, &JenkinsXMLAPIModel::nodesList_httpFinished));
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::loadJobsQueue(){
@@ -137,7 +137,7 @@ void JenkinsXMLAPIModel::loadJobsQueue(){
 
 	m_jobsQueueLoaded = false;
 
-	httpGetter.get(m_jenkinsUrl + "/queue/api/xml", this, SLOT(jobsQueue_httpFinished(QString,QNetworkReply::NetworkError,QString)));
+	httpGetter.get(m_jenkinsUrl + "/queue/api/xml", HttpGetter::bindGetCallback(this, &JenkinsXMLAPIModel::jobsQueue_httpFinished));
 }
 //------------------------------------------------------------------------------
 // Private slots

@@ -50,12 +50,12 @@ void MessageGraphicsItem::setRect(const QRectF &rect){
 	setSize(rect.width(), rect.height());
 }
 //------------------------------------------------------------------------------
-void MessageGraphicsItem::setMessage(eMessageType type, const QString &msg){
+void MessageGraphicsItem::setMessage(MessageType type, const QString &msg){
 	switch(type){
-		case NoType:	m_backgroundColor = QColor(); break;
-		case Normal:	m_backgroundColor = Qt::darkGray; break;
-		case Warning:	m_backgroundColor = Qt::darkYellow; break;
-		case Error:		m_backgroundColor = Qt::darkRed; break;
+		case MessageType::NoType:	m_backgroundColor = QColor(); break;
+		case MessageType::Normal:	m_backgroundColor = Qt::darkGray; break;
+		case MessageType::Warning:	m_backgroundColor = Qt::darkYellow; break;
+		case MessageType::Error:	m_backgroundColor = Qt::darkRed; break;
 	}
 	m_messageItem->setText(msg);
 	updateMessage();

@@ -2,13 +2,13 @@
 #include "autoresizingtextitem.h"
 
 #include <QPainter>
-#include <QDebug>
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 AutoResizingTextItem::AutoResizingTextItem(QGraphicsItem *parent/* = nullptr*/):QGraphicsObject(parent), QGraphicsLayoutItem(),
 	m_visible(true),
 	m_shadowed(false),
+	m_shadowOffset(0),
 	m_textFlags(Qt::AlignCenter){
 	setGraphicsItem(this);
 }
