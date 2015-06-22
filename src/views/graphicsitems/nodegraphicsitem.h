@@ -35,7 +35,7 @@ class NodeGraphicsItem : public QGraphicsObject {
 
 		void setName(const QString &name);
 		void setColor(const QColor &color);
-
+		void setPing(uint ping);
 //------------------------------------------------------------------------------
 // Private functions
 //------------------------------------------------------------------------------
@@ -50,6 +50,7 @@ class NodeGraphicsItem : public QGraphicsObject {
 		QString	m_name;
 		QColor	m_color;
 		AutoResizingTextItem	*m_nameItem;
+		AutoResizingTextItem	*m_pingItem;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

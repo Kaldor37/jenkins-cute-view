@@ -131,16 +131,14 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 	update();
 }
 //------------------------------------------------------------------------------
-void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const QVector<jenkins::NodeStatus> &nodeStatuses){
-	Q_ASSERT(nodeNames.size() == nodeStatuses.size());
-	int nbNodes = nodeNames.size();
+void JenkinsGraphicsView::updateNodes(const QVector<NodeData> &nodes){
+	QStringList nodeNames;
 
-	for(int i=0 ; i < nbNodes ; ++i){
-		const QString &name = nodeNames.at(i);
+	for(const NodeData node : nodes){
+		nodeNames.push_back(node.name);
 
-		const jenkins::NodeStatus &nodeStatus = nodeStatuses.at(i);
 		QColor color;
-		switch(nodeStatus){
+		switch(node.status){
 			case jenkins::Idle:						color = property("NodeIdle").value<QColor>(); break;
 			case jenkins::Working:					color = property("NodeIdle").value<QColor>().lighter(); break;
 			case jenkins::Offline:					color = property("NodeOffline").value<QColor>(); break;
@@ -149,7 +147,7 @@ void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const Q
 
 		// Find node
 		NodeGraphicsItem *foundNode = NULL;
-		NodesItems::Iterator found = m_nodeItems.find(name);
+		NodesItems::Iterator found = m_nodeItems.find(node.name);
 		if(found != m_nodeItems.end()){
 			foundNode = found.value();
 			Q_ASSERT(foundNode);
@@ -158,19 +156,21 @@ void JenkinsGraphicsView::updateNodes(const QVector<QString> &nodeNames, const Q
 		// Update node
 		if(foundNode){
 			foundNode->setColor(color);
+			foundNode->setPing(node.ping);
 		}
 		// Create node
 		else{
 			NodeGraphicsItem *nodeItem = new NodeGraphicsItem();
-			nodeItem->setName(name);
+			nodeItem->setName(node.name);
 			nodeItem->setColor(color);
-			m_nodeItems[name] = nodeItem;
+			nodeItem->setPing(node.ping);
+			m_nodeItems[node.name] = nodeItem;
 			m_scene->addItem(nodeItem);
 		}
 	}
 
 	// Delete old nodes
-	QList<QString> nodesList = m_nodeItems.keys();
+	const QList<QString> nodesList = m_nodeItems.keys();
 	for(const QString &nodeName : nodesList){
 		if(!nodeNames.contains(nodeName)){
 			NodeGraphicsItem *node = m_nodeItems.take(nodeName);

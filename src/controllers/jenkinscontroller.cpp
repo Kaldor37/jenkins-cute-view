@@ -2,7 +2,7 @@
 #include "jenkinscontroller.h"
 #include "models/jenkinsxmlapimodel.h"
 #include "models/buildmodel.h"
-#include "models/nodemodel.h"
+#include "models/nodeslistmodel.h"
 #include "models/viewmodel.h"
 #include "preferences.h"
 #include "views/mainwindow.h"
@@ -16,16 +16,18 @@
 //------------------------------------------------------------------------------
 JenkinsController::JenkinsController(QObject *parent):QObject(parent),
 	m_updateTimer(new QTimer(this)),
-	m_XMLAPIModel(new JenkinsXMLAPIModel(this)){
+	m_XMLAPIModel(new JenkinsXMLAPIModel(this)),
+	m_nodesModel(new NodesListModel(this)){
 
 	QObject::connect(&Prefs, &Preferences::sigJenkinsUrlChanged, m_XMLAPIModel, &JenkinsXMLAPIModel::setJenkinsUrl);
 	QObject::connect(&Prefs, &Preferences::sigSelectedViewChanged, m_XMLAPIModel, &JenkinsXMLAPIModel::setSelectedView);
 	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::selectedViewLoaded, this, &JenkinsController::selectedViewDataUpdated);
-	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::nodesListLoaded, this, &JenkinsController::nodesListUpdated);
 
 	QObject::connect(m_updateTimer, &QTimer::timeout, m_XMLAPIModel, &JenkinsXMLAPIModel::loadViews);
-	QObject::connect(m_updateTimer, &QTimer::timeout, m_XMLAPIModel, &JenkinsXMLAPIModel::loadNodes);
 	QObject::connect(m_updateTimer, &QTimer::timeout, m_XMLAPIModel, &JenkinsXMLAPIModel::loadJobsQueue);
+
+	QObject::connect(m_updateTimer, &QTimer::timeout, m_nodesModel, &NodesListModel::update);
+	QObject::connect(m_nodesModel, &NodesListModel::updated, this, &JenkinsController::updateNodesList);
 }
 //------------------------------------------------------------------------------
 JenkinsController::~JenkinsController(){}
@@ -55,6 +57,8 @@ void JenkinsController::start(){
 
 	m_XMLAPIModel->setJenkinsUrl(Prefs.getJenkinsUrl());
 	m_XMLAPIModel->setSelectedView(Prefs.getSelectedView());
+
+	m_nodesModel->update();
 
 	m_updateTimer->setInterval(Prefs.getAPIUpdateInterval()*1000);
 	QObject::connect(&Prefs, &Preferences::sigAPIUpdateIntervalChanged, this, &JenkinsController::prefs_APIUpdateIntervalChanged);
@@ -138,28 +142,28 @@ void JenkinsController::selectedViewDataUpdated(){
 	emit jobs_updated(jobsList);
 }
 //------------------------------------------------------------------------------
-void JenkinsController::nodesListUpdated(){
-	const JenkinsXMLAPIModel::NodesList &nodesList = m_XMLAPIModel->nodes();
+void JenkinsController::updateNodesList(){
+	const NodesListModel::NodesList &nodesList = m_nodesModel->nodes();
 
-	QVector<QString> nodesNames;
-	QVector<jenkins::NodeStatus> nodesStatuses;
+	QVector<JenkinsGraphicsView::NodeData> nodes;
+	nodes.reserve(nodesList.size());
 
-	for(const NodeModel * node : nodesList){
-		nodesNames.push_back(node->getDisplayName());
-
-		jenkins::NodeStatus status;
-		if(node->getTemporarilyOffline())
-			status = jenkins::TemporarilyOffline;
-		else if(node->getOffline())
-			status = jenkins::Offline;
-		else if(!node->getIdle())
-			status = jenkins::Working;
+	for(const NodesListModel::Node & node : nodesList){
+		JenkinsGraphicsView::NodeData nd;
+		nd.name = node.displayName;
+		nd.ping = node.ping;
+		if(node.temporarilyOffline)
+			nd.status = jenkins::TemporarilyOffline;
+		else if(node.offline)
+			nd.status = jenkins::Offline;
+		else if(!node.idle)
+			nd.status = jenkins::Working;
 		else
-			status = jenkins::Idle;
+			nd.status = jenkins::Idle;
 
-		nodesStatuses.push_back(status);
+		nodes.push_back(nd);
 	}
 
-	emit nodes_updated(nodesNames, nodesStatuses);
+	emit nodes_updated(nodes);
 }
 //------------------------------------------------------------------------------

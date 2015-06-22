@@ -1,7 +1,6 @@
 //------------------------------------------------------------------------------
 #include "jenkinsxmlapimodel.h"
 #include "utils/httpgetter.h"
-#include "models/nodemodel.h"
 #include "models/viewmodel.h"
 #include "preferences.h"
 #include "application.h"
@@ -17,14 +16,12 @@ JenkinsXMLAPIModel::JenkinsXMLAPIModel(QObject *parent): QObject(parent),
 	m_viewsListLoaded(false),
 	m_primaryView(nullptr),
 	m_selectedView(nullptr),
-	m_nodesListLoaded(false),
 	m_jobsQueueLoaded(false)
 {
 }
 //------------------------------------------------------------------------------
 JenkinsXMLAPIModel::~JenkinsXMLAPIModel(){
 	clearViews();
-	clearNodes();
 }
 //------------------------------------------------------------------------------
 // Public functions
@@ -45,10 +42,6 @@ const ViewModel * JenkinsXMLAPIModel::selectedView() const {
 	return m_selectedView;
 }
 //------------------------------------------------------------------------------
-const JenkinsXMLAPIModel::NodesList & JenkinsXMLAPIModel::nodes() const {
-	return m_nodes;
-}
-//------------------------------------------------------------------------------
 const QVector<QString> & JenkinsXMLAPIModel::jobsQueue() const {
 	return m_jobsQueue;
 }
@@ -67,7 +60,6 @@ void JenkinsXMLAPIModel::setJenkinsUrl(const QString &url){
 		if(!m_jenkinsUrl.isEmpty()){
 			emit message(tr("Loading..."));
 			loadViews();
-			loadNodes();
 			loadJobsQueue();
 		}
 		else
@@ -122,15 +114,6 @@ void JenkinsXMLAPIModel::loadSelectedView(){
 	m_selectedView->loadJobs();
 }
 //------------------------------------------------------------------------------
-void JenkinsXMLAPIModel::loadNodes(){
-	if(m_jenkinsUrl.isEmpty())
-		return;
-
-	m_nodesListLoaded = false;
-
-	httpGetter.get(m_jenkinsUrl + "/computer/api/xml", HttpGetter::bindGetCallback(this, &JenkinsXMLAPIModel::nodesList_httpFinished));
-}
-//------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::loadJobsQueue(){
 	if(m_jenkinsUrl.isEmpty())
 		return;
@@ -158,24 +141,6 @@ void JenkinsXMLAPIModel::viewsList_httpFinished(const QString &content, QNetwork
 	}
 
 	parseViews(doc);
-}
-//------------------------------------------------------------------------------
-void JenkinsXMLAPIModel::nodesList_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
-	if(errCode != QNetworkReply::NoError){
-		qWarning()<<"JenkinsXMLAPIModel::nodesList_httpFinished - Error : "<<errCode<<" ("<<error<<")";
-		emit this->error(error);
-		return;
-	}
-
-	QDomDocument doc;
-	bool parsed = doc.setContent(content);
-	if(!parsed){
-		qWarning()<<"JenkinsXMLAPIModel::nodesList_httpFinished - Error parsing XML !";
-		emit this->error(tr("Error parsing views list data"));
-		return;
-	}
-
-	parseNodes(doc);
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::jobsQueue_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
@@ -283,46 +248,6 @@ void JenkinsXMLAPIModel::parseViews(const QDomDocument &doc){
 	emit viewsNamesUpdated(viewsNamesList, m_primaryView->getName());
 }
 //------------------------------------------------------------------------------
-void JenkinsXMLAPIModel::parseNodes(const QDomDocument &doc){
-	QDomNodeList nodesList = doc.elementsByTagName("computer");
-	int nbNodes = nodesList.size();
-	NodesList nodes;
-	nodes.reserve(nbNodes);
-
-	for(int i=0 ; i < nbNodes ; ++i){
-		QDomNode nodeNode = nodesList.at(i);
-
-		QDomElement displayNameElm = nodeNode.firstChildElement("displayName");
-		QDomElement idleElm = nodeNode.firstChildElement("idle");
-		QDomElement numExecutorsElm = nodeNode.firstChildElement("numExecutors");
-		QDomElement offlineElm = nodeNode.firstChildElement("offline");
-		QDomElement offlineCauseReasonElm = nodeNode.firstChildElement("offlineCauseReason");
-		QDomElement temporarilyOfflineElm = nodeNode.firstChildElement("temporarilyOffline");
-		if(!displayNameElm.isNull() && !idleElm.isNull() && !numExecutorsElm.isNull() &&
-			!offlineElm.isNull() && !offlineCauseReasonElm.isNull() && !temporarilyOfflineElm.isNull()){
-			// Do not load nodes with no executors
-			uint numExecutors = numExecutorsElm.text().toUInt();
-			if(numExecutors == 0)
-				continue;
-
-			NodeModel *nm = new NodeModel(this);
-			nm->setDisplayName(displayNameElm.text());
-			nm->setIdle(idleElm.text() == "true");
-			nm->setNumExecutors(numExecutors);
-			nm->setOffline(offlineElm.text() == "true");
-			nm->setOfflineCauseReason(offlineCauseReasonElm.text());
-			nm->setTemporarilyOffline(temporarilyOfflineElm.text() == "true");
-			nodes.push_back(nm);
-		}
-	}
-
-	m_nodes.swap(nodes);
-	emit nodesListLoaded();
-
-	for(NodeModel *model : nodes)
-		model->deleteLater();
-}
-//------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::parseJobsQueue(const QDomDocument &doc){
 	QDomNodeList nodesList = doc.elementsByTagName("item");
 	int nbJobs = nodesList.size();
@@ -348,12 +273,5 @@ void JenkinsXMLAPIModel::clearViews(){
 		view->deleteLater();
 
 	m_views.clear();
-}
-//------------------------------------------------------------------------------
-void JenkinsXMLAPIModel::clearNodes(){
-	for(NodeModel *node : m_nodes)
-		node->deleteLater();
-
-	m_nodes.clear();
 }
 //------------------------------------------------------------------------------

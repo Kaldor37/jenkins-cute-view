@@ -40,11 +40,21 @@ class JenkinsGraphicsView : public QGraphicsView {
 		void contextMenuHidden();
 
 //------------------------------------------------------------------------------
+// Public typedefs
+//------------------------------------------------------------------------------
+	public:
+		struct NodeData {
+			QString name;
+			jenkins::NodeStatus status = jenkins::Offline;
+			uint ping = 0;
+		};
+
+//------------------------------------------------------------------------------
 // Public slots
 //------------------------------------------------------------------------------
 	public slots:
 		void updateJobs(const QList<JobDisplayData> &);
-		void updateNodes(const QVector<QString> &nodeNames, const QVector<jenkins::NodeStatus> &nodeColors);
+		void updateNodes(const QVector<NodeData> &nodes);
 
 		void displayMessage(const QString & msg, MessageGraphicsItem::MessageType type);
 		void displayMessage(const QString & msg);

@@ -10,11 +10,18 @@
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 NodeGraphicsItem::NodeGraphicsItem(QGraphicsItem *parent/* = nullptr*/):QGraphicsObject(parent),
-	m_nameItem(new AutoResizingTextItem(this)){
+	m_nameItem(new AutoResizingTextItem(this)),
+	m_pingItem(new AutoResizingTextItem(this)){
+
 	m_nameItem->setFont(QFont(Prefs.getFont(), -1, QFont::Bold));
 	m_nameItem->setPen(QPen(Qt::white));
 	m_nameItem->setShadowed(true);
 	QObject::connect(&Prefs, &Preferences::sigFontChanged, m_nameItem, &AutoResizingTextItem::setFontFamily);
+
+	m_pingItem->setTextFlags(Qt::AlignCenter);
+	m_pingItem->setFont(QFont(Prefs.getFont(), -1, QFont::Bold));
+	m_pingItem->setPen(QPen(Qt::white));
+	QObject::connect(&Prefs, &Preferences::sigFontChanged, m_pingItem, &AutoResizingTextItem::setFontFamily);
 }
 //------------------------------------------------------------------------------
 NodeGraphicsItem::~NodeGraphicsItem(){ }
@@ -65,6 +72,12 @@ void NodeGraphicsItem::setName(const QString &name){
 	m_nameItem->setText(m_name);
 }
 //------------------------------------------------------------------------------
+void NodeGraphicsItem::setPing(uint ping){
+	Q_ASSERT(m_pingItem);
+	m_pingItem->setVisible(ping > 0);
+	m_pingItem->setText(QString("%1 ms").arg(ping));
+}
+//------------------------------------------------------------------------------
 void NodeGraphicsItem::setColor(const QColor &color){
 	m_color = color;
 }
@@ -78,5 +91,6 @@ const QString & NodeGraphicsItem::getName() const{
 void NodeGraphicsItem::updateLayout(){
 	QRectF rect(boundingRect());
 	m_nameItem->setRect(QRectF(rect.x()+(rect.width()*0.05), rect.height()*0.2, rect.width()*0.9, rect.height()*0.6));
+	m_pingItem->setRect(QRectF(rect.x()+(rect.width()*0.1), rect.height()*0.75, rect.width()*0.9, rect.height()*0.18));
 }
 //------------------------------------------------------------------------------

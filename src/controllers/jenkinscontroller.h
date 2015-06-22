@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "views/jobdisplaydata.h"
 #include "jenkinsnamespace.h"
+#include "views/jenkinsgraphicsview.h"
 
 #include <QObject>
 #include <QList>
@@ -13,6 +14,7 @@
 class MainWindow;
 class QTimer;
 class JenkinsXMLAPIModel;
+class NodesListModel;
 //------------------------------------------------------------------------------
 class JenkinsController : public QObject {
 	Q_OBJECT
@@ -23,7 +25,7 @@ class JenkinsController : public QObject {
 //------------------------------------------------------------------------------
 	signals:
 		void jobs_updated(QList<JobDisplayData> jobs);
-		void nodes_updated(QVector<QString> nodesNames, QVector<jenkins::NodeStatus> nodesColors);
+		void nodes_updated(QVector<JenkinsGraphicsView::NodeData> nodes);
 
 //------------------------------------------------------------------------------
 	public slots:
@@ -32,11 +34,14 @@ class JenkinsController : public QObject {
 		void start();
 
 		void selectedViewDataUpdated();
-		void nodesListUpdated();
+
+	private slots:
+		void updateNodesList();
 //------------------------------------------------------------------------------
 	private:
 		QTimer					*m_updateTimer;
 		JenkinsXMLAPIModel	*m_XMLAPIModel;
+		NodesListModel			*m_nodesModel;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

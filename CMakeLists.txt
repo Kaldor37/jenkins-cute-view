@@ -44,7 +44,7 @@ SET(MOC_HDRS
 	src/models/buildmodel.h
 	src/models/jenkinsxmlapimodel.h
 	src/models/jobmodel.h
-	src/models/nodemodel.h
+	src/models/nodeslistmodel.h
 	src/models/viewmodel.h
 	src/utils/httpgetter.h
 	src/views/aboutdialog.h
@@ -67,7 +67,7 @@ SET(SOURCES
 	src/models/buildmodel.cpp
 	src/models/jenkinsxmlapimodel.cpp
 	src/models/jobmodel.cpp
-	src/models/nodemodel.cpp
+	src/models/nodeslistmodel.cpp
 	src/models/viewmodel.cpp
 	src/utils/httpgetter.cpp
 	src/views/aboutdialog.cpp

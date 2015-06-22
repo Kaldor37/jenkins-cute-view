@@ -78,8 +78,10 @@ void HttpGetter::networkReply_finished(){
 	if(netRep){
 		if(m_replyManagers.contains(netRep)){
 			NetworkReplyManager * manager = m_replyManagers.take(netRep);
+			QObject::disconnect(manager);
 			manager->deleteLater();
 		}
+		QObject::disconnect(netRep);
 		netRep->deleteLater();
 	}
 }
