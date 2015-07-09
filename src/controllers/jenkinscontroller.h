@@ -3,7 +3,6 @@
 #define JENKINSCONTROLLER_H
 //------------------------------------------------------------------------------
 #include "views/jobdisplaydata.h"
-#include "jenkinsnamespace.h"
 #include "views/jenkinsgraphicsview.h"
 
 #include <QObject>

@@ -21,7 +21,7 @@ void NodesListModel::update(){
 	Q_ASSERT(!Prefs.getJenkinsUrl().isEmpty());
 	QUrl url(Prefs.getJenkinsUrl() + "/computer/api/json");
 	Q_ASSERT(url.isValid());
-	HttpGetter::instance().get(url, HttpGetter::bindGetCallback(this, &NodesListModel::httpFinished));
+	HttpGetter::instance().get(url, this, &NodesListModel::httpFinished);
 }
 //------------------------------------------------------------------------------
 void NodesListModel::httpFinished(const QString & data, QNetworkReply::NetworkError errorCode, const QString & errString){

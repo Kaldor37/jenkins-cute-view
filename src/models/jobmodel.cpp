@@ -77,7 +77,7 @@ void JobModel::load(){
 
 	m_lastBuildLoaded = m_lastCompletedBuildLoaded = false;
 
-	httpGetter.get(m_Url + "api/xml", HttpGetter::bindGetCallback(this, &JobModel::http_finished));
+	HttpGetter::instance().get(m_Url + "api/xml", this, &JobModel::http_finished);
 }
 //------------------------------------------------------------------------------
 void JobModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){

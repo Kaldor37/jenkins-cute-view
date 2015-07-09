@@ -4,7 +4,6 @@
 //------------------------------------------------------------------------------
 #include "jobdisplaydata.h"
 #include "graphicsitems/messagegraphicsitem.h"
-#include "jenkinsnamespace.h"
 
 #include <QGraphicsView>
 #include <QMap>
@@ -43,9 +42,16 @@ class JenkinsGraphicsView : public QGraphicsView {
 // Public typedefs
 //------------------------------------------------------------------------------
 	public:
+		enum class NodeStatus {
+			Idle,
+			Working,
+			TemporarilyOffline,
+			Offline
+		};
+
 		struct NodeData {
 			QString name;
-			jenkins::NodeStatus status = jenkins::Offline;
+			NodeStatus status = NodeStatus::Offline;
 			uint ping = 0;
 		};
 

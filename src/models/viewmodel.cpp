@@ -32,7 +32,7 @@ void ViewModel::loadJobs(){
 
 	m_jobsListLoaded = false;
 
-	httpGetter.get(m_url + "/api/xml", HttpGetter::bindGetCallback(this, &ViewModel::http_finished));
+	HttpGetter::instance().get(m_url + "/api/xml", this, &ViewModel::http_finished);
 }
 //------------------------------------------------------------------------------
 const QString & ViewModel::getName() const{

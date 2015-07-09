@@ -59,7 +59,7 @@ void BuildModel::load(){
 
 	m_loaded = false;
 
-	httpGetter.get(m_Url + "api/xml", HttpGetter::bindGetCallback(this, &BuildModel::http_finished));
+	HttpGetter::instance().get(m_Url + "api/xml", this, &BuildModel::http_finished);
 }
 //------------------------------------------------------------------------------
 void BuildModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){

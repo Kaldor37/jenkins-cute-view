@@ -139,10 +139,10 @@ void JenkinsGraphicsView::updateNodes(const QVector<NodeData> &nodes){
 
 		QColor color;
 		switch(node.status){
-			case jenkins::Idle:						color = property("NodeIdle").value<QColor>(); break;
-			case jenkins::Working:					color = property("NodeIdle").value<QColor>().lighter(); break;
-			case jenkins::Offline:					color = property("NodeOffline").value<QColor>(); break;
-			case jenkins::TemporarilyOffline:	color = property("NodeTemporarilyOffline").value<QColor>(); break;
+			case JenkinsGraphicsView::NodeStatus::Idle:						color = property("NodeIdle").value<QColor>(); break;
+			case JenkinsGraphicsView::NodeStatus::Working:					color = property("NodeIdle").value<QColor>().lighter(); break;
+			case JenkinsGraphicsView::NodeStatus::Offline:					color = property("NodeOffline").value<QColor>(); break;
+			case JenkinsGraphicsView::NodeStatus::TemporarilyOffline:	color = property("NodeTemporarilyOffline").value<QColor>(); break;
 		}
 
 		// Find node

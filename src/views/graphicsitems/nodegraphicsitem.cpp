@@ -90,7 +90,7 @@ const QString & NodeGraphicsItem::getName() const{
 //------------------------------------------------------------------------------
 void NodeGraphicsItem::updateLayout(){
 	QRectF rect(boundingRect());
-	m_nameItem->setRect(QRectF(rect.x()+(rect.width()*0.05), rect.height()*0.2, rect.width()*0.9, rect.height()*0.6));
-	m_pingItem->setRect(QRectF(rect.x()+(rect.width()*0.1), rect.height()*0.75, rect.width()*0.9, rect.height()*0.18));
+	m_nameItem->setRect(QRectF(rect.x()+(rect.width()*0.05), rect.height()*0.2, rect.width()*0.9, rect.height()*0.5));
+	m_pingItem->setRect(QRectF(rect.x()+(rect.width()*0.1), rect.height()*0.70, rect.width()*0.9, rect.height()*0.23));
 }
 //------------------------------------------------------------------------------

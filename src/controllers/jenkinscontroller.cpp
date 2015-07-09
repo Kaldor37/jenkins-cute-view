@@ -153,13 +153,13 @@ void JenkinsController::updateNodesList(){
 		nd.name = node.displayName;
 		nd.ping = node.ping;
 		if(node.temporarilyOffline)
-			nd.status = jenkins::TemporarilyOffline;
+			nd.status = JenkinsGraphicsView::NodeStatus::TemporarilyOffline;
 		else if(node.offline)
-			nd.status = jenkins::Offline;
+			nd.status = JenkinsGraphicsView::NodeStatus::Offline;
 		else if(!node.idle)
-			nd.status = jenkins::Working;
+			nd.status = JenkinsGraphicsView::NodeStatus::Working;
 		else
-			nd.status = jenkins::Idle;
+			nd.status = JenkinsGraphicsView::NodeStatus::Idle;
 
 		nodes.push_back(nd);
 	}

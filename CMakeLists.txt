@@ -32,7 +32,6 @@ include_directories(
 
 # Headers
 SET(HEADERS
-	src/jenkinsnamespace.h
 	src/views/jobdisplaydata.h
 )
 

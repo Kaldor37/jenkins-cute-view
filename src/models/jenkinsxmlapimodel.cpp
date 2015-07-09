@@ -103,7 +103,7 @@ void JenkinsXMLAPIModel::loadViews(){
 
 	m_viewsListLoaded = false;
 
-	httpGetter.get(m_jenkinsUrl + "/api/xml", HttpGetter::bindGetCallback(this, &JenkinsXMLAPIModel::viewsList_httpFinished));
+	HttpGetter::instance().get(m_jenkinsUrl + "/api/xml", this, &JenkinsXMLAPIModel::viewsList_httpFinished);
 }
 //------------------------------------------------------------------------------
 void JenkinsXMLAPIModel::loadSelectedView(){
@@ -120,7 +120,7 @@ void JenkinsXMLAPIModel::loadJobsQueue(){
 
 	m_jobsQueueLoaded = false;
 
-	httpGetter.get(m_jenkinsUrl + "/queue/api/xml", HttpGetter::bindGetCallback(this, &JenkinsXMLAPIModel::jobsQueue_httpFinished));
+	HttpGetter::instance().get(m_jenkinsUrl + "/queue/api/xml", this, &JenkinsXMLAPIModel::jobsQueue_httpFinished);
 }
 //------------------------------------------------------------------------------
 // Private slots
