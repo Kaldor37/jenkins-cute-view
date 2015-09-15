@@ -11,17 +11,19 @@
 //------------------------------------------------------------------------------
 NodeGraphicsItem::NodeGraphicsItem(QGraphicsItem *parent/* = nullptr*/):QGraphicsObject(parent),
 	m_nameItem(new AutoResizingTextItem(this)),
-	m_pingItem(new AutoResizingTextItem(this)){
+	m_responseTimeItem(new AutoResizingTextItem(this)){
 
 	m_nameItem->setFont(QFont(Prefs.getFont(), -1, QFont::Bold));
 	m_nameItem->setPen(QPen(Qt::white));
 	m_nameItem->setShadowed(true);
 	QObject::connect(&Prefs, &Preferences::sigFontChanged, m_nameItem, &AutoResizingTextItem::setFontFamily);
 
-	m_pingItem->setTextFlags(Qt::AlignCenter);
-	m_pingItem->setFont(QFont(Prefs.getFont(), -1, QFont::Bold));
-	m_pingItem->setPen(QPen(Qt::white));
-	QObject::connect(&Prefs, &Preferences::sigFontChanged, m_pingItem, &AutoResizingTextItem::setFontFamily);
+	m_responseTimeItem->setTextFlags(Qt::AlignCenter);
+	m_responseTimeItem->setFont(QFont(Prefs.getFont(), -1, QFont::Bold));
+	m_responseTimeItem->setPen(QPen(Qt::white));
+	QObject::connect(&Prefs, &Preferences::sigFontChanged, m_responseTimeItem, &AutoResizingTextItem::setFontFamily);
+
+	QObject::connect(&Prefs, &Preferences::sigShowNodesResponseTimeChanged, this, &NodeGraphicsItem::setShowResponseTime);
 }
 //------------------------------------------------------------------------------
 NodeGraphicsItem::~NodeGraphicsItem(){ }
@@ -72,10 +74,14 @@ void NodeGraphicsItem::setName(const QString &name){
 	m_nameItem->setText(m_name);
 }
 //------------------------------------------------------------------------------
-void NodeGraphicsItem::setPing(uint ping){
-	Q_ASSERT(m_pingItem);
-	m_pingItem->setVisible(ping > 0);
-	m_pingItem->setText(QString("%1 ms").arg(ping));
+void NodeGraphicsItem::setResponseTime(uint rtime){
+	Q_ASSERT(m_responseTimeItem);
+	m_responseTimeItem->setText(QString("%1 ms").arg(rtime));
+}
+//------------------------------------------------------------------------------
+void NodeGraphicsItem::setShowResponseTime(bool show){
+	Q_ASSERT(m_responseTimeItem);
+	m_responseTimeItem->setVisible(show);
 }
 //------------------------------------------------------------------------------
 void NodeGraphicsItem::setColor(const QColor &color){
@@ -89,8 +95,13 @@ const QString & NodeGraphicsItem::getName() const{
 // Private functions
 //------------------------------------------------------------------------------
 void NodeGraphicsItem::updateLayout(){
-	QRectF rect(boundingRect());
-	m_nameItem->setRect(QRectF(rect.x()+(rect.width()*0.05), rect.height()*0.2, rect.width()*0.9, rect.height()*0.5));
-	m_pingItem->setRect(QRectF(rect.x()+(rect.width()*0.1), rect.height()*0.70, rect.width()*0.9, rect.height()*0.23));
+	const QRectF rect(boundingRect());
+	if(Prefs.getShowNodesResponseTime()){
+		m_nameItem->setRect(QRectF(rect.x()+(rect.width()*0.05), rect.height()*0.2, rect.width()*0.9, rect.height()*0.5));
+		m_responseTimeItem->setRect(QRectF(rect.x()+(rect.width()*0.1), rect.height()*0.70, rect.width()*0.9, rect.height()*0.23));
+	}
+	else{
+		m_nameItem->setRect(QRectF(rect.x()+(rect.width()*0.05), rect.height()*0.2, rect.width()*0.9, rect.height()*0.7));
+	}
 }
 //------------------------------------------------------------------------------

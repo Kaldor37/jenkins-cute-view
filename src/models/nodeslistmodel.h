@@ -24,7 +24,7 @@ class NodesListModel : public QObject {
 			bool		offline = false;
 			QString	offlineCauseReason;
 			bool		temporarilyOffline = false;
-			uint		ping = 0;
+			uint		reponseTime = 0;
 		};
 		typedef QVector<Node> NodesList;
 

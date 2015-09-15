@@ -52,7 +52,7 @@ class JenkinsGraphicsView : public QGraphicsView {
 		struct NodeData {
 			QString name;
 			NodeStatus status = NodeStatus::Offline;
-			uint ping = 0;
+			uint responseTime = 0;
 		};
 
 //------------------------------------------------------------------------------

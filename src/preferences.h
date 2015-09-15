@@ -67,6 +67,7 @@ PREFS_DECLARE_FIELD(bool,		ShowEstimatedEndTime)
 PREFS_DECLARE_FIELD(bool,		ShowLastBuildDescription)
 PREFS_DECLARE_FIELD(uint,		Columns)
 PREFS_DECLARE_FIELD(bool,		ShowNodes)
+PREFS_DECLARE_FIELD(bool,		ShowNodesResponseTime)
 PREFS_DECLARE_FIELD(bool,		ShowPositionInQueue)
 PREFS_DECLARE_FIELD(uint,		JobsMargin)
 PREFS_DECLARE_FIELD(int,		JobsNameDescAlignFlags)
@@ -91,6 +92,7 @@ PREFS_DECLARE_FIELD(QString,	Font)
 		void sigShowLastBuildDescriptionChanged(bool);
 		void sigColumnsChanged(uint);
 		void sigShowNodesChanged(bool);
+		void sigShowNodesResponseTimeChanged(bool);
 		void sigShowPositionInQueueChanged(bool);
 		void sigJobsMarginChanged(uint);
 		void sigJobsNameDescAlignFlagsChanged(int);

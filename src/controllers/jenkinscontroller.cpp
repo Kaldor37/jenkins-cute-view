@@ -151,7 +151,7 @@ void JenkinsController::updateNodesList(){
 	for(const NodesListModel::Node & node : nodesList){
 		JenkinsGraphicsView::NodeData nd;
 		nd.name = node.displayName;
-		nd.ping = node.ping;
+		nd.responseTime = node.reponseTime;
 		if(node.temporarilyOffline)
 			nd.status = JenkinsGraphicsView::NodeStatus::TemporarilyOffline;
 		else if(node.offline)

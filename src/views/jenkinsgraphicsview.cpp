@@ -156,14 +156,14 @@ void JenkinsGraphicsView::updateNodes(const QVector<NodeData> &nodes){
 		// Update node
 		if(foundNode){
 			foundNode->setColor(color);
-			foundNode->setPing(node.ping);
+			foundNode->setResponseTime(node.responseTime);
 		}
 		// Create node
 		else{
 			NodeGraphicsItem *nodeItem = new NodeGraphicsItem();
 			nodeItem->setName(node.name);
 			nodeItem->setColor(color);
-			nodeItem->setPing(node.ping);
+			nodeItem->setResponseTime(node.responseTime);
 			m_nodeItems[node.name] = nodeItem;
 			m_scene->addItem(nodeItem);
 		}

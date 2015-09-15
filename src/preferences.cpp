@@ -39,6 +39,7 @@ PREFS_IMPL_BOOL_FIELD(ShowEstimatedEndTime,		"Display/ShowEstimatedEndTime", tru
 PREFS_IMPL_BOOL_FIELD(ShowLastBuildDescription,	"Display/ShowLastBuildDescription", true)
 PREFS_IMPL_UINT_FIELD(Columns,						"Display/Columns", 1)
 PREFS_IMPL_BOOL_FIELD(ShowNodes,						"Display/ShowNodes", true)
+PREFS_IMPL_BOOL_FIELD(ShowNodesResponseTime,		"Display/ShowNodesResponseTime", false)
 PREFS_IMPL_BOOL_FIELD(ShowPositionInQueue,		"Display/ShowPositionInQueue", true)
 PREFS_IMPL_UINT_FIELD(JobsMargin,					"Display/JobsMargin", 2)
 PREFS_IMPL_INT_FIELD(JobsNameDescAlignFlags,		"Display/JobsNameDescAlignFlags", Qt::AlignCenter)

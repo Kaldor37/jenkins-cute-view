@@ -75,6 +75,7 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	ui->m_showEstEndTimeCheckBox->setChecked(prefs.getShowEstimatedEndTime());
 	ui->m_showLastBuildDescCheckBox->setChecked(prefs.getShowLastBuildDescription());
 	ui->m_showNodesCheckBox->setChecked(prefs.getShowNodes());
+	ui->m_showNodesResponseTimeCheckBox->setChecked(prefs.getShowNodesResponseTime());
 	ui->m_showPositionInQueue->setChecked(prefs.getShowPositionInQueue());
 	ui->m_startFullscreenCheckBox->setChecked(prefs.getStartFullscreen());
 
@@ -205,6 +206,7 @@ void PreferencesDialog::savePreferences(){
 	Prefs.setShowEstimatedEndTime(ui->m_showEstEndTimeCheckBox->isChecked());
 	Prefs.setShowLastBuildDescription(ui->m_showLastBuildDescCheckBox->isChecked());
 	Prefs.setShowNodes(ui->m_showNodesCheckBox->isChecked());
+	Prefs.setShowNodesResponseTime(ui->m_showNodesResponseTimeCheckBox->isChecked());
 	Prefs.setShowPositionInQueue(ui->m_showPositionInQueue->isChecked());
 
 	const QComboBox *jndacb = ui->m_jobsNameDescAlignComboBox;

@@ -52,7 +52,7 @@ void NodesListModel::httpFinished(const QString & data, QNetworkReply::NetworkEr
 			if(jNode["monitorData"].isObject()){
 				QJsonObject monitorData = jNode["monitorData"].toObject();
 				if(monitorData["hudson.node_monitors.ResponseTimeMonitor"].isObject()){
-					node.ping = monitorData["hudson.node_monitors.ResponseTimeMonitor"].toObject()["average"].toInt();
+					node.reponseTime = monitorData["hudson.node_monitors.ResponseTimeMonitor"].toObject()["average"].toInt();
 				}
 			}
 
