@@ -124,7 +124,13 @@ void PreferencesDialog::viewsList_updated(const QStringList &viewsList, const QS
 			ui->m_viewDisplayComboBox->addItem(view, viewData);
 	}
 
-	// Premier update, on récupère la view dans les prefs
+	for(int i=0 ; i < ui->m_viewDisplayComboBox->count() ; ){
+		if(!viewsList.contains(ui->m_viewDisplayComboBox->itemText(i)))
+			ui->m_viewDisplayComboBox->removeItem(i);
+		else
+			++i;
+	}
+
 	if(firstUpdate){
 		int index = ui->m_viewDisplayComboBox->findData(Prefs.getSelectedView());
 		if(index >= 0)

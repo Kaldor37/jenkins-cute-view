@@ -6,10 +6,7 @@
 #include "application.h"
 
 #include <QDebug>
-#include <QDomDocument> // TODO remove
-#include <QDomNodeList> // TODO remove
 #include <QStringList>
-
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -106,7 +103,7 @@ void JenkinsAPIModel::loadViews(){
 
 	m_viewsListLoaded = false;
 
-	HttpGetter::instance().get(m_jenkinsUrl + "/api/xml", this, &JenkinsAPIModel::viewsList_httpFinished);
+	HttpGetter::instance().get(m_jenkinsUrl + "/api/json", this, &JenkinsAPIModel::viewsList_httpFinished);
 }
 //------------------------------------------------------------------------------
 void JenkinsAPIModel::loadSelectedView(){
@@ -133,15 +130,88 @@ void JenkinsAPIModel::viewsList_httpFinished(const QString &content, QNetworkRep
 		return;
 	}
 
-	QDomDocument doc;
-	bool parsed = doc.setContent(content);
-	if(!parsed){
-		qWarning()<<"JenkinsAPIModel::viewsList_httpFinished - Error parsing XML !";
-		emit this->error(tr("Error parsing views list data"));
+	if(m_selectedView)
+		m_selectedView->disconnect(this);
+
+	m_selectedView = nullptr;
+	m_primaryView = nullptr;
+
+	QJsonDocument jsonDoc = QJsonDocument::fromJson(content.toUtf8());
+	Q_ASSERT(jsonDoc.isObject());
+	const QJsonObject rootObj = jsonDoc.object();
+
+	Q_ASSERT(rootObj.contains("primaryView"));
+	Q_ASSERT(rootObj["primaryView"].isObject());
+	const QString primaryViewName = rootObj["primaryView"].toObject()["name"].toString();
+	Q_ASSERT(!primaryViewName.isEmpty());
+
+	Q_ASSERT(rootObj.contains("views"));
+	Q_ASSERT(rootObj["views"].isArray());
+	const QJsonArray viewsArray = rootObj["views"].toArray();
+	if(viewsArray.size() == 0){
+		emit this->error(tr("No view found"));
+		qWarning()<<"JenkinsAPIModel::parseViews - No view found !";
 		return;
 	}
 
-	parseViews(doc);
+	QStringList viewNames;
+	viewNames.reserve(viewsArray.size());
+
+	for(const QJsonValue jVal : viewsArray){
+		Q_ASSERT(jVal.isObject());
+		QJsonObject viewObj = jVal.toObject();
+		Q_ASSERT(viewObj["name"].isString());
+		Q_ASSERT(viewObj["url"].isString());
+		const QString viewName = viewObj["name"].toString();
+		Q_ASSERT(!viewName.isEmpty());
+
+		ViewModel *model = nullptr;
+		for(ViewModel *vm : m_views){
+			if(vm->getName() == viewName){
+				model = vm;
+				model->setUrl(viewObj["url"].toString());
+				break;
+			}
+		}
+		if(!model){
+			model = new ViewModel(viewName, viewObj["url"].toString(), this);
+			m_views.push_back(model);
+		}
+
+		if(m_selectedViewName == viewName)
+			m_selectedView = model;
+		if(primaryViewName == viewName)
+			m_primaryView = model;
+
+		viewNames.append(viewName);
+	}
+
+	for(auto it = m_views.begin() ; it != m_views.end() ; ){
+		ViewModel * vm = *it;
+		if(!viewNames.contains(vm->getName())){
+			if(m_selectedView == vm)
+				m_selectedView = nullptr;
+			vm->deleteLater();
+			it = m_views.erase(it);
+		}
+		else
+			++it;
+	}
+
+	Q_ASSERT(m_primaryView);
+
+	// If no selected view, selected becomes primary
+	if(!m_selectedView && m_primaryView)
+		m_selectedView = m_primaryView;
+
+	if(App.verbose())
+		qDebug()<<"JenkinsAPIModel::parseViews - Parsed "<<m_views.size()<<" views - Primary : "<<m_primaryView->getName()<<" - Selected : "<<m_selectedView->getName();
+
+	loadSelectedView();
+
+	viewNames.sort();
+	emit viewsNamesUpdated(viewNames, m_primaryView->getName());
+
 }
 //------------------------------------------------------------------------------
 void JenkinsAPIModel::jobsQueue_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
@@ -185,82 +255,6 @@ void JenkinsAPIModel::selectedView_jobsListLoaded(){
 }
 //------------------------------------------------------------------------------
 // Private functions
-//------------------------------------------------------------------------------
-void JenkinsAPIModel::parseViews(const QDomDocument &doc){
-	if(m_selectedView)
-		m_selectedView->disconnect(this);
-
-	m_selectedView = nullptr;
-	m_primaryView = nullptr;
-
-	QString primaryViewName;
-	QDomNodeList primaryViewsList = doc.elementsByTagName("primaryView");
-	if(primaryViewsList.length() <= 0){
-		emit error(tr("No primary view found"));
-		qWarning()<<"JenkinsAPIModel::parseViews - No primary view !";
-		return;
-	}
-	QDomElement primaryViewNameElm = primaryViewsList.at(0).firstChildElement("name");
-	if(!primaryViewNameElm.isNull()){
-		primaryViewName = primaryViewNameElm.text();
-	}
-
-	// Loads views list
-	QDomNodeList viewsList = doc.elementsByTagName("view");
-	int nbViews = viewsList.length();
-	if(nbViews <= 0){
-		emit error(tr("No view found"));
-		qWarning()<<"JenkinsAPIModel::parseViews - No view found !";
-		return;
-	}
-
-	QStringList viewsNamesList;
-	ViewsList views;
-	views.reserve(nbViews);
-
-	for(int i=0 ; i < nbViews ; ++i){
-		QDomNode viewNode = viewsList.at(i);
-		QDomElement nameElm = viewNode.firstChildElement("name");
-		QDomElement urlElm = viewNode.firstChildElement("url");
-
-		if(!nameElm.isNull() && !urlElm.isNull()){
-			QString viewName = nameElm.text();
-
-			if(!viewName.isEmpty()){
-				ViewModel *vm = new ViewModel(viewName, urlElm.text(), this);
-				views.push_back(vm);
-
-				// Pointer on selected view
-				if(m_selectedViewName == viewName)
-					m_selectedView = vm;
-				// Pointer on primary view
-				if(primaryViewName == viewName)
-					m_primaryView = vm;
-
-				viewsNamesList.append(viewName);
-			}
-		}
-	}
-
-	m_views.swap(views);
-
-	for(ViewModel *view:views)
-		view->deleteLater();
-
-	Q_ASSERT(m_primaryView);
-
-	// If no selected view, selected becomes primary
-	if(!m_selectedView && m_primaryView)
-		m_selectedView = m_primaryView;
-
-	if(App.verbose())
-		qDebug()<<"JenkinsAPIModel::parseViews - Parsed "<<m_views.size()<<" views - Primary : "<<m_primaryView->getName()<<" - Selected : "<<m_selectedView->getName();
-
-	loadSelectedView();
-
-	viewsNamesList.sort();
-	emit viewsNamesUpdated(viewsNamesList, m_primaryView->getName());
-}
 //------------------------------------------------------------------------------
 void JenkinsAPIModel::clearViews(){
 	for(ViewModel *view : m_views)

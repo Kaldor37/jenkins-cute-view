@@ -13,7 +13,6 @@ class QString;
 class HttpGetter;
 class JobModel;
 class ViewModel;
-class QDomDocument; // TODO remove
 //------------------------------------------------------------------------------
 class JenkinsAPIModel : public QObject {
 	Q_OBJECT
@@ -75,29 +74,10 @@ class JenkinsAPIModel : public QObject {
 // Public slots
 //------------------------------------------------------------------------------
 	public slots:
-		/**
-		 * Sets Jenkins root URL
-		 */
 		void setJenkinsUrl(const QString &url);
-
-		/**
-		 * Sets selected Jenkins view
-		 */
 		void setSelectedView(const QString &name);
-
-		/**
-		 * Starts loading views list
-		 */
 		void loadViews();
-
-		/**
-		 * Loads selected view
-		 */
 		void loadSelectedView();
-
-		/**
-		 * Starts loading jobs queue
-		 */
 		void loadJobsQueue();
 
 		void viewsList_httpFinished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
@@ -113,8 +93,6 @@ class JenkinsAPIModel : public QObject {
 // Private functions
 //------------------------------------------------------------------------------
 	private:
-		void parseViews(const QDomDocument &doc);
-
 		void clearViews();
 
 //------------------------------------------------------------------------------
