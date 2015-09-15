@@ -12,7 +12,7 @@
 
 class MainWindow;
 class QTimer;
-class JenkinsXMLAPIModel;
+class JenkinsAPIModel;
 class NodesListModel;
 //------------------------------------------------------------------------------
 class JenkinsController : public QObject {
@@ -39,7 +39,7 @@ class JenkinsController : public QObject {
 //------------------------------------------------------------------------------
 	private:
 		QTimer					*m_updateTimer;
-		JenkinsXMLAPIModel	*m_XMLAPIModel;
+		JenkinsAPIModel	*m_APIModel;
 		NodesListModel			*m_nodesModel;
 //------------------------------------------------------------------------------
 };

@@ -13,16 +13,16 @@ class QString;
 class HttpGetter;
 class JobModel;
 class ViewModel;
-class QDomDocument;
+class QDomDocument; // TODO remove
 //------------------------------------------------------------------------------
-class JenkinsXMLAPIModel : public QObject {
+class JenkinsAPIModel : public QObject {
 	Q_OBJECT
 //------------------------------------------------------------------------------
 // Constructor(s)/Destructor
 //------------------------------------------------------------------------------
 	public:
-		explicit JenkinsXMLAPIModel(QObject *parent=nullptr);
-		~JenkinsXMLAPIModel();
+		explicit JenkinsAPIModel(QObject *parent=nullptr);
+		~JenkinsAPIModel();
 
 //------------------------------------------------------------------------------
 // Typedefs
@@ -114,7 +114,6 @@ class JenkinsXMLAPIModel : public QObject {
 //------------------------------------------------------------------------------
 	private:
 		void parseViews(const QDomDocument &doc);
-		void parseJobsQueue(const QDomDocument &doc);
 
 		void clearViews();
 
@@ -130,7 +129,6 @@ class JenkinsXMLAPIModel : public QObject {
 		ViewModel *			m_primaryView;
 		ViewModel *			m_selectedView;
 
-		bool					m_jobsQueueLoaded;
 		QVector<QString>	m_jobsQueue;
 //------------------------------------------------------------------------------
 };

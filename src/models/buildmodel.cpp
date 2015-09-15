@@ -3,7 +3,7 @@
 #include "utils/httpgetter.h"
 #include "preferences.h"
 
-#include <QDomDocument>
+#include <QDomDocument> // TODO remove
 //------------------------------------------------------------------------------
 #define BUILD_INIT_INT_MEMBER(Member) m_##Member(0)
 #define BUILD_INIT_STR_MEMBER(Member) m_##Member()

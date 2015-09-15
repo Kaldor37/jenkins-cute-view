@@ -6,7 +6,7 @@
 #include <QString>
 #include <QNetworkReply>
 
-class QDomDocument;
+class QDomDocument; // TODO remove
 //------------------------------------------------------------------------------
 class BuildModel : public QObject {
 	Q_OBJECT

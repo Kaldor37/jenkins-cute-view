@@ -6,7 +6,7 @@
 #include "application.h"
 
 #include <QDebug>
-#include <QDomDocument>
+#include <QDomDocument> // TODO remove
 //------------------------------------------------------------------------------
 ViewModel::ViewModel(const QString &name, const QString &url, QObject *parent):QObject(parent),
 	m_name(name),

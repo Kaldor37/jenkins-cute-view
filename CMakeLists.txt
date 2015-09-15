@@ -41,7 +41,7 @@ SET(MOC_HDRS
 	src/preferences.h
 	src/controllers/jenkinscontroller.h
 	src/models/buildmodel.h
-	src/models/jenkinsxmlapimodel.h
+	src/models/jenkinsapimodel.h
 	src/models/jobmodel.h
 	src/models/nodeslistmodel.h
 	src/models/viewmodel.h
@@ -64,7 +64,7 @@ SET(SOURCES
 	src/preferences.cpp
 	src/controllers/jenkinscontroller.cpp
 	src/models/buildmodel.cpp
-	src/models/jenkinsxmlapimodel.cpp
+	src/models/jenkinsapimodel.cpp
 	src/models/jobmodel.cpp
 	src/models/nodeslistmodel.cpp
 	src/models/viewmodel.cpp
@@ -109,7 +109,7 @@ target_link_libraries(${PROJECT_NAME}
 	Qt5::Core
 	Qt5::Gui
 	Qt5::Widgets
-	Qt5::Xml
+	Qt5::Xml # TODO - remove
 	Qt5::Network
 )
 

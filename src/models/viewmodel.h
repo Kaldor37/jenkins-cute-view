@@ -8,7 +8,7 @@
 #include <QNetworkReply>
 //------------------------------------------------------------------------------
 class JobModel;
-class QDomDocument;
+class QDomDocument; // TODO remove
 //------------------------------------------------------------------------------
 class ViewModel : public QObject {
 	Q_OBJECT

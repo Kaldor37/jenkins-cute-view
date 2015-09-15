@@ -4,7 +4,7 @@
 #include "utils/httpgetter.h"
 #include "preferences.h"
 
-#include <QDomDocument>
+#include <QDomDocument> // TODO remove
 //------------------------------------------------------------------------------
 #define JOB_INIT_INT_MEMBER(Member) m_##Member(0)
 #define JOB_INIT_STR_MEMBER(Member) m_##Member()

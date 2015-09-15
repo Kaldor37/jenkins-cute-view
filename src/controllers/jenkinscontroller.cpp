@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 #include "jenkinscontroller.h"
-#include "models/jenkinsxmlapimodel.h"
+#include "models/jenkinsapimodel.h"
 #include "models/buildmodel.h"
 #include "models/nodeslistmodel.h"
 #include "models/viewmodel.h"
@@ -16,15 +16,15 @@
 //------------------------------------------------------------------------------
 JenkinsController::JenkinsController(QObject *parent):QObject(parent),
 	m_updateTimer(new QTimer(this)),
-	m_XMLAPIModel(new JenkinsXMLAPIModel(this)),
+	m_APIModel(new JenkinsAPIModel(this)),
 	m_nodesModel(new NodesListModel(this)){
 
-	QObject::connect(&Prefs, &Preferences::sigJenkinsUrlChanged, m_XMLAPIModel, &JenkinsXMLAPIModel::setJenkinsUrl);
-	QObject::connect(&Prefs, &Preferences::sigSelectedViewChanged, m_XMLAPIModel, &JenkinsXMLAPIModel::setSelectedView);
-	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::selectedViewLoaded, this, &JenkinsController::selectedViewDataUpdated);
+	QObject::connect(&Prefs, &Preferences::sigJenkinsUrlChanged, m_APIModel, &JenkinsAPIModel::setJenkinsUrl);
+	QObject::connect(&Prefs, &Preferences::sigSelectedViewChanged, m_APIModel, &JenkinsAPIModel::setSelectedView);
+	QObject::connect(m_APIModel, &JenkinsAPIModel::selectedViewLoaded, this, &JenkinsController::selectedViewDataUpdated);
 
-	QObject::connect(m_updateTimer, &QTimer::timeout, m_XMLAPIModel, &JenkinsXMLAPIModel::loadViews);
-	QObject::connect(m_updateTimer, &QTimer::timeout, m_XMLAPIModel, &JenkinsXMLAPIModel::loadJobsQueue);
+	QObject::connect(m_updateTimer, &QTimer::timeout, m_APIModel, &JenkinsAPIModel::loadViews);
+	QObject::connect(m_updateTimer, &QTimer::timeout, m_APIModel, &JenkinsAPIModel::loadJobsQueue);
 
 	QObject::connect(m_updateTimer, &QTimer::timeout, m_nodesModel, &NodesListModel::update);
 	QObject::connect(m_nodesModel, &NodesListModel::updated, this, &JenkinsController::updateNodesList);
@@ -36,16 +36,16 @@ JenkinsController::~JenkinsController(){}
 //------------------------------------------------------------------------------
 void JenkinsController::control(MainWindow *wnd){
 	// To UI
-	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::viewsNamesUpdated, wnd, &MainWindow::viewsNamesUpdated);
+	QObject::connect(m_APIModel, &JenkinsAPIModel::viewsNamesUpdated, wnd, &MainWindow::viewsNamesUpdated);
 
 	// To graphics view
 	QObject::connect(this, &JenkinsController::jobs_updated, wnd->getGraphicsView(), &JenkinsGraphicsView::updateJobs);
 	QObject::connect(this, &JenkinsController::nodes_updated, wnd->getGraphicsView(), &JenkinsGraphicsView::updateNodes);
 
 	void (JenkinsGraphicsView::*slotMessage)(const QString &) = &JenkinsGraphicsView::displayMessage;
-	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::message, wnd->getGraphicsView(), slotMessage);
-	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::warning, wnd->getGraphicsView(), &JenkinsGraphicsView::displayWarning);
-	QObject::connect(m_XMLAPIModel, &JenkinsXMLAPIModel::error, wnd->getGraphicsView(), &JenkinsGraphicsView::displayError);
+	QObject::connect(m_APIModel, &JenkinsAPIModel::message, wnd->getGraphicsView(), slotMessage);
+	QObject::connect(m_APIModel, &JenkinsAPIModel::warning, wnd->getGraphicsView(), &JenkinsGraphicsView::displayWarning);
+	QObject::connect(m_APIModel, &JenkinsAPIModel::error, wnd->getGraphicsView(), &JenkinsGraphicsView::displayError);
 }
 //------------------------------------------------------------------------------
 void JenkinsController::prefs_APIUpdateIntervalChanged(uint value){
@@ -55,8 +55,8 @@ void JenkinsController::prefs_APIUpdateIntervalChanged(uint value){
 //------------------------------------------------------------------------------
 void JenkinsController::start(){
 
-	m_XMLAPIModel->setJenkinsUrl(Prefs.getJenkinsUrl());
-	m_XMLAPIModel->setSelectedView(Prefs.getSelectedView());
+	m_APIModel->setJenkinsUrl(Prefs.getJenkinsUrl());
+	m_APIModel->setSelectedView(Prefs.getSelectedView());
 
 	m_nodesModel->update();
 
@@ -68,11 +68,11 @@ void JenkinsController::start(){
 //------------------------------------------------------------------------------
 void JenkinsController::selectedViewDataUpdated(){
 	// Selected view
-	const ViewModel *selectedView = m_XMLAPIModel->selectedView();
+	const ViewModel *selectedView = m_APIModel->selectedView();
 	Q_ASSERT(selectedView);
 
 	QList<JobDisplayData> jobsList;
-	const QVector<QString> &jobsQueue = m_XMLAPIModel->jobsQueue();
+	const QVector<QString> &jobsQueue = m_APIModel->jobsQueue();
 	uint queueSize = jobsQueue.size();
 
 	// View's jobs
