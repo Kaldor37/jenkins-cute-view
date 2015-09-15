@@ -5,8 +5,6 @@
 #include <QObject>
 #include <QString>
 #include <QNetworkReply>
-
-class QDomDocument; // TODO remove
 //------------------------------------------------------------------------------
 class BuildModel : public QObject {
 	Q_OBJECT
@@ -39,12 +37,6 @@ class BuildModel : public QObject {
 //------------------------------------------------------------------------------
 	signals:
 		void loaded();
-
-//------------------------------------------------------------------------------
-// Private functions
-//------------------------------------------------------------------------------
-	private:
-		void parseBuild(const QDomDocument &);
 
 //------------------------------------------------------------------------------
 // Members

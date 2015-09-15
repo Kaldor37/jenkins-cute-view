@@ -3,7 +3,9 @@
 #include "utils/httpgetter.h"
 #include "preferences.h"
 
-#include <QDomDocument> // TODO remove
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 //------------------------------------------------------------------------------
 #define BUILD_INIT_INT_MEMBER(Member) m_##Member(0)
 #define BUILD_INIT_STR_MEMBER(Member) m_##Member()
@@ -59,7 +61,7 @@ void BuildModel::load(){
 
 	m_loaded = false;
 
-	HttpGetter::instance().get(m_Url + "api/xml", this, &BuildModel::http_finished);
+	HttpGetter::instance().get(m_Url + "/api/json", this, &BuildModel::http_finished);
 }
 //------------------------------------------------------------------------------
 void BuildModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
@@ -68,66 +70,23 @@ void BuildModel::http_finished(const QString &content, QNetworkReply::NetworkErr
 		return;
 	}
 
-	QDomDocument doc;
-	bool parsed = doc.setContent(content);
-	if(!parsed){
-		qWarning()<<"BuildModel["<<m_Number<<"]::http_finished - Error parsing XML !";
-		return;
-	}
+	QJsonDocument jsonDoc = QJsonDocument::fromJson(content.toUtf8());
+	Q_ASSERT(jsonDoc.isObject());
+	const QJsonObject rootObj = jsonDoc.object();
 
-	parseBuild(doc);
-}
-//------------------------------------------------------------------------------
-void BuildModel::parseBuild(const QDomDocument &doc){
-	QDomNodeList ndList;
-	QDomElement elm;
-
-	if((ndList = doc.elementsByTagName("building")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setBuilding(elm.text() == "true");
-
-	if((ndList = doc.elementsByTagName("description")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setDescription(elm.text());
-
-	if((ndList = doc.elementsByTagName("duration")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setDuration(elm.text().toLongLong());
-
-	if((ndList = doc.elementsByTagName("estimatedDuration")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setEstimatedDuration(elm.text().toLongLong());
-
-	if((ndList = doc.elementsByTagName("fullDisplayName")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setFullDisplayName(elm.text());
-
-	if((ndList = doc.elementsByTagName("id")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setId(elm.text());
-
-	if((ndList = doc.elementsByTagName("number")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setNumber(elm.text().toUInt());
-
-	if((ndList = doc.elementsByTagName("result")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setResult(elm.text());
-
-	if((ndList = doc.elementsByTagName("timestamp")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setTimestamp(elm.text().toLongLong());
-
-	if((ndList = doc.elementsByTagName("url")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setUrl(elm.text());
-
-	if((ndList = doc.elementsByTagName("builtOn")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setBuiltOn(elm.text());
+	setBuilding(rootObj["building"].toBool());
+	setDescription(rootObj["description"].toString());
+	setFullDisplayName(rootObj["fullDisplayName"].toString());
+	setId(rootObj["id"].toString());
+	setNumber(static_cast<uint>(rootObj["id"].toInt()));
+	setResult(rootObj["result"].toString());
+	setUrl(rootObj["url"].toString());
+	setBuiltOn(rootObj["builtOn"].toString());
+	setDuration(rootObj["duration"].toVariant().toULongLong());
+	setEstimatedDuration(rootObj["estimatedDuration"].toVariant().toULongLong());
+	setTimestamp(rootObj["timestamp"].toVariant().toULongLong());
 
 	m_loaded = true;
-
 	emit loaded();
 }
 //------------------------------------------------------------------------------

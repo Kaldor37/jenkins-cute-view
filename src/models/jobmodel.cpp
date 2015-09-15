@@ -4,7 +4,9 @@
 #include "utils/httpgetter.h"
 #include "preferences.h"
 
-#include <QDomDocument> // TODO remove
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 //------------------------------------------------------------------------------
 #define JOB_INIT_INT_MEMBER(Member) m_##Member(0)
 #define JOB_INIT_STR_MEMBER(Member) m_##Member()
@@ -77,7 +79,7 @@ void JobModel::load(){
 
 	m_lastBuildLoaded = m_lastCompletedBuildLoaded = false;
 
-	HttpGetter::instance().get(m_Url + "api/xml", this, &JobModel::http_finished);
+	HttpGetter::instance().get(m_Url + "/api/json", this, &JobModel::http_finished);
 }
 //------------------------------------------------------------------------------
 void JobModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
@@ -86,104 +88,85 @@ void JobModel::http_finished(const QString &content, QNetworkReply::NetworkError
 		return;
 	}
 
-	QDomDocument doc;
-	bool parsed = doc.setContent(content);
-	if(!parsed){
-		qWarning()<<"JobModel["<<m_Name<<"]::http_finished - Error parsing XML !";
-		return;
+	QJsonDocument jsonDoc = QJsonDocument::fromJson(content.toUtf8());
+	Q_ASSERT(jsonDoc.isObject());
+	const QJsonObject rootObj = jsonDoc.object();
+
+	setDescription(rootObj["description"].toString());
+	setDisplayName(rootObj["displayName"].toString());
+	setBuildable(rootObj["buildable"].toBool());
+	setColor(rootObj["color"].toString());
+	setInQueue(rootObj["inQueue"].toBool());
+	setKeepDependencies(rootObj["keepDependencies"].toBool());
+	setNextBuildNumber(static_cast<uint>(rootObj["nextBuildNumber"].toInt()));
+	setConcurrentBuild(rootObj["concurrentBuild"].toBool());
+
+	if(rootObj["healthReport"].isArray()){
+		const QJsonArray healthReport = rootObj["healthReport"].toArray();
+		if(healthReport.size() > 0 && healthReport.at(0).isObject()){
+			const QJsonObject firstHealReport = healthReport.at(0).toObject();
+			if(!firstHealReport["description"].isNull())
+				setHealthDescription(firstHealReport["description"].toString());
+			if(!firstHealReport["score"].isNull())
+				setHealthScore(firstHealReport["score"].toInt());
+		}
 	}
 
-	parseJob(doc);
-}
-//------------------------------------------------------------------------------
-void JobModel::parseJob(const QDomDocument &doc){
-	QDomNodeList ndList;
-	QDomElement elm;
+	int lastBuildNumber = 0;
+	QString lastBuildUrl;
+	int lastCompletedBuildNumber = 0;
+	QString lastCompletedBuildUrl;
 
-	if((ndList = doc.elementsByTagName("description")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setDescription(elm.text());
-
-	if((ndList = doc.elementsByTagName("displayName")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setDisplayName(elm.text());
-
-	if((ndList = doc.elementsByTagName("buildable")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setBuildable(elm.text() == "true");
-
-	if((ndList = doc.elementsByTagName("color")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setColor(elm.text());
-
-	if((ndList = doc.elementsByTagName("inQueue")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setInQueue(elm.text() == "true");
-
-	if((ndList = doc.elementsByTagName("keepDependencies")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setKeepDependencies(elm.text() == "true");
-
-	if((ndList = doc.elementsByTagName("healthReport")).count() > 0){
-		if(!((elm = ndList.at(0).firstChildElement("description")).isNull()))
-			setHealthDescription(elm.text());
-		if(!((elm = ndList.at(0).firstChildElement("score")).isNull()))
-			setHealthScore(elm.text().toInt());
+	if(!rootObj["lastBuild"].isNull() && rootObj["lastBuild"].isObject()){
+		const QJsonObject lastBuild = rootObj["lastBuild"].toObject();
+		lastBuildNumber = lastBuild["number"].toInt();
+		lastBuildUrl = lastBuild["url"].toString();
+	}
+	if(!rootObj["lastCompletedBuild"].isNull() && rootObj["lastCompletedBuild"].isObject()){
+		const QJsonObject lastCompletedBuild = rootObj["lastCompletedBuild"].toObject();
+		lastCompletedBuildNumber = lastCompletedBuild["number"].toInt();
+		lastCompletedBuildUrl = lastCompletedBuild["url"].toString();
 	}
 
-	if((ndList = doc.elementsByTagName("nextBuildNumber")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setNextBuildNumber(elm.text().toUInt());
-
-	if((ndList = doc.elementsByTagName("concurrentBuild")).count() > 0)
-		if(!((elm = ndList.at(0).toElement()).isNull()))
-			setConcurrentBuild(elm.text() == "true");
-
-	if(m_lastBuild){
-		m_lastBuild->deleteLater();
-		m_lastBuild = nullptr;
-	}
-
-	if(m_lastCompletedBuild){
-		m_lastCompletedBuild->deleteLater();
-		m_lastCompletedBuild = nullptr;
-	}
-
-	// Load last build
-	if((ndList = doc.elementsByTagName("lastBuild")).count() > 0){
-		uint lastBuildNumber = 0;
-		QString lastBuildUrl;
-
-		if(!((elm = ndList.at(0).firstChildElement("number")).isNull()))
-			lastBuildNumber = elm.text().toUInt();
-		if(!((elm = ndList.at(0).firstChildElement("url")).isNull()))
-			lastBuildUrl = elm.text();
-
-		m_lastBuild = new BuildModel(lastBuildNumber, lastBuildUrl, this);
-		QObject::connect(m_lastBuild, &BuildModel::loaded, this, &JobModel::lastBuild_loaded);
+	if(lastBuildNumber > 0 && !lastBuildUrl.isEmpty()){
+		if(m_lastBuild){
+			m_lastBuild->setNumber(lastBuildNumber);
+			m_lastBuild->setUrl(lastBuildUrl);
+		}
+		else{
+			m_lastBuild = new BuildModel(lastBuildNumber, lastBuildUrl, this);
+			QObject::connect(m_lastBuild, &BuildModel::loaded, this, &JobModel::lastBuild_loaded);
+		}
 		m_lastBuild->load();
 	}
-	// No last build, consider it loaded
-	else
-		emit lastBuild_loaded();
+	else{
+		if(m_lastBuild){
+			m_lastBuild->disconnect(this);
+			m_lastBuild->deleteLater();
+			m_lastBuild = nullptr;
+		}
+		lastBuild_loaded();
+	}
 
-	// Load last completed build
-	if((ndList = doc.elementsByTagName("lastCompletedBuild")).count() > 0){
-		uint lastBuildNumber = 0;
-		QString lastBuildUrl;
-
-		if(!((elm = ndList.at(0).firstChildElement("number")).isNull()))
-			lastBuildNumber = elm.text().toUInt();
-		if(!((elm = ndList.at(0).firstChildElement("url")).isNull()))
-			lastBuildUrl = elm.text();
-
-		m_lastCompletedBuild = new BuildModel(lastBuildNumber, lastBuildUrl, this);
-		QObject::connect(m_lastCompletedBuild, &BuildModel::loaded, this, &JobModel::lastCompletedBuild_loaded);
+	if(lastCompletedBuildNumber > 0 && !lastCompletedBuildUrl.isEmpty()){
+		if(m_lastCompletedBuild){
+			m_lastCompletedBuild->setNumber(lastCompletedBuildNumber);
+			m_lastCompletedBuild->setUrl(lastCompletedBuildUrl);
+		}
+		else{
+			m_lastCompletedBuild = new BuildModel(lastCompletedBuildNumber, lastCompletedBuildUrl, this);
+			QObject::connect(m_lastCompletedBuild, &BuildModel::loaded, this, &JobModel::lastCompletedBuild_loaded);
+		}
 		m_lastCompletedBuild->load();
 	}
-	// No last completed build, consider it loaded
-	else
-		emit lastCompletedBuild_loaded();
+	else{
+		if(m_lastCompletedBuild){
+			m_lastCompletedBuild->disconnect(this);
+			m_lastCompletedBuild->deleteLater();
+			m_lastCompletedBuild = nullptr;
+		}
+		lastCompletedBuild_loaded();
+	}
 }
 //------------------------------------------------------------------------------
 void JobModel::lastBuild_loaded(){

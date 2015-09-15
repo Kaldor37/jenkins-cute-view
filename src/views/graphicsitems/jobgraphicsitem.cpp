@@ -300,8 +300,8 @@ void JobGraphicsItem::updateLayout(){
 	}
 	else{
 		// Name rect full width
-		nameRect.setX(jobX);
-		nameRect.setWidth(jobW);
+		nameRect.setX(jobX + jobW*0.05);
+		nameRect.setWidth(jobW*0.95);
 	}
 
 	descRect.setX(nameRect.x());

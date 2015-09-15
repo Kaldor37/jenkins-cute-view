@@ -7,7 +7,6 @@
 #include <QNetworkReply>
 //------------------------------------------------------------------------------
 class BuildModel;
-class QDomDocument; // TODO remove
 //------------------------------------------------------------------------------
 class JobModel : public QObject {
 	Q_OBJECT
@@ -51,12 +50,6 @@ class JobModel : public QObject {
 	private slots:
 		void lastBuild_loaded();
 		void lastCompletedBuild_loaded();
-
-//------------------------------------------------------------------------------
-// Private functions
-//------------------------------------------------------------------------------
-	private:
-		void parseJob(const QDomDocument &doc);
 
 //------------------------------------------------------------------------------
 // Members
