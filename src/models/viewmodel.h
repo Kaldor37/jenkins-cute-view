@@ -8,7 +8,6 @@
 #include <QNetworkReply>
 //------------------------------------------------------------------------------
 class JobModel;
-class QDomDocument; // TODO remove
 //------------------------------------------------------------------------------
 class ViewModel : public QObject {
 	Q_OBJECT
@@ -28,7 +27,8 @@ class ViewModel : public QObject {
 // Typedefs
 //------------------------------------------------------------------------------
 	public:
-		typedef QVector<JobModel*> JobsList;
+		typedef QList<JobModel*>				JobsList;
+		typedef QMap<QString, JobModel*>		JobsMap;
 
 //------------------------------------------------------------------------------
 // Signals
@@ -48,10 +48,10 @@ class ViewModel : public QObject {
 // Public functions
 //------------------------------------------------------------------------------
 	public:
-		const QString & getName() const;
-		const QString & getUrl() const;
-		bool isJobsListLoaded() const;
-		const JobsList & getJobs() const;
+		const QString &	getName() const;
+		const QString &	getUrl() const;
+		bool					isJobsListLoaded() const;
+		JobsList				getJobs() const;
 
 		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 
@@ -64,7 +64,6 @@ class ViewModel : public QObject {
 // Private functions
 //------------------------------------------------------------------------------
 	private:
-		void parseJobs(const QDomDocument &doc);
 		void clearJobs();
 //------------------------------------------------------------------------------
 // Members
@@ -73,7 +72,7 @@ class ViewModel : public QObject {
 		QString			m_name;
 		QString			m_url;
 		bool				m_jobsListLoaded;
-		JobsList			m_jobs;
+		JobsMap			m_jobs;
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

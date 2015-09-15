@@ -6,7 +6,9 @@
 #include "application.h"
 
 #include <QDebug>
-#include <QDomDocument> // TODO remove
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 //------------------------------------------------------------------------------
 ViewModel::ViewModel(const QString &name, const QString &url, QObject *parent):QObject(parent),
 	m_name(name),
@@ -32,7 +34,7 @@ void ViewModel::loadJobs(){
 
 	m_jobsListLoaded = false;
 
-	HttpGetter::instance().get(m_url + "/api/xml", this, &ViewModel::http_finished);
+	HttpGetter::instance().get(m_url + "/api/json", this, &ViewModel::http_finished);
 }
 //------------------------------------------------------------------------------
 const QString & ViewModel::getName() const{
@@ -47,8 +49,8 @@ bool ViewModel::isJobsListLoaded() const{
 	return m_jobsListLoaded;
 }
 //------------------------------------------------------------------------------
-const ViewModel::JobsList & ViewModel::getJobs() const{
-	return m_jobs;
+ViewModel::JobsList ViewModel::getJobs() const {
+	return m_jobs.values();
 }
 //------------------------------------------------------------------------------
 void ViewModel::http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error){
@@ -57,48 +59,53 @@ void ViewModel::http_finished(const QString &content, QNetworkReply::NetworkErro
 		return;
 	}
 
-	QDomDocument doc;
-	bool parsed = doc.setContent(content);
-	if(!parsed){
-		qWarning()<<"ViewModel["<<m_name<<"]::http_finished - Error parsing XML !";
-		return;
+	QJsonDocument jsonDoc = QJsonDocument::fromJson(content.toUtf8());
+	Q_ASSERT(jsonDoc.isObject());
+	const QJsonObject rootObj = jsonDoc.object();
+
+	Q_ASSERT(rootObj.contains("jobs"));
+	Q_ASSERT(rootObj["jobs"].isArray());
+	const QJsonArray jobs = rootObj["jobs"].toArray();
+
+	QStringList jobNames;
+	jobNames.reserve(jobs.size());
+
+	for(const QJsonValue jJob : jobs){
+		Q_ASSERT(jJob.isObject());
+		const QJsonObject joJob = jJob.toObject();
+		const QString name = joJob["name"].toString();
+		Q_ASSERT(!name.isEmpty());
+		const QString url = joJob["url"].toString();
+		Q_ASSERT(!url.isEmpty());
+
+		JobModel * job = nullptr;
+		if(m_jobs.contains(name)){
+			job = m_jobs[name];
+			job->setUrl(url);
+		}
+		else{
+			job = new JobModel(name, url, this);
+			QObject::connect(job, &JobModel::loaded, this, &ViewModel::job_loaded);
+			m_jobs[name] = job;
+		}
+		Q_ASSERT(job);
+		job->load();
+		jobNames.append(name);
 	}
 
-	parseJobs(doc);
+	for(JobsMap::iterator it=m_jobs.begin() ; it != m_jobs.end() ; ){
+		if(!jobNames.contains(it.key())){
+			JobModel * model = it.value();
+			model->disconnect(this);
+			model->deleteLater();
+			it = m_jobs.erase(it);
+		}
+		else
+			++it;
+	}
 }
 //------------------------------------------------------------------------------
 // Private functions
-//------------------------------------------------------------------------------
-void ViewModel::parseJobs(const QDomDocument &doc){
-	clearJobs();
-
-	if(App.verbose())
-		qDebug()<<"ViewModel["<<m_name<<"]::parseJobs()";
-
-	QDomNodeList nodesList = doc.elementsByTagName("job");
-	int numJobs = nodesList.size();
-	m_jobs.reserve(numJobs);
-	for(int i=0 ; i < numJobs ; ++i){
-		QDomElement jobElm = nodesList.at(i).toElement();
-		if(jobElm.isNull())
-			continue;
-
-		QDomElement nameElm = jobElm.firstChildElement("name");
-		QDomElement urlElm = jobElm.firstChildElement("url");
-		if(nameElm.isNull() || urlElm.isNull())
-			continue;
-
-		QString name = nameElm.text();
-		QString url = urlElm.text();
-		if(name.isEmpty() || url.isEmpty())
-			continue;
-
-		JobModel * job = new JobModel(name, url, this);
-		QObject::connect(job, &JobModel::loaded, this, &ViewModel::job_loaded);
-		m_jobs.push_back(job);
-		job->load();
-	}
-}
 //------------------------------------------------------------------------------
 void ViewModel::clearJobs(){
 	for(JobModel *job : m_jobs)
