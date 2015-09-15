@@ -78,7 +78,7 @@ void BuildModel::http_finished(const QString &content, QNetworkReply::NetworkErr
 	setDescription(rootObj["description"].toString());
 	setFullDisplayName(rootObj["fullDisplayName"].toString());
 	setId(rootObj["id"].toString());
-	setNumber(static_cast<uint>(rootObj["id"].toInt()));
+	setNumber(static_cast<uint>(rootObj["number"].toInt()));
 	setResult(rootObj["result"].toString());
 	setUrl(rootObj["url"].toString());
 	setBuiltOn(rootObj["builtOn"].toString());

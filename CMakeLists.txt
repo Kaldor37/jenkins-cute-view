@@ -20,7 +20,6 @@ add_definitions(-Wall -Wextra -std=c++11)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Xml REQUIRED)
 find_package(Qt5Network REQUIRED)
 
 # Include directories (sources and bin for generated moc headers)

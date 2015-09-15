@@ -76,7 +76,7 @@
    <item>
     <widget class="QLabel" name="m_googleCodeLinkLabel">
      <property name="text">
-      <string>&lt;a href=&quot;https://code.google.com/p/jenkins-cute-view/&quot;&gt;Google Code Project&lt;/a&gt;</string>
+      <string>&lt;a href=&quot;https://github.com/kaldor37/jenkins-cute-view&quot;&gt;GitHub project page&lt;/a&gt;</string>
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
