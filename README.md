@@ -5,7 +5,7 @@ Written with Qt framework, **jenkins-cute-view** can be used to display the stat
 **Dependencies**:
 - GCC (4.8+, with C++11)
 - CMake (2.8+)
-- Qt5 libs (Core, Gui, Widgets, Xml, Network)
+- Qt5 (Core, Gui, Widgets, Network)
  
 **Compile > Install > Exec**:
 - Clone the repository (master) and move inside
@@ -23,5 +23,9 @@ Tested successfully on Debian 8, Ubuntu 15.04, Windows 7+ and Mac OSX.
 Compiles (slowly) successfully but not tested on a Raspberry Pi.
 
 ### Screenshots
-![alt text](screenshots/1column.png "Classic, 1 column display with build numbers")
-![alt text](screenshots/2columns.png "2 columns display for larger screens")
+
+Classic, 1 column display with build numbers:
+![alt text](screenshots/1column.png "Screenshot")
+
+2 columns display for larger screens:
+![alt text](screenshots/2columns.png "2 columns screenshot")
