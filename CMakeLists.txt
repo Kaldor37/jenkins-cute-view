@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.11)
 
 # Project name
 SET(PROJECT_NAME	jenkins-cute-view)
@@ -14,7 +14,7 @@ IF(NOT INSTALL_DIRECTORY)
 	SET(INSTALL_DIRECTORY /usr/local/bin)
 ENDIF()
 
-# Warnings
+# Compile definitions
 add_definitions(-Wall -Wextra -std=c++11)
 
 find_package(Qt5Core REQUIRED)
@@ -96,7 +96,13 @@ qt5_wrap_cpp(MOC_SRCS ${MOC_HDRS})
 qt5_wrap_ui(FORMS_SRCS ${FORMS})
 qt5_add_resources(RESOURCES_SRCS ${RESOURCES})
 
+SET(executableOpts "")
+IF(WIN32)
+	SET(executableOpts "WIN32")
+ENDIF()
+
 add_executable(${PROJECT_NAME}
+	${executableOpts}
 	${SOURCES}
 	${HEADERS}
 	${MOC_SRCS}
