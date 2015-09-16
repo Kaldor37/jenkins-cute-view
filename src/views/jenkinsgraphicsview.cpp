@@ -231,30 +231,24 @@ void JenkinsGraphicsView::setJobsMargin(uint value){
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::updateDisplay(){
-	QSizeF size = m_scene->sceneRect().size();
-	qreal width = size.width();
-	qreal height = size.height();
-
-	const JobsItems::Iterator end = m_jobItems.end();
-	const NodesItems::Iterator nodesEnd = m_nodeItems.end();
+	const QSizeF size = m_scene->sceneRect().size();
+	const qreal width = size.width();
+	const qreal height = size.height();
 
 	// Display message instead of jobs
 	if(m_messageItem->isVisible()){
 		m_messageItem->setRect(QRectF(width*0.05, height*0.4, width*0.9, height*0.2));
 
 		// Hide jobs
-		for(JobsItems::Iterator it=m_jobItems.begin() ; it != end ; ++it){
-			JobGraphicsItem *job = it.value();
+		for(JobGraphicsItem *job : m_jobItems){
 			Q_ASSERT(job);
 			job->setVisible(false);
 		}
 		// Hide nodes
-		for(NodesItems::Iterator it=m_nodeItems.begin() ; it != nodesEnd ; ++it){
-			NodeGraphicsItem *node = it.value();
+		for(NodeGraphicsItem *node : m_nodeItems){
 			Q_ASSERT(node);
 			node->setVisible(false);
 		}
-
 		return;
 	}
 
@@ -265,53 +259,47 @@ void JenkinsGraphicsView::updateDisplay(){
 		return;
 
 	// Number of nodes to display
-	qreal numNodes = (m_showNodes)?m_nodeItems.size():0;
+	const uint numNodes = (m_showNodes)?m_nodeItems.size():0;
 	// Number of jobs
-	qreal numJobs = m_jobItems.size();
+	const uint numJobs = m_jobItems.size();
 	// Number of columns
-	qreal numColumns = (m_columns > numJobs)?numJobs:m_columns;
+	const uint numColumns = (m_columns > numJobs)?numJobs:m_columns;
 	// Jobs per column
-	qreal jobsPerCol = qCeil(numJobs/numColumns);
+	const uint jobsPerCol = qCeil(static_cast<qreal>(numJobs)/static_cast<qreal>(numColumns));
 	// Number of rows
-	qreal numRows = jobsPerCol+((numNodes > 0)?1:0);
-
+	const uint numRows = jobsPerCol+((numNodes > 0)?1:0);
 	// Job width
-	qreal jobWidth = (width-((numColumns+1)*m_jobsMargin))/numColumns;
+	const qreal jobWidth = (width-((numColumns+1)*m_jobsMargin))/numColumns;
 	// Job height
-	qreal jobHeight = (height-((numRows+1)*m_jobsMargin))/numRows;
+	const qreal jobHeight = (height-((numRows+1)*m_jobsMargin))/numRows;
 	// Node width
-	qreal nodeWidth = (numNodes > 0)?((width-((numNodes+1)*m_jobsMargin))/numNodes):0;
-
-	int i = 0;
+	const qreal nodeWidth = (numNodes > 0)?((width-((numNodes+1)*m_jobsMargin))/numNodes):0;
 
 	if(m_showNodes){
-		for(NodesItems::Iterator it=m_nodeItems.begin() ; it != nodesEnd ; ++it){
-			NodeGraphicsItem *node = it.value();
+		uint nodeNum = 0;
+		for(NodeGraphicsItem *node : m_nodeItems){
 			Q_ASSERT(node);
-			node->setRect(QRectF(m_jobsMargin + ((nodeWidth+m_jobsMargin)*i), m_jobsMargin, nodeWidth, jobHeight));
-
-			if(!node->isVisible())
-				node->setVisible(true);
-
-			++i;
+			node->setRect(QRectF(m_jobsMargin + ((nodeWidth+m_jobsMargin)*nodeNum), m_jobsMargin, nodeWidth, jobHeight));
+			node->setVisible(true);
+			++nodeNum;
+		}
+	}
+	else{
+		for(NodeGraphicsItem *node : m_nodeItems){
+			Q_ASSERT(node);
+			node->setVisible(false);
 		}
 	}
 
-	int col = 0, row = ((numNodes > 0)?1:0);
-	for(JobsItems::Iterator it=m_jobItems.begin() ; it != end ; ++it){
-
-		JobGraphicsItem *job = it.value();
+	const uint jobsRows = numRows-((numNodes > 0)?1:0);
+	uint jobNum = 0;
+	for(JobGraphicsItem *job : m_jobItems){
 		Q_ASSERT(job);
+		const uint col = jobNum/jobsRows;
+		const uint row = (jobNum%jobsRows)+((numNodes > 0)?1:0);
 		job->setRect(QRectF(m_jobsMargin + ((jobWidth+m_jobsMargin)*col), m_jobsMargin + ((jobHeight+m_jobsMargin)*row), jobWidth, jobHeight));
-
-		if(!job->isVisible())
-			job->setVisible(true);
-
-		++row;
-		if(row > jobsPerCol){
-			col++;
-			row = ((numNodes > 0)?1:0);
-		}
+		job->setVisible(true);
+		++jobNum;
 	}
 }
 //------------------------------------------------------------------------------
