@@ -25,7 +25,8 @@ JenkinsGraphicsView::JenkinsGraphicsView(QWidget *parent) : QGraphicsView(parent
 
 	m_progressUpdateTimer = new QTimer(this);
 	QObject::connect(m_progressUpdateTimer, &QTimer::timeout, this, &JenkinsGraphicsView::progressTimer_timeout);
-	m_progressUpdateTimer->start(jobsProgressUpdateTimer);
+	m_progressUpdateTimer->setInterval(Prefs.getRunningJobsRedrawTime());
+	QObject::connect(&Prefs, &Preferences::sigRunningJobsRedrawTimeChanged, [&](){ m_progressUpdateTimer->setInterval(Prefs.getRunningJobsRedrawTime()); });
 
 	m_messageItem = new MessageGraphicsItem(); // Destroyed by the scene
 	m_messageItem->setVisible(false);
@@ -75,10 +76,14 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 	if(App.verbose())
 		qDebug()<<"JenkinsGraphicsView::updateJobs("<<jobs.size()<<")";
 
+	bool running = false;
+
 	// Add new jobs - Update existing jobs
 	for(const JobDisplayData &job : jobs){
 		const QString &name = job.getName();
 		jobsList.push_back(name);
+
+		running |= job.isRunning();
 
 		// Find job
 		JobGraphicsItem *foundJob = NULL;
@@ -127,6 +132,11 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 		m_messageItem->setVisible(false);
 		updateDisplay();
 	}
+
+	if(running && !m_progressUpdateTimer->isActive())
+		m_progressUpdateTimer->start();
+	else if(!running && m_progressUpdateTimer->isActive())
+		m_progressUpdateTimer->stop();
 
 	update();
 }
@@ -322,21 +332,8 @@ void JenkinsGraphicsView::initContextMenu(){
 }
 //------------------------------------------------------------------------------
 void JenkinsGraphicsView::progressTimer_timeout(){
-	bool repaint = false;
-
-	// Update running jobs
-	const JobsItems::Iterator end = m_jobItems.end();
-	for(JobsItems::Iterator it=m_jobItems.begin() ; it != end ; ++it){
-		JobGraphicsItem *job = it.value();
-		if(job->isRunning()){
-			job->updateProgress();
-			repaint = true;
-		}
-	}
-
-	if(repaint){
-		this->update();
-	}
+	for(JobGraphicsItem *job : m_jobItems)
+		job->updateProgress();
 }
 //------------------------------------------------------------------------------
 // JenkinsGraphicsScene

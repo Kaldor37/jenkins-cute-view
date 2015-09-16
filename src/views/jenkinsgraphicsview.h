@@ -114,11 +114,6 @@ class JenkinsGraphicsView : public QGraphicsView {
 		bool						m_showNodes;
 
 		uint						m_jobsMargin;
-//------------------------------------------------------------------------------
-// Constants
-//------------------------------------------------------------------------------
-	private:
-		const static int jobsProgressUpdateTimer = 200;
 
 //------------------------------------------------------------------------------
 };

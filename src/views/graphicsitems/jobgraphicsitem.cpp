@@ -213,23 +213,22 @@ void JobGraphicsItem::updateName(){
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::updateProgress(){
-	if(m_running){
-		qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
-		if(now < m_buildStartTime){
-			m_progressFactor = 0;
-		}
-		else if(now > m_buildEstEndTime || (m_buildStartTime >= m_buildEstEndTime)){
-			m_progressFactor = 1;
-		}
-		else{
-			qreal range = m_buildEstEndTime-m_buildStartTime;
-			qreal done = now-m_buildStartTime;
-			m_progressFactor = (done/range);
-		}
+	if(!m_running)
+		return;
 
-		if(App.verbose())
-			qDebug()<<"JobGraphicsItem::update("<<m_nameItem->text()<<") - Started : "<<m_buildStartTime<<" - Should end : "<<m_buildEstEndTime<<" - Now : "<<now<<" - Progression : "<<m_progressFactor;
+	qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+	if(now < m_buildStartTime){
+		m_progressFactor = 0;
 	}
+	else if(now > m_buildEstEndTime || (m_buildStartTime >= m_buildEstEndTime)){
+		m_progressFactor = 1;
+	}
+	else{
+		qreal range = m_buildEstEndTime-m_buildStartTime;
+		qreal done = now-m_buildStartTime;
+		m_progressFactor = (done/range);
+	}
+	QGraphicsItem::update();
 }
 //------------------------------------------------------------------------------
 void JobGraphicsItem::setShowBuildNumber(bool val){

@@ -15,18 +15,6 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 	ui(new Ui::PreferencesDialog){
 	ui->setupUi(this);
 
-	m_updateIntervalValidator = new QIntValidator(ui->m_updateIntervalLineEdit);
-	m_updateIntervalValidator->setRange(1, 999);
-	ui->m_updateIntervalLineEdit->setValidator(m_updateIntervalValidator);
-
-	m_columnsValidator = new QIntValidator(ui->m_columnsLineEdit);
-	m_columnsValidator->setRange(1, 100);
-	ui->m_columnsLineEdit->setValidator(m_columnsValidator);
-
-	m_jobsMarginValidator = new QIntValidator(ui->m_jobsMarginLineEdit);
-	m_jobsMarginValidator->setRange(0, 100);
-	ui->m_jobsMarginLineEdit->setValidator(m_jobsMarginValidator);
-
 	ui->m_jenkinsURLLineEdit->setPlaceholderText(tr("Enter url..."));
 
 	ui->m_jobsNameDescAlignComboBox->addItem(tr("Left"),		(int)(Qt::AlignLeft|Qt::AlignVCenter));
@@ -63,7 +51,7 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	ui->m_APITokenLineEdit->setText(prefs.getAPIToken());
 
 	// Update interval
-	ui->m_updateIntervalLineEdit->setText(QString("%1").arg(prefs.getAPIUpdateInterval()));
+	ui->m_updateIntervalSpinBox->setValue(prefs.getAPIUpdateInterval());
 
 	// Selected view
 	int index = ui->m_viewDisplayComboBox->findData(prefs.getSelectedView());
@@ -80,10 +68,10 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 	ui->m_startFullscreenCheckBox->setChecked(prefs.getStartFullscreen());
 
 	// Number of columns
-	ui->m_columnsLineEdit->setText(QString("%1").arg(prefs.getColumns()));
+	ui->m_columnsSpinBox->setValue(prefs.getColumns());
 
 	// Jobs margin PX
-	ui->m_jobsMarginLineEdit->setText(QString("%1").arg(prefs.getJobsMargin()));
+	ui->m_jobsMarginSpinBox->setValue(prefs.getJobsMargin());
 
 	comboIndex = ui->m_jobsNameDescAlignComboBox->findData(prefs.getJobsNameDescAlignFlags());
 	ui->m_jobsNameDescAlignComboBox->setCurrentIndex((comboIndex >= 0)?comboIndex:0);
@@ -93,6 +81,8 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 
 	comboIndex = ui->m_fontComboBox->findData(prefs.getFont());
 	ui->m_fontComboBox->setCurrentIndex((comboIndex >= 0)?comboIndex:0);
+
+	ui->m_runningJobsRedrawTimeSpinBox->setValue(prefs.getRunningJobsRedrawTime());
 	//----------------------------------------------------------
 
 	ui->m_jenkinsTabWidget->setCurrentIndex(0);
@@ -101,28 +91,17 @@ void PreferencesDialog::showEvent(QShowEvent * event){
 }
 //------------------------------------------------------------------------------
 void PreferencesDialog::viewsList_updated(const QStringList &viewsList, const QString &primaryView){
-	bool firstUpdate = (ui->m_viewDisplayComboBox->count() == 0);
+	Q_ASSERT(viewsList.size() > 0);
+	Q_UNUSED(primaryView);
 
-	// Update primary text
-	int primaryIndex = ui->m_viewDisplayComboBox->findData(QVariant());
-	QString primaryText = tr("Default (%1)").arg(primaryView);
-	if(primaryIndex >= 0)
-		ui->m_viewDisplayComboBox->setItemText(primaryIndex, primaryText);
-	else
-		ui->m_viewDisplayComboBox->addItem(primaryText, QVariant());
+	const bool firstUpdate = (ui->m_viewDisplayComboBox->count() == 0);
 
-	// Update other texts
-	for(const QString &view : viewsList){
-		// Skip primary view
-		if(view == primaryView)
-			continue;
-
-		QVariant viewData(view);
-		int itemIndex = ui->m_viewDisplayComboBox->findData(viewData);
-		if(itemIndex >= 0)
-			ui->m_viewDisplayComboBox->setItemText(itemIndex, view);
-		else
+	for(QString view : viewsList){
+		const QVariant viewData(view);
+		const int itemIndex = ui->m_viewDisplayComboBox->findData(viewData);
+		if(itemIndex == -1){
 			ui->m_viewDisplayComboBox->addItem(view, viewData);
+		}
 	}
 
 	for(int i=0 ; i < ui->m_viewDisplayComboBox->count() ; ){
@@ -163,24 +142,12 @@ void PreferencesDialog::on_m_buttonBox_clicked(QAbstractButton *btn){
 }
 //------------------------------------------------------------------------------
 void PreferencesDialog::savePreferences(){
-	int pos=0;
-	QString text;
-
 	// General tab --------------------------------------------------------------
 	Prefs.setStartFullscreen(ui->m_startFullscreenCheckBox->isChecked());
 
 	// Jenkins tab --------------------------------------------------------------
-	text = ui->m_updateIntervalLineEdit->text();
-
-	if(m_updateIntervalValidator->validate(text, pos) == QValidator::Acceptable)
-		Prefs.setAPIUpdateInterval(ui->m_updateIntervalLineEdit->text().toUInt());
-	else{
-		ui->m_updateIntervalLineEdit->setText(QString("%1").arg(Prefs.getAPIUpdateInterval()));
-	}
-
-	Prefs.setAPIUpdateInterval(ui->m_updateIntervalLineEdit->text().toUInt());
+	Prefs.setAPIUpdateInterval(ui->m_updateIntervalSpinBox->value());
 	Prefs.setJenkinsUrl(ui->m_jenkinsURLLineEdit->text());
-
 	Prefs.setAPIUserID(ui->m_APIUserIdLineEdit->text());
 	Prefs.setAPIToken(ui->m_APITokenLineEdit->text());
 	HttpGetter::instance().setBasicAuthorization(Prefs.getAPIUserID(), Prefs.getAPIToken());
@@ -189,17 +156,8 @@ void PreferencesDialog::savePreferences(){
 	Prefs.setSelectedView((selectedViewData.isValid())?selectedViewData.toString():"");
 
 	// Display tab --------------------------------------------------------------
-	text = ui->m_columnsLineEdit->text();
-	if(m_columnsValidator->validate(text, pos) == QValidator::Acceptable)
-		Prefs.setColumns(ui->m_columnsLineEdit->text().toUInt());
-	else
-		ui->m_columnsLineEdit->setText(QString("%1").arg(Prefs.getColumns()));
-
-	text = ui->m_jobsMarginLineEdit->text();
-	if(m_jobsMarginValidator->validate(text, pos) == QValidator::Acceptable)
-		Prefs.setJobsMargin(ui->m_jobsMarginLineEdit->text().toUInt());
-	else
-		ui->m_jobsMarginLineEdit->setText(QString("%1").arg(Prefs.getJobsMargin()));
+	Prefs.setColumns(ui->m_columnsSpinBox->value());
+	Prefs.setJobsMargin(ui->m_jobsMarginSpinBox->value());
 
 	Prefs.setShowBuildNumber(ui->m_showBuildNumberCheckBox->isChecked());
 	Prefs.setShowWeatherIcon(ui->m_showWeatherCheckBox->isChecked());
@@ -217,5 +175,7 @@ void PreferencesDialog::savePreferences(){
 
 	const QComboBox *fcb = ui->m_fontComboBox;
 	Prefs.setFont(fcb->itemData(fcb->currentIndex()).toString());
+
+	Prefs.setRunningJobsRedrawTime(ui->m_runningJobsRedrawTimeSpinBox->value());
 }
 //------------------------------------------------------------------------------

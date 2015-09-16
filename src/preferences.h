@@ -75,6 +75,7 @@ PREFS_DECLARE_FIELD(QString,	APIUserID)
 PREFS_DECLARE_FIELD(QString,	APIToken)
 PREFS_DECLARE_FIELD(bool,		StartFullscreen)
 PREFS_DECLARE_FIELD(QString,	Font)
+PREFS_DECLARE_FIELD(uint,		RunningJobsRedrawTime)
 //------------------------------------------------------------------------------
 #undef PREFS_DECLARE_FIELD
 
@@ -100,6 +101,7 @@ PREFS_DECLARE_FIELD(QString,	Font)
 		void sigAPITokenChanged(QString);
 		void sigStartFullscreenChanged(bool);
 		void sigFontChanged(QString);
+		void sigRunningJobsRedrawTimeChanged(uint);
 
 //------------------------------------------------------------------------------
 };

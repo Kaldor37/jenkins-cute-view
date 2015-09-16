@@ -44,6 +44,7 @@ PREFS_IMPL_BOOL_FIELD(ShowPositionInQueue,		"Display/ShowPositionInQueue", true)
 PREFS_IMPL_UINT_FIELD(JobsMargin,					"Display/JobsMargin", 2)
 PREFS_IMPL_INT_FIELD(JobsNameDescAlignFlags,		"Display/JobsNameDescAlignFlags", Qt::AlignCenter)
 PREFS_IMPL_STRING_FIELD(Font,							"Display/Font", "Arial")
+PREFS_IMPL_UINT_FIELD(RunningJobsRedrawTime,		"Display/RunningJobsRedrawTime", 100)
 PREFS_IMPL_BOOL_FIELD(StartFullscreen,				"General/StartFullscreen", false)
 //------------------------------------------------------------------------------
 #undef PREFS_IMPL_UINT_FIELD

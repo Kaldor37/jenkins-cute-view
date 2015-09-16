@@ -57,7 +57,7 @@
          <item>
           <widget class="QLabel" name="m_jenkinsURLLabel">
            <property name="text">
-            <string>Jenkins URL :</string>
+            <string>Jenkins URL</string>
            </property>
           </widget>
          </item>
@@ -98,7 +98,7 @@
          <item>
           <widget class="QLabel" name="m_APITokenLabel">
            <property name="text">
-            <string>API Token :</string>
+            <string>API Token</string>
            </property>
           </widget>
          </item>
@@ -112,26 +112,20 @@
          <item>
           <widget class="QLabel" name="m_updateIntervalLabel">
            <property name="text">
-            <string>API Update interval (s) :</string>
+            <string>API Update interval</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="m_updateIntervalLineEdit">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+          <widget class="QSpinBox" name="m_updateIntervalSpinBox">
+           <property name="suffix">
+            <string> seconds</string>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>80</width>
-             <height>16777215</height>
-            </size>
+           <property name="minimum">
+            <number>1</number>
            </property>
-           <property name="maxLength">
-            <number>5</number>
+           <property name="maximum">
+            <number>9999</number>
            </property>
           </widget>
          </item>
@@ -155,7 +149,7 @@
          <item>
           <widget class="QLabel" name="m_viewDisplayLabel">
            <property name="text">
-            <string>View :</string>
+            <string>View</string>
            </property>
           </widget>
          </item>
@@ -206,17 +200,23 @@
          <item>
           <widget class="QLabel" name="m_columnsLabel">
            <property name="text">
-            <string>Columns:</string>
+            <string>Columns</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="m_columnsLineEdit">
+          <widget class="QSpinBox" name="m_columnsSpinBox">
            <property name="maximumSize">
             <size>
-             <width>40</width>
+             <width>50</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="suffix">
+            <string/>
+           </property>
+           <property name="minimum">
+            <number>1</number>
            </property>
           </widget>
          </item>
@@ -240,24 +240,23 @@
          <item>
           <widget class="QLabel" name="m_jobsMarginLabel">
            <property name="text">
-            <string>Jobs margin:</string>
+            <string>Jobs margin</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="m_jobsMarginLineEdit">
+          <widget class="QSpinBox" name="m_jobsMarginSpinBox">
            <property name="maximumSize">
             <size>
-             <width>40</width>
+             <width>60</width>
              <height>16777215</height>
             </size>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="m_jobsMarginPXLabel">
-           <property name="text">
-            <string>px</string>
+           <property name="suffix">
+            <string> px</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -281,7 +280,7 @@
          <item>
           <widget class="QLabel" name="m_jobsNameDescAlignLabel">
            <property name="text">
-            <string>Jobs names alignment:</string>
+            <string>Jobs names alignment</string>
            </property>
           </widget>
          </item>
@@ -308,7 +307,7 @@
          <item>
           <widget class="QLabel" name="m_fontLabel">
            <property name="text">
-            <string>Font: </string>
+            <string>Font</string>
            </property>
           </widget>
          </item>
@@ -317,6 +316,43 @@
          </item>
          <item>
           <spacer name="horizontalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLabel" name="m_runningJobsRedrawTime">
+           <property name="text">
+            <string>Running jobs redraw every</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="m_runningJobsRedrawTimeSpinBox">
+           <property name="suffix">
+            <string> ms</string>
+           </property>
+           <property name="minimum">
+            <number>5</number>
+           </property>
+           <property name="maximum">
+            <number>99999</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_9">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
