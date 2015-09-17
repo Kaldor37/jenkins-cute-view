@@ -8,9 +8,9 @@
 ; Path to build directory (containing compiled jenkins-cute-view.exe)
 !define JCV_BUILD_DIR "C:\build\jenkins-cute-view"
 ; Path to Qt libraries and binaries
-!define QT_BIN_DIR "C:\Qt\5.5\mingw492_32\bin"
+!define QT_DIR "C:\Qt\5.5\mingw492_32"
 ; Version of this setup
-!define JCV_VERSION "1.0"
+!define JCV_VERSION "0.2"
 
 ; The name of the installer
 Name "Jenkins Cute View"
@@ -49,31 +49,37 @@ FunctionEnd
 ; Languages
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "French"
+!insertmacro MUI_LANGUAGE "German"
+!insertmacro MUI_LANGUAGE "Spanish"
 
 ; Files to install
 Section "Main section"
 
 	SetOutPath $INSTDIR
-
 	File "${JCV_BUILD_DIR}\jenkins-cute-view.exe"
-	File "${QT_BIN_DIR}\Qt5Core.dll"
-	File "${QT_BIN_DIR}\Qt5Gui.dll"
-	File "${QT_BIN_DIR}\Qt5Network.dll"
-	File "${QT_BIN_DIR}\Qt5Widgets.dll"
-	File "${QT_BIN_DIR}\libstdc++-6.dll"
-	File "${QT_BIN_DIR}\libwinpthread-1.dll"
-	File "${QT_BIN_DIR}\libgcc_s_dw2-1.dll"
+	File "${QT_DIR}\bin\Qt5Core.dll"
+	File "${QT_DIR}\bin\Qt5Gui.dll"
+	File "${QT_DIR}\bin\Qt5Network.dll"
+	File "${QT_DIR}\bin\Qt5Widgets.dll"
+	File "${QT_DIR}\bin\libstdc++-6.dll"
+	File "${QT_DIR}\bin\libwinpthread-1.dll"
+	File "${QT_DIR}\bin\libgcc_s_dw2-1.dll"
 	File "${JCV_SRC_DIR}\LICENSE.md"
 	File "${JCV_SRC_DIR}\README.md"
+	
+	SetOutPath "$INSTDIR\platforms"
+	File "${QT_DIR}\plugins\platforms\qwindows.dll"
 	
 	WriteUninstaller "$INSTDIR\Uninstall.exe"  
 SectionEnd
 
 Section "Uninstall"
 
-  Delete "$INSTDIR\*.*"
-  RMDir "$INSTDIR"
+	Delete "$INSTDIR\platforms\*.*"
+	RMDir "$INSTDIR\platforms"
+	Delete "$INSTDIR\*.*"
+	RMDir "$INSTDIR"
 
-  DeleteRegKey /ifempty HKCU "Software\JenkinsCuteView"
+	DeleteRegKey /ifempty HKCU "Software\JenkinsCuteView"
 
 SectionEnd
