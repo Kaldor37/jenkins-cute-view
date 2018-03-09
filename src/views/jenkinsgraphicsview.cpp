@@ -280,6 +280,7 @@ void JenkinsGraphicsView::updateDisplay(){
 	const uint numRows = jobsPerCol+((numNodes > 0)?1:0);
 	// Job width
 	const qreal jobWidth = (width-((numColumns+1)*m_jobsMargin))/numColumns;
+	const qreal expandingJobWidth = (width-(numColumns*m_jobsMargin))/(numColumns-1);
 	// Job height
 	const qreal jobHeight = (height-((numRows+1)*m_jobsMargin))/numRows;
 	// Node width
@@ -306,8 +307,17 @@ void JenkinsGraphicsView::updateDisplay(){
 	for(JobGraphicsItem *job : m_jobItems){
 		Q_ASSERT(job);
 		const uint col = jobNum/jobsRows;
-		const uint row = (jobNum%jobsRows)+((numNodes > 0)?1:0);
-		job->setRect(QRectF(m_jobsMargin + ((jobWidth+m_jobsMargin)*col), m_jobsMargin + ((jobHeight+m_jobsMargin)*row), jobWidth, jobHeight));
+		const uint row = jobNum%jobsRows;
+		const uint dispRow = row+((numNodes > 0)?1:0);
+		const uint rowMaxJobNum = (jobsPerCol*(numColumns-1)) + row;
+		const uint jobsInRow = (numJobs/jobsPerCol)+((rowMaxJobNum >= numJobs)?0:1);
+		const qreal jWidth = (jobsInRow < numColumns)?expandingJobWidth:jobWidth;
+
+		job->setRect(QRectF(
+			 m_jobsMargin + ((jWidth+m_jobsMargin)*col),
+			 m_jobsMargin + ((jobHeight+m_jobsMargin)*dispRow),
+			 jWidth, jobHeight
+		));
 		job->setVisible(true);
 		++jobNum;
 	}
