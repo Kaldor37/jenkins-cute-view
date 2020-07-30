@@ -23,6 +23,7 @@ JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *paren
 	m_descriptionItem(new AutoResizingTextItem(this)),
 	m_weatherItem(new WeatherGraphicsItem(this)),
 	m_positionInQueueItem(new AutoResizingTextItem(this)),
+	m_jobsReportItem(new AutoResizingTextItem(this)),
 	m_running(false),
 	m_progressFactor(0),
 	m_buildStartTime(0),
@@ -55,6 +56,10 @@ JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *paren
 	m_positionInQueueItem->setPen(QPen(Qt::white));
 	m_positionInQueueItem->setShadowed(true);
 
+	m_jobsReportItem->setFont(QFont(prefs->getFont(), -1, QFont::Bold));
+	m_jobsReportItem->setPen(QPen(Qt::white));
+	m_jobsReportItem->setShadowed(true);
+
 	// Prefs changes
 	QObject::connect(prefs, &Preferences::sigShowBuildNumberChanged, this, &JobGraphicsItem::setShowBuildNumber);
 	QObject::connect(prefs, &Preferences::sigShowEstimatedEndTimeChanged, this, &JobGraphicsItem::setShowEstEndTime);
@@ -68,6 +73,7 @@ JobGraphicsItem::JobGraphicsItem(JenkinsGraphicsView *view, QGraphicsItem *paren
 	QObject::connect(prefs, &Preferences::sigFontChanged, m_descriptionItem, &AutoResizingTextItem::setFontFamily);
 	QObject::connect(prefs, &Preferences::sigWeatherIconsThemeChanged, m_weatherItem, &WeatherGraphicsItem::setWeatherTheme);
 	QObject::connect(prefs, &Preferences::sigFontChanged, m_positionInQueueItem, &AutoResizingTextItem::setFontFamily);
+	QObject::connect(prefs, &Preferences::sigFontChanged, m_jobsReportItem, &AutoResizingTextItem::setFontFamily);
 }
 //------------------------------------------------------------------------------
 JobGraphicsItem::~JobGraphicsItem(){ }
@@ -162,14 +168,18 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 	if(m_running){
 		m_buildStartTime = data.getStartTime();
 		m_buildEstEndTime	= m_buildStartTime + data.getEstimatedDuration();
-		m_estEndTimeItem->setText(QDateTime::fromMSecsSinceEpoch(m_buildEstEndTime).time().toString(QLocale().timeFormat(QLocale::ShortFormat)));
+		m_estEndTimeItem->setText(
+			QDateTime::fromMSecsSinceEpoch(m_buildEstEndTime).time().toString(QLocale().timeFormat(QLocale::ShortFormat))
+		);
 	}
 	else
 		m_progressFactor = 0;
 
 	// Description
-	m_descriptionItem->setText(data.getLastBuildDesc());
-	m_descriptionItem->setVisible(!m_descriptionItem->text().isEmpty() && m_showLastBuildDesc);
+	if(data.getType() == JobDisplayData::JobType::Freestyle){
+		m_descriptionItem->setText(data.getLastBuildDesc());
+		m_descriptionItem->setVisible(!m_descriptionItem->text().isEmpty() && m_showLastBuildDesc);
+	}
 
 	// Weather
 	if(data.getStatus() != JobDisplayData::JobStatus::NeverBuilt){
@@ -191,14 +201,28 @@ void JobGraphicsItem::update(const JobDisplayData& data){
 		m_weatherItem->setVisible(false);
 	}
 
-	// Position in queue
-	m_positionInQueue = data.getPositionInQueue();
-	if(m_positionInQueue > 0 && m_showPositionInQueue && (!m_running || !m_showEstEndTime)){
-		m_positionInQueueItem->setText(QString("%1").arg(m_positionInQueue));
-		m_positionInQueueItem->setVisible(true);
+	if(data.getType() == JobDisplayData::JobType::Freestyle){
+		// Position in queue
+		m_positionInQueue = data.getPositionInQueue();
+		if(m_positionInQueue > 0 && m_showPositionInQueue && (!m_running || !m_showEstEndTime)){
+			m_positionInQueueItem->setText(QString("%1").arg(m_positionInQueue));
+			m_positionInQueueItem->setVisible(true);
+		}
+		else
+			m_positionInQueueItem->setVisible(false);
+
+		m_jobsReportItem->setVisible(false);
 	}
-	else
+	else if(data.getType() == JobDisplayData::JobType::MultibranchPipeline){
+		if(m_showJobsReport && (!m_running || !m_showEstEndTime)){
+			m_jobsReportItem->setText(QString("%1/%2").arg(data.getSucceededJobs()).arg(data.getTotalJobs()));
+			m_jobsReportItem->setVisible(true);
+		}
+		else{
+			m_jobsReportItem->setVisible(false);
+		}
 		m_positionInQueueItem->setVisible(false);
+	}
 
 	updateName();
 	updateProgress();
@@ -262,6 +286,12 @@ void JobGraphicsItem::setShowPositionInQueue(bool val){
 	updateLayout();
 }
 //------------------------------------------------------------------------------
+void JobGraphicsItem::setShowJobsReport(bool val){
+	m_showJobsReport = val;
+	m_jobsReportItem->setVisible(val && (!m_running || !m_showEstEndTime));
+	updateLayout();
+}
+//------------------------------------------------------------------------------
 // Private functions
 //------------------------------------------------------------------------------
 void JobGraphicsItem::updateLayout(){
@@ -311,5 +341,6 @@ void JobGraphicsItem::updateLayout(){
 	m_estEndTimeItem->setRect(estEndRect);
 	m_weatherItem->setRect(weatherRect);
 	m_positionInQueueItem->setRect(estEndRect);
+	m_jobsReportItem->setRect(estEndRect);
 }
 //------------------------------------------------------------------------------

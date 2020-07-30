@@ -73,7 +73,7 @@ void JenkinsController::selectedViewDataUpdated(){
 
 	QList<JobDisplayData> jobsList;
 	const QVector<QString> &jobsQueue = m_APIModel->jobsQueue();
-	uint queueSize = jobsQueue.size();
+	uint queueSize = static_cast<uint>(jobsQueue.size());
 
 	// View's jobs
 	const ViewModel::JobsList &jobs = selectedView->getJobs();
@@ -82,59 +82,103 @@ void JenkinsController::selectedViewDataUpdated(){
 		qDebug()<<"JenkinsController::selectedViewDataUpdated - Jobs to display : "<<jobs.size();
 
 	for(const JobModel *job : jobs){
-		const BuildModel *jobLastBuild = job->getLastBuild();
-		const BuildModel *jobLastCompBuild = job->getLastCompletedBuild();
+		JobDisplayData::JobType jobType = JobDisplayData::JobType::Unknown;
+		if(job->isFreeStyle())
+			jobType = JobDisplayData::JobType::Freestyle;
+		else if(job->isMultiBranchPipeline())
+			jobType = JobDisplayData::JobType::MultibranchPipeline;
+		else{
+			if(App.verbose())
+				qDebug()<<"JenkinsController::selectedViewDataUpdated - Job "<<job->getName()<<" is of unmanged class type "<<job->getJenkinsClass();
+
+			continue;
+		}
 
 		QString displayName = job->getDisplayName();
 		QString name = job->getName();
 
 		JobDisplayData jobData;
 		jobData.setName(displayName.isEmpty()?name:displayName);
-		jobData.setStability(job->getHealthScore());
+		jobData.setStability(static_cast<uint>(job->getHealthScore()));
+		jobData.setType(jobType);
 
-		// Last build infos
-		if(jobLastBuild){
-			jobData.setLastBuildNum(jobLastBuild->getNumber());
-			jobData.setRunning(jobLastBuild->getBuilding());
-			if(jobLastBuild->getBuilding()){
-				jobData.setStartTime(jobLastBuild->getTimestamp());
-				jobData.setEstimatedDuration(jobLastBuild->getEstimatedDuration());
+		if(job->isFreeStyle()){
+			const BuildModel *jobLastBuild = job->getLastBuild();
+			const BuildModel *jobLastCompBuild = job->getLastCompletedBuild();
+
+			// Last build infos
+			if(jobLastBuild){
+				jobData.setLastBuildNum(jobLastBuild->getNumber());
+				jobData.setRunning(jobLastBuild->getBuilding());
+				if(jobLastBuild->getBuilding()){
+					jobData.setStartTime(jobLastBuild->getTimestamp());
+					jobData.setEstimatedDuration(jobLastBuild->getEstimatedDuration());
+				}
+				jobData.setLastBuildDesc(jobLastBuild->getDescription());
 			}
-			jobData.setLastBuildDesc(jobLastBuild->getDescription());
-		}
 
-		// Last completed build infos
-		if(jobLastCompBuild){
-			// Success
-			if(jobLastCompBuild->getResult() == "SUCCESS")
-				jobData.setStatus(JobDisplayData::JobStatus::LastBuildSuccessful);
-			// Failure
-			else if(jobLastCompBuild->getResult() == "FAILURE")
-				jobData.setStatus(JobDisplayData::JobStatus::LastBuildFailed);
-			// Aborted
-			else if(jobLastCompBuild->getResult() == "ABORTED")
-				jobData.setStatus(JobDisplayData::JobStatus::InactiveOrAborted);
-			// Success but unstable
+			// Last completed build infos
+			if(jobLastCompBuild){
+				// Success
+				if(jobLastCompBuild->getResult() == "SUCCESS")
+					jobData.setStatus(JobDisplayData::JobStatus::LastBuildSuccessful);
+				// Failure
+				else if(jobLastCompBuild->getResult() == "FAILURE")
+					jobData.setStatus(JobDisplayData::JobStatus::LastBuildFailed);
+				// Aborted
+				else if(jobLastCompBuild->getResult() == "ABORTED")
+					jobData.setStatus(JobDisplayData::JobStatus::InactiveOrAborted);
+				// Success but unstable
+				else
+					jobData.setStatus(JobDisplayData::JobStatus::LastBuildSuccessfulButUnstable);
+			}
+			// Job never built yet
 			else
-				jobData.setStatus(JobDisplayData::JobStatus::LastBuildSuccessfulButUnstable);
-		}
-		// Job never built yet
-		else
-			jobData.setStatus(JobDisplayData::JobStatus::NeverBuilt);
+				jobData.setStatus(JobDisplayData::JobStatus::NeverBuilt);
 
-		if(!job->getBuildable()){
-			jobData.setStatus((jobLastCompBuild)?JobDisplayData::JobStatus::InactiveOrAborted:JobDisplayData::JobStatus::InactiveOrAborted);
-		}
-
-		// Position in queue
-		uint queuePos = 0;
-		for(uint i = 0 ; i < queueSize ; ++i){
-			if(job->getName() == jobsQueue[i]){
-				queuePos = i+1;
-				break;
+			if(!job->getBuildable()){
+				jobData.setStatus((jobLastCompBuild)?JobDisplayData::JobStatus::InactiveOrAborted:JobDisplayData::JobStatus::InactiveOrAborted);
 			}
+
+			// Position in queue
+			uint queuePos = 0;
+			for(uint i = 0 ; i < queueSize ; ++i){
+				if(job->getName() == jobsQueue[static_cast<int>(i)]){
+					queuePos = i+1;
+					break;
+				}
+			}
+			jobData.setPositionInQueue(queuePos);
 		}
-		jobData.setPositionInQueue(queuePos);
+		else if(job->isMultiBranchPipeline()){
+			uint succeededJobs = 0;
+			uint failedJobs = 0;
+			uint totalJobs = 0;
+			jobData.setRunning(false);
+			for(const JobModel *subJob : job->getJobs()){
+				++totalJobs;
+				const auto subJobLastCompBuild = subJob->getLastCompletedBuild();
+				const auto subJobLastBuild = subJob->getLastBuild();
+				if(subJobLastCompBuild){
+					succeededJobs += (subJobLastCompBuild->getResult() == "SUCCESS")?1:0;
+					failedJobs += (subJobLastCompBuild->getResult() == "FAILURE")?1:0;
+				}
+				if(subJobLastBuild && subJobLastBuild->getBuilding() && !jobData.isRunning()){
+					jobData.setRunning(true);
+					jobData.setStartTime(subJobLastBuild->getTimestamp());
+					jobData.setEstimatedDuration(subJobLastBuild->getEstimatedDuration());
+				}
+			}
+			jobData.setSucceededJobs(succeededJobs);
+			jobData.setFailedJobs(failedJobs);
+			jobData.setTotalJobs(totalJobs);
+			if(failedJobs == 0 && succeededJobs > 0)
+				jobData.setStatus(JobDisplayData::JobStatus::LastBuildSuccessful);
+			else if(failedJobs > 0)
+				jobData.setStatus(JobDisplayData::JobStatus::LastBuildFailed);
+			else
+				jobData.setStatus(JobDisplayData::JobStatus::NeverBuilt);
+		}
 
 		jobsList.push_back(jobData);
 	}

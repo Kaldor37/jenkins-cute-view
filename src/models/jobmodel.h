@@ -23,6 +23,13 @@ class JobModel : public QObject {
 		~JobModel();
 
 //------------------------------------------------------------------------------
+// Typedefs
+//------------------------------------------------------------------------------
+	public:
+		typedef QList<JobModel*>				JobsList;
+		typedef QMap<QString, JobModel*>		JobsMap;
+
+//------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------
 	public:
@@ -32,8 +39,18 @@ class JobModel : public QObject {
 
 		void http_finished(const QString &content, QNetworkReply::NetworkError errCode, const QString &error);
 
+		bool isFreeStyle() const {
+			return getJenkinsClass() == "hudson.model.FreeStyleProject";
+		}
+
+		bool isMultiBranchPipeline() const {
+			return getJenkinsClass() == "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject";
+		}
+
+		JobsList				getJobs() const;
+
 //------------------------------------------------------------------------------
-// Public slots
+// Signals
 //------------------------------------------------------------------------------
 	signals:
 		void loaded();
@@ -50,15 +67,18 @@ class JobModel : public QObject {
 	private slots:
 		void lastBuild_loaded();
 		void lastCompletedBuild_loaded();
+		void job_loaded();
 
 //------------------------------------------------------------------------------
 // Members
 //------------------------------------------------------------------------------
 	private:
-		bool m_lastBuildLoaded;
-		bool m_lastCompletedBuildLoaded;
-		BuildModel * m_lastBuild = nullptr;
-		BuildModel * m_lastCompletedBuild = nullptr;
+		bool				m_lastBuildLoaded;
+		bool				m_lastCompletedBuildLoaded;
+		BuildModel *		m_lastBuild = nullptr;
+		BuildModel *		m_lastCompletedBuild = nullptr;
+		JobsMap				m_jobs;
+		bool				m_jobsLoaded;
 
 //------------------------------------------------------------------------------
 // Members declaration
@@ -72,17 +92,18 @@ class JobModel : public QObject {
 		Type m_##Member;
 //------------------------------------------------------------------------------
 // General
-JOB_DECLARE_MEMBER(QString,	Name)
-JOB_DECLARE_MEMBER(QString,	Url)
-JOB_DECLARE_MEMBER(QString,	Description)
-JOB_DECLARE_MEMBER(QString,	DisplayName)
+JOB_DECLARE_MEMBER(QString,		Name)
+JOB_DECLARE_MEMBER(QString,		Url)
+JOB_DECLARE_MEMBER(QString,		Description)
+JOB_DECLARE_MEMBER(QString,		DisplayName)
 JOB_DECLARE_MEMBER(bool,		Buildable)
-JOB_DECLARE_MEMBER(QString,	Color)
+JOB_DECLARE_MEMBER(QString,		Color)
 JOB_DECLARE_MEMBER(bool,		InQueue)
 JOB_DECLARE_MEMBER(bool,		KeepDependencies)
+JOB_DECLARE_MEMBER(QString,		JenkinsClass)
 
 // Health
-JOB_DECLARE_MEMBER(QString,	HealthDescription)
+JOB_DECLARE_MEMBER(QString,		HealthDescription)
 JOB_DECLARE_MEMBER(int,			HealthScore)
 
 // Builds

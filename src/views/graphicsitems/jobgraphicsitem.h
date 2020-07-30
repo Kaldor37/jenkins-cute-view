@@ -48,6 +48,7 @@ class JobGraphicsItem : public QGraphicsObject {
 		void setShowLastBuildDesc(bool val);
 		void setShowEstEndTime(bool val);
 		void setShowPositionInQueue(bool val);
+		void setShowJobsReport(bool val);
 
 //------------------------------------------------------------------------------
 // Private
@@ -70,8 +71,9 @@ class JobGraphicsItem : public QGraphicsObject {
 		AutoResizingTextItem	*m_nameItem;
 		AutoResizingTextItem	*m_estEndTimeItem;
 		AutoResizingTextItem	*m_descriptionItem;
-		WeatherGraphicsItem	*m_weatherItem;
+		WeatherGraphicsItem		*m_weatherItem;
 		AutoResizingTextItem	*m_positionInQueueItem;
+		AutoResizingTextItem	*m_jobsReportItem;
 
 		bool			m_running;
 		qreal			m_progressFactor;
@@ -84,6 +86,8 @@ class JobGraphicsItem : public QGraphicsObject {
 		bool m_showLastBuildDesc;
 		bool m_showEstEndTime;
 		bool m_showPositionInQueue;
+		bool m_showJobsReport = true;
+
 //------------------------------------------------------------------------------
 };
 //------------------------------------------------------------------------------

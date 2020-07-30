@@ -144,7 +144,7 @@ void JenkinsGraphicsView::updateJobs(const QList<JobDisplayData> &jobs){
 void JenkinsGraphicsView::updateNodes(const QVector<NodeData> &nodes){
 	QStringList nodeNames;
 
-	for(const NodeData node : nodes){
+	for(const NodeData & node : nodes){
 		nodeNames.push_back(node.name);
 
 		QColor color;
@@ -156,7 +156,7 @@ void JenkinsGraphicsView::updateNodes(const QVector<NodeData> &nodes){
 		}
 
 		// Find node
-		NodeGraphicsItem *foundNode = NULL;
+		NodeGraphicsItem *foundNode = nullptr;
 		NodesItems::Iterator found = m_nodeItems.find(node.name);
 		if(found != m_nodeItems.end()){
 			foundNode = found.value();

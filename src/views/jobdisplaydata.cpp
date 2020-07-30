@@ -11,6 +11,10 @@ JobDisplayData::JobStatus JobDisplayData::getStatus() const {
 	return m_status;
 }
 //------------------------------------------------------------------------------
+JobDisplayData::JobType JobDisplayData::getType() const {
+	return m_type;
+}
+//------------------------------------------------------------------------------
 uint JobDisplayData::getStability() const {
 	return m_stability;
 }
@@ -39,6 +43,18 @@ uint JobDisplayData::getPositionInQueue() const {
 	return m_positionInQueue;
 }
 //------------------------------------------------------------------------------
+uint JobDisplayData::getSucceededJobs() const {
+	return m_succeededJobs;
+}
+//------------------------------------------------------------------------------
+uint JobDisplayData::getFailedJobs() const {
+	return m_failedJobs;
+}
+//------------------------------------------------------------------------------
+uint JobDisplayData::getTotalJobs() const {
+	return m_totalJobs;
+}
+//------------------------------------------------------------------------------
 // Setters
 //------------------------------------------------------------------------------
 void JobDisplayData::setName(const QString &value){
@@ -47,6 +63,10 @@ void JobDisplayData::setName(const QString &value){
 //------------------------------------------------------------------------------
 void JobDisplayData::setStatus(JobDisplayData::JobStatus value){
 	m_status = value;
+}
+//------------------------------------------------------------------------------
+void JobDisplayData::setType(JobDisplayData::JobType value){
+	m_type = value;
 }
 //------------------------------------------------------------------------------
 void JobDisplayData::setStability(uint value){
@@ -75,5 +95,17 @@ void JobDisplayData::setEstimatedDuration(qint64 value){
 //------------------------------------------------------------------------------
 void JobDisplayData::setPositionInQueue(uint value){
 	m_positionInQueue = value;
+}
+//------------------------------------------------------------------------------
+void JobDisplayData::setSucceededJobs(uint value){
+	m_succeededJobs = value;
+}
+//------------------------------------------------------------------------------
+void JobDisplayData::setFailedJobs(uint value){
+	m_failedJobs = value;
+}
+//------------------------------------------------------------------------------
+void JobDisplayData::setTotalJobs(uint value){
+	m_totalJobs = value;
 }
 //------------------------------------------------------------------------------

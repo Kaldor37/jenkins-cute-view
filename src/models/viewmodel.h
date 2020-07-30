@@ -71,7 +71,7 @@ class ViewModel : public QObject {
 	private:
 		QString			m_name;
 		QString			m_url;
-		bool				m_jobsListLoaded;
+		bool			m_jobsListLoaded;
 		JobsMap			m_jobs;
 //------------------------------------------------------------------------------
 };
